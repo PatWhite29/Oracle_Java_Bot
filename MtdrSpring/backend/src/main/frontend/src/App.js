@@ -10,12 +10,10 @@
  * consistency.
  * @author  jean.de.lavarene@oracle.com
  */
-import React, { useState, useEffect } from 'react';
-import NewItem from './NewItem';
+import React, { useMemo, useState } from 'react';
 import API_LIST from './API';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { Button, TableBody, CircularProgress } from '@mui/material';
-import Moment from 'react-moment';
+import SummaryCard from './components/SummaryCard';
+import TaskTable from './components/TaskTable';
 
 /* In this application we're using Function Components with the State Hooks
  * to manage the states. See the doc: https://reactjs.org/docs/hooks-state.html
@@ -23,218 +21,241 @@ import Moment from 'react-moment';
  * and two tables: one that lists the todo items that are to be done and another
  * one with the items that are already done.
  */
+const pendingTaskSeed = [
+  {
+    id: 'pending-1',
+    title: 'Hacer Video Demo de app',
+    assignee: 'Ana Torres',
+    estimatedHours: 6,
+    complexity: 'High',
+    status: 'Pending',
+  },
+  {
+    id: 'pending-2',
+    title: 'Documentar horas por desarrollador',
+    assignee: 'Luis García',
+    estimatedHours: 4,
+    complexity: 'Medium',
+    status: 'Pending',
+  },
+  {
+    id: 'pending-3',
+    title: 'Revisar backlog Sprint 0',
+    assignee: 'María Pérez',
+    estimatedHours: 3,
+    complexity: 'Low',
+    status: 'Pending',
+  },
+];
+
+const completedTaskSeed = [
+  {
+    id: 'completed-1',
+    title: 'Configurar base de datos',
+    assignee: 'Carlos Vega',
+    workedHours: 8,
+    status: 'Completed',
+  },
+  {
+    id: 'completed-2',
+    title: 'Conectar backend con Telegram',
+    assignee: 'Sofía Rojas',
+    workedHours: 10,
+    status: 'Completed',
+  },
+  {
+    id: 'completed-3',
+    title: 'Crear modelo relacional',
+    assignee: 'Diego Ruiz',
+    workedHours: 5,
+    status: 'Completed',
+  },
+];
+
+const pendingColumns = [
+  { key: 'title', label: 'Title' },
+  { key: 'assignee', label: 'Assignee' },
+  { key: 'estimatedHours', label: 'Estimated Hours' },
+  { key: 'complexity', label: 'Complexity' },
+  { key: 'status', label: 'Status' },
+];
+
+const completedColumns = [
+  { key: 'title', label: 'Title' },
+  { key: 'assignee', label: 'Assignee' },
+  { key: 'workedHours', label: 'Worked Hours' },
+  { key: 'status', label: 'Status' },
+];
+
+const initialFormState = {
+  title: '',
+  assignee: '',
+  estimatedHours: '',
+  complexity: 'Medium',
+};
+
 function App() {
-    // isLoading is true while waiting for the backend to return the list
-    // of items. We use this state to display a spinning circle:
-    const [isLoading, setLoading] = useState(false);
-    // Similar to isLoading, isInserting is true while waiting for the backend
-    // to insert a new item:
-    const [isInserting, setInserting] = useState(false);
-    // The list of todo items is stored in this state. It includes the "done"
-    // "not-done" items:
-    const [items, setItems] = useState([]);
-    // In case of an error during the API call:
-    const [error, setError] = useState();
+  const [pendingTasks, setPendingTasks] = useState(pendingTaskSeed);
+  const [completedTasks, setCompletedTasks] = useState(completedTaskSeed);
+  const [formData, setFormData] = useState(initialFormState);
 
-    function deleteItem(deleteId) {
-      // console.log("deleteItem("+deleteId+")")
-      fetch(API_LIST+"/"+deleteId, {
-        method: 'DELETE',
-      })
-      .then(response => {
-        // console.log("response=");
-        // console.log(response);
-        if (response.ok) {
-          // console.log("deleteItem FETCH call is ok");
-          return response;
-        } else {
-          throw new Error('Something went wrong ...');
-        }
-      })
-      .then(
-        (result) => {
-          const remainingItems = items.filter(item => item.id !== deleteId);
-          setItems(remainingItems);
-        },
-        (error) => {
-          setError(error);
-        }
-      );
-    }
-    function toggleDone(event, id, description, done) {
-      event.preventDefault();
-      modifyItem(id, description, done).then(
-        (result) => { reloadOneIteam(id); },
-        (error) => { setError(error); }
-      );
-    }
-    function reloadOneIteam(id){
-      fetch(API_LIST+"/"+id)
-        .then(response => {
-          if (response.ok) {
-            return response.json();
-          } else {
-            throw new Error('Something went wrong ...');
-          }
-        })
-        .then(
-          (result) => {
-            const items2 = items.map(
-              x => (x.id === id ? {
-                 ...x,
-                 'description':result.description,
-                 'done': result.done
-                } : x));
-            setItems(items2);
-          },
-          (error) => {
-            setError(error);
-          });
-    }
-    function modifyItem(id, description, done) {
-      // console.log("deleteItem("+deleteId+")")
-      var data = {"description": description, "done": done};
-      return fetch(API_LIST+"/"+id, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      })
-      .then(response => {
-        // console.log("response=");
-        // console.log(response);
-        if (response.ok) {
-          // console.log("deleteItem FETCH call is ok");
-          return response;
-        } else {
-          throw new Error('Something went wrong ...');
-        }
-      });
-    }
-    /*
-    To simulate slow network, call sleep before making API calls.
-    const sleep = (milliseconds) => {
-      return new Promise(resolve => setTimeout(resolve, milliseconds))
-    }
-    */
-    useEffect(() => {
-      setLoading(true);
-      // sleep(5000).then(() => {
-      fetch(API_LIST)
-        .then(response => {
-          if (response.ok) {
-            return response.json();
-          } else {
-            throw new Error('Something went wrong ...');
-          }
-        })
-        .then(
-          (result) => {
-            setLoading(false);
-            setItems(result);
-          },
-          (error) => {
-            setLoading(false);
-            setError(error);
-          });
+  const summary = useMemo(
+    () => ({
+      total: pendingTasks.length + completedTasks.length,
+      pending: pendingTasks.length,
+      completed: completedTasks.length,
+    }),
+    [pendingTasks, completedTasks]
+  );
 
-      //})
-    },
-    // https://en.reactjs.org/docs/faq-ajax.html
-    [] // empty deps array [] means
-       // this useEffect will run once
-       // similar to componentDidMount()
-    );
-    function addItem(text){
-      console.log("addItem("+text+")")
-      setInserting(true);
-      var data = {};
-      console.log(data);
-      data.description = text;
-      fetch(API_LIST, {
-        method: 'POST',
-        // We convert the React state to JSON and send it as the POST body
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data),
-      }).then((response) => {
-        // This API doens't return a JSON document
-        console.log(response);
-        console.log();
-        console.log(response.headers.location);
-        // return response.json();
-        if (response.ok) {
-          return response;
-        } else {
-          throw new Error('Something went wrong ...');
-        }
-      }).then(
-        (result) => {
-          var id = result.headers.get('location');
-          var newItem = {"id": id, "description": text}
-          setItems([newItem, ...items]);
-          setInserting(false);
-        },
-        (error) => {
-          setInserting(false);
-          setError(error);
-        }
-      );
-    }
-    return (
-      <div className="App">
-        <h1>MY TODO LIST</h1>
-        <NewItem addItem={addItem} isInserting={isInserting}/>
-        { error &&
-          <p>Error: {error.message}</p>
-        }
-        { isLoading &&
-          <CircularProgress />
-        }
-        { !isLoading &&
-        <div id="maincontent">
-        <table id="itemlistNotDone" className="itemlist">
-          <TableBody>
-          {items.map(item => (
-            !item.done && (
-            <tr key={item.id}>
-              <td className="description">{item.description}</td>
-              { /*<td>{JSON.stringify(item, null, 2) }</td>*/ }
-              <td className="date"><Moment format="MMM Do hh:mm:ss">{item.createdAt}</Moment></td>
-              <td><Button variant="contained" className="DoneButton" onClick={(event) => toggleDone(event, item.id, item.description, !item.done)} size="small">
-                    Done
-                  </Button></td>
-            </tr>
-          )))}
-          </TableBody>
-        </table>
-        <h2 id="donelist">
-          Done items
-        </h2>
-        <table id="itemlistDone" className="itemlist">
-          <TableBody>
-          {items.map(item => (
-            item.done && (
+  function handleInputChange(event) {
+    const { name, value } = event.target;
+    setFormData((currentForm) => ({
+      ...currentForm,
+      [name]: value,
+    }));
+  }
 
-            <tr key={item.id}>
-              <td className="description">{item.description}</td>
-              <td className="date"><Moment format="MMM Do hh:mm:ss">{item.createdAt}</Moment></td>
-              <td><Button variant="contained" className="DoneButton" onClick={(event) => toggleDone(event, item.id, item.description, !item.done)} size="small">
-                    Undo
-                  </Button></td>
-              <td><Button startIcon={<DeleteIcon />} variant="contained" className="DeleteButton" onClick={() => deleteItem(item.id)} size="small">
-                    Delete
-                  </Button></td>
-            </tr>
-          )))}
-          </TableBody>
-        </table>
+  function handleCreateTask(event) {
+    event.preventDefault();
+
+    if (!formData.title.trim() || !formData.assignee.trim() || !formData.estimatedHours) {
+      return;
+    }
+
+    const newTask = {
+      id: `pending-${Date.now()}`,
+      title: formData.title.trim(),
+      assignee: formData.assignee.trim(),
+      estimatedHours: Number(formData.estimatedHours),
+      complexity: formData.complexity,
+      status: 'Pending',
+    };
+
+    setPendingTasks((currentTasks) => [newTask, ...currentTasks]);
+    setFormData(initialFormState);
+  }
+
+  function handleCompleteTask(taskId) {
+    const taskToMove = pendingTasks.find((task) => task.id === taskId);
+
+    if (!taskToMove) {
+      return;
+    }
+
+    setPendingTasks((currentTasks) => currentTasks.filter((task) => task.id !== taskId));
+    setCompletedTasks((currentTasks) => [
+      {
+        id: `completed-${taskToMove.id}`,
+        title: taskToMove.title,
+        assignee: taskToMove.assignee,
+        workedHours: taskToMove.estimatedHours,
+        status: 'Completed',
+      },
+      ...currentTasks,
+    ]);
+  }
+
+  return (
+    <div className="app-shell">
+      <header className="hero-card">
+        <div>
+          <span className="eyebrow">Team 33</span>
+          <h1>Software Manager Tool</h1>
+          <p>Team 33 Challenge Demo</p>
         </div>
-        }
+        <div className="hero-note">
+          <span className="hero-note-label">Demo Mode</span>
+          <strong>Ready for API integration via {API_LIST}</strong>
+        </div>
+      </header>
 
-      </div>
-    );
+      <section className="summary-grid">
+        <SummaryCard label="Total Tasks" value={summary.total} accentClass="accent-primary" />
+        <SummaryCard label="Pending Tasks" value={summary.pending} accentClass="accent-muted" />
+        <SummaryCard label="Completed Tasks" value={summary.completed} accentClass="accent-success" />
+      </section>
+
+      <section className="card section-card">
+        <div className="section-header">
+          <div>
+            <h2>Create Task</h2>
+            <p>Register a new task for the project management demo dashboard.</p>
+          </div>
+        </div>
+
+        <form className="task-form" onSubmit={handleCreateTask}>
+          <div className="form-grid">
+            <label>
+              <span>Task title</span>
+              <input
+                name="title"
+                type="text"
+                value={formData.title}
+                onChange={handleInputChange}
+                placeholder="Enter task title"
+              />
+            </label>
+
+            <label>
+              <span>Assignee</span>
+              <input
+                name="assignee"
+                type="text"
+                value={formData.assignee}
+                onChange={handleInputChange}
+                placeholder="Enter team member"
+              />
+            </label>
+
+            <label>
+              <span>Estimated hours</span>
+              <input
+                name="estimatedHours"
+                type="number"
+                min="1"
+                value={formData.estimatedHours}
+                onChange={handleInputChange}
+                placeholder="0"
+              />
+            </label>
+
+            <label>
+              <span>Complexity</span>
+              <select name="complexity" value={formData.complexity} onChange={handleInputChange}>
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+              </select>
+            </label>
+          </div>
+
+          <div className="form-actions">
+            <button type="submit" className="primary-button">
+              Create Task
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <TaskTable
+        title="Pending Tasks"
+        description="Open work items prepared for the challenge review and demo presentation."
+        tasks={pendingTasks}
+        columns={pendingColumns}
+        actionLabel="Complete"
+        onAction={handleCompleteTask}
+        emptyMessage="There are no pending tasks right now."
+      />
+
+      <TaskTable
+        title="Completed Tasks"
+        description="Delivered tasks already closed by the team during the challenge preparation."
+        tasks={completedTasks}
+        columns={completedColumns}
+        emptyMessage="Completed tasks will appear here once work is closed."
+      />
+    </div>
+  );
 }
 export default App;
