@@ -10,7 +10,7 @@
  * consistency.
  * @author  jean.de.lavarene@oracle.com
  */
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import API_LIST from './API';
 import SummaryCard from './components/SummaryCard';
 import TaskTable from './components/TaskTable';
@@ -94,10 +94,112 @@ const initialFormState = {
   complexity: 'Medium',
 };
 
+const REFRESH_INTERVAL_MS = 5000;
+
+function normalizeTaskTitle(title) {
+  return (title || '').trim().toLowerCase();
+}
+
+function mergeTasksByTitle(...taskGroups) {
+  const seenTitles = new Set();
+
+  return taskGroups.flat().filter((task) => {
+    const normalizedTitle = normalizeTaskTitle(task.title);
+
+    if (!normalizedTitle || seenTitles.has(normalizedTitle)) {
+      return false;
+    }
+
+    seenTitles.add(normalizedTitle);
+    return true;
+  });
+}
+
+function mapApiTask(item) {
+  const title = item.description || 'New task from bot';
+
+  return {
+    id: `api-${item.id ?? item.ID}`,
+    apiId: item.id ?? item.ID,
+    title,
+    assignee: 'Telegram Bot',
+    estimatedHours: '—',
+    workedHours: '—',
+    complexity: 'Medium',
+    status: item.done ? 'Completed' : 'Pending',
+    source: 'api',
+    createdAt: item.createdAt || item.creation_ts || null,
+    done: Boolean(item.done),
+  };
+}
+
+function sortTasksByCreatedAt(tasks) {
+  return [...tasks].sort((leftTask, rightTask) => {
+    const leftDate = leftTask.createdAt ? new Date(leftTask.createdAt).getTime() : 0;
+    const rightDate = rightTask.createdAt ? new Date(rightTask.createdAt).getTime() : 0;
+
+    return rightDate - leftDate;
+  });
+}
+
 function App() {
-  const [pendingTasks, setPendingTasks] = useState(pendingTaskSeed);
-  const [completedTasks, setCompletedTasks] = useState(completedTaskSeed);
+  const [localPendingTasks, setLocalPendingTasks] = useState([]);
+  const [localCompletedTasks, setLocalCompletedTasks] = useState([]);
+  const [apiTasks, setApiTasks] = useState([]);
   const [formData, setFormData] = useState(initialFormState);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    async function loadTasks() {
+      try {
+        const response = await fetch(API_LIST);
+
+        if (!response.ok) {
+          throw new Error('Unable to load tasks from API');
+        }
+
+        const result = await response.json();
+
+        if (isMounted) {
+          const mappedTasks = sortTasksByCreatedAt((result || []).map(mapApiTask));
+          setApiTasks(mappedTasks);
+        }
+      } catch (error) {
+        if (isMounted) {
+          setApiTasks((currentTasks) => currentTasks);
+        }
+      }
+    }
+
+    loadTasks();
+    const intervalId = window.setInterval(loadTasks, REFRESH_INTERVAL_MS);
+
+    return () => {
+      isMounted = false;
+      window.clearInterval(intervalId);
+    };
+  }, []);
+
+  const pendingTasks = useMemo(
+    () =>
+      mergeTasksByTitle(
+        apiTasks.filter((task) => !task.done),
+        localPendingTasks,
+        pendingTaskSeed
+      ),
+    [apiTasks, localPendingTasks]
+  );
+
+  const completedTasks = useMemo(
+    () =>
+      mergeTasksByTitle(
+        apiTasks.filter((task) => task.done),
+        localCompletedTasks,
+        completedTaskSeed
+      ),
+    [apiTasks, localCompletedTasks]
+  );
 
   const summary = useMemo(
     () => ({
@@ -130,21 +232,57 @@ function App() {
       estimatedHours: Number(formData.estimatedHours),
       complexity: formData.complexity,
       status: 'Pending',
+      source: 'local',
     };
 
-    setPendingTasks((currentTasks) => [newTask, ...currentTasks]);
+    setLocalPendingTasks((currentTasks) => [newTask, ...currentTasks]);
     setFormData(initialFormState);
   }
 
-  function handleCompleteTask(taskId) {
+  async function handleCompleteTask(taskId) {
     const taskToMove = pendingTasks.find((task) => task.id === taskId);
 
     if (!taskToMove) {
       return;
     }
 
-    setPendingTasks((currentTasks) => currentTasks.filter((task) => task.id !== taskId));
-    setCompletedTasks((currentTasks) => [
+    if (taskToMove.source === 'api') {
+      try {
+        const response = await fetch(`${API_LIST}/${taskToMove.apiId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            description: taskToMove.title,
+            done: true,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Unable to update task');
+        }
+
+        setApiTasks((currentTasks) =>
+          currentTasks.map((task) =>
+            task.apiId === taskToMove.apiId
+              ? {
+                  ...task,
+                  done: true,
+                  status: 'Completed',
+                }
+              : task
+          )
+        );
+      } catch (error) {
+        return;
+      }
+
+      return;
+    }
+
+    setLocalPendingTasks((currentTasks) => currentTasks.filter((task) => task.id !== taskId));
+    setLocalCompletedTasks((currentTasks) => [
       {
         id: `completed-${taskToMove.id}`,
         title: taskToMove.title,
@@ -165,8 +303,9 @@ function App() {
           <p>Team 33 Challenge Demo</p>
         </div>
         <div className="hero-note">
-          <span className="hero-note-label">Demo Mode</span>
-          <strong>Ready for API integration via {API_LIST}</strong>
+          <span className="hero-note-label">Live Sync</span>
+          <strong>Auto-refreshes every 5 seconds to show tasks received by the bot.</strong>
+          <small className="hero-note-footnote">Source: {API_LIST}</small>
         </div>
       </header>
 
@@ -240,7 +379,7 @@ function App() {
 
       <TaskTable
         title="Pending Tasks"
-        description="Open work items prepared for the challenge review and demo presentation."
+        description="Open work items prepared for the challenge review and demo presentation, including new tasks created by Telegram messages."
         tasks={pendingTasks}
         columns={pendingColumns}
         actionLabel="Complete"

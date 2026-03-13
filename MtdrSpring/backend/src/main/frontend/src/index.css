@@ -115,6 +115,13 @@ select {
   word-break: break-word;
 }
 
+.hero-note-footnote {
+  display: block;
+  margin-top: 10px;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+}
+
 .summary-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
