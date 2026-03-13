@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,6 +40,7 @@ public class ToDoItemService {
 
     
     public ToDoItem addToDoItem(ToDoItem toDoItem){
+        applyTaskDefaults(toDoItem);
         return toDoItemRepository.save(toDoItem);
     }
 
@@ -56,13 +57,75 @@ public class ToDoItemService {
         if(toDoItemData.isPresent()){
             ToDoItem toDoItem = toDoItemData.get();
             toDoItem.setID(id);
-            toDoItem.setCreation_ts(td.getCreation_ts());
-            toDoItem.setDescription(td.getDescription());
+            toDoItem.setCreation_ts(td.getCreation_ts() != null ? td.getCreation_ts() : toDoItem.getCreation_ts());
+            toDoItem.setTitle(firstNonBlank(td.getTitle(), td.getDescription(), toDoItem.getTitle(), toDoItem.getDescription()));
+            toDoItem.setDescription(firstNonBlank(td.getDescription(), td.getTitle(), toDoItem.getDescription(), toDoItem.getTitle()));
+            toDoItem.setAssignee(firstNonBlank(td.getAssignee(), toDoItem.getAssignee(), "Unassigned"));
+            toDoItem.setComplexity(normalizeComplexity(firstNonBlank(td.getComplexity(), toDoItem.getComplexity(), "Medium")));
+            toDoItem.setStartTime(td.getStartTime() != null ? td.getStartTime() : toDoItem.getStartTime());
             toDoItem.setDone(td.isDone());
+            if (toDoItem.isDone()) {
+                toDoItem.setEndTime(td.getEndTime() != null ? td.getEndTime() :
+                        (toDoItem.getEndTime() != null ? toDoItem.getEndTime() : OffsetDateTime.now()));
+            } else {
+                toDoItem.setEndTime(null);
+            }
+            applyTaskDefaults(toDoItem);
             return toDoItemRepository.save(toDoItem);
         }else{
             return null;
         }
+    }
+
+    private void applyTaskDefaults(ToDoItem toDoItem) {
+        OffsetDateTime now = OffsetDateTime.now();
+
+        toDoItem.setTitle(firstNonBlank(toDoItem.getTitle(), toDoItem.getDescription(), "Untitled task"));
+        toDoItem.setDescription(firstNonBlank(toDoItem.getDescription(), toDoItem.getTitle(), "Untitled task"));
+        toDoItem.setAssignee(firstNonBlank(toDoItem.getAssignee(), "Unassigned"));
+        toDoItem.setComplexity(normalizeComplexity(firstNonBlank(toDoItem.getComplexity(), "Medium")));
+
+        if (toDoItem.getCreation_ts() == null) {
+            toDoItem.setCreation_ts(now);
+        }
+
+        if (toDoItem.getStartTime() == null) {
+            toDoItem.setStartTime(toDoItem.getCreation_ts());
+        }
+
+        if (toDoItem.isDone() && toDoItem.getEndTime() == null) {
+            toDoItem.setEndTime(now);
+        }
+
+        if (!toDoItem.isDone()) {
+            toDoItem.setEndTime(null);
+        }
+    }
+
+    private String firstNonBlank(String... values) {
+        for (String value : values) {
+            if (value != null && !value.trim().isEmpty()) {
+                return value.trim();
+            }
+        }
+
+        return null;
+    }
+
+    private String normalizeComplexity(String complexity) {
+        if (complexity == null || complexity.trim().isEmpty()) {
+            return "Medium";
+        }
+
+        String normalizedComplexity = complexity.trim().toUpperCase();
+        if ("LOW".equals(normalizedComplexity) || "BAJA".equals(normalizedComplexity)) {
+            return "Low";
+        }
+        if ("HIGH".equals(normalizedComplexity) || "ALTA".equals(normalizedComplexity)) {
+            return "High";
+        }
+
+        return "Medium";
     }
     
 

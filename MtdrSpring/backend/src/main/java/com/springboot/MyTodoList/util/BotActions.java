@@ -6,6 +6,8 @@ import com.springboot.MyTodoList.service.ToDoItemService;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +18,11 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 public class BotActions{
 
     private static final Logger logger = LoggerFactory.getLogger(BotActions.class);
+    private static final Map<Long, BotConversationState> CONVERSATIONS = new ConcurrentHashMap<>();
+    private static final String TITLE_PREFIX = "TITULO:";
+    private static final String TITLE_PREFIX_ALT = "TÍTULO:";
+    private static final String ASSIGNEE_PREFIX = "ASIGNADO:";
+    private static final String COMPLEXITY_PREFIX = "COMPLEJIDAD:";
 
     String requestText;
     long chatId;
@@ -67,12 +74,7 @@ public class BotActions{
         if (!(requestText.equals(BotCommands.START_COMMAND.getCommand()) || requestText.equals(BotLabels.SHOW_MAIN_SCREEN.getLabel())) || exit) 
             return;
 
-        BotHelper.sendMessageToTelegram(chatId, BotMessages.HELLO_MYTODO_BOT.getMessage(), telegramClient,  ReplyKeyboardMarkup
-            .builder()
-            .keyboardRow(new KeyboardRow(BotLabels.LIST_ALL_ITEMS.getLabel(),BotLabels.ADD_NEW_ITEM.getLabel()))
-            .keyboardRow(new KeyboardRow(BotLabels.SHOW_MAIN_SCREEN.getLabel(),BotLabels.HIDE_MAIN_SCREEN.getLabel()))
-            .build()
-        );
+        startTaskConversation();
         exit = true;
     }
 
@@ -87,8 +89,12 @@ public class BotActions{
 
             ToDoItem item = todoService.getToDoItemById(id);
             item.setDone(true);
-            todoService.updateToDoItem(id, item);
-            BotHelper.sendMessageToTelegram(chatId, BotMessages.ITEM_DONE.getMessage(), telegramClient);
+            item.setEndTime(OffsetDateTime.now());
+            ToDoItem updatedItem = todoService.updateToDoItem(id, item);
+            String productivityMessage = updatedItem != null && updatedItem.getProductivityKpi() != null
+                    ? " KPI: " + updatedItem.getProductivityKpi()
+                    : "";
+            BotHelper.sendMessageToTelegram(chatId, BotMessages.ITEM_DONE.getMessage() + productivityMessage, telegramClient);
 
         } catch (Exception e) {
             logger.error(e.getLocalizedMessage(), e);
@@ -108,6 +114,7 @@ public class BotActions{
 
             ToDoItem item = todoService.getToDoItemById(id);
             item.setDone(false);
+            item.setEndTime(null);
             todoService.updateToDoItem(id, item);
             BotHelper.sendMessageToTelegram(chatId, BotMessages.ITEM_UNDONE.getMessage(), telegramClient);
 
@@ -177,7 +184,7 @@ public class BotActions{
 
         for (ToDoItem item : activeItems) {
             KeyboardRow currentRow = new KeyboardRow();
-            currentRow.add(item.getDescription());
+            currentRow.add(buildTaskLabel(item));
             currentRow.add(item.getID() + BotLabels.DASH.getLabel() + BotLabels.DONE.getLabel());
             keyboard.add(currentRow);
         }
@@ -187,7 +194,7 @@ public class BotActions{
 
         for (ToDoItem item : doneItems) {
             KeyboardRow currentRow = new KeyboardRow();
-            currentRow.add(item.getDescription());
+            currentRow.add(buildTaskLabel(item));
             currentRow.add(item.getID() + BotLabels.DASH.getLabel() + BotLabels.UNDO.getLabel());
             currentRow.add(item.getID() + BotLabels.DASH.getLabel() + BotLabels.DELETE.getLabel());
             keyboard.add(currentRow);
@@ -211,20 +218,45 @@ public class BotActions{
 				|| requestText.contains(BotLabels.ADD_NEW_ITEM.getLabel())) || exit )
             return;
         logger.info("Adding item by BotHelper");
-        BotHelper.sendMessageToTelegram(chatId, BotMessages.TYPE_NEW_TODO_ITEM.getMessage(), telegramClient);
+        startTaskConversation();
+        exit = true;
+    }
+
+    public void fnCollectTaskData() {
+        if (exit) {
+            return;
+        }
+
+        BotConversationState conversationState = getConversationState();
+        if (!conversationState.isAwaitingInput()) {
+            return;
+        }
+
+        switch (conversationState.getStep()) {
+            case WAITING_TITLE:
+                handleTitleStep(conversationState);
+                break;
+            case WAITING_ASSIGNEE:
+                handleAssigneeStep(conversationState);
+                break;
+            case WAITING_COMPLEXITY:
+                handleComplexityStep(conversationState);
+                break;
+            default:
+                return;
+        }
+
         exit = true;
     }
 
     public void fnElse(){
         if(exit)
             return;
-        ToDoItem newItem = new ToDoItem();
-        newItem.setDescription(requestText);
-        newItem.setCreation_ts(OffsetDateTime.now());
-        newItem.setDone(false);
-        todoService.addToDoItem(newItem);
-
-        BotHelper.sendMessageToTelegram(chatId, BotMessages.NEW_ITEM_ADDED.getMessage(), telegramClient, null);
+        BotHelper.sendMessageToTelegram(chatId,
+                "Usa /start para comenzar el flujo guiado de creación de tareas o /todolist para ver la lista.",
+                telegramClient,
+                null);
+        exit = true;
     }
 
     public void fnLLM(){
@@ -242,6 +274,125 @@ public class BotActions{
 
         BotHelper.sendMessageToTelegram(chatId, "LLM: "+out, telegramClient, null);
 
+    }
+
+    private void startTaskConversation() {
+        BotConversationState conversationState = getConversationState();
+        conversationState.reset();
+        conversationState.setStep(BotConversationState.Step.WAITING_TITLE);
+
+        BotHelper.sendMessageToTelegram(chatId, BotMessages.HELLO_MYTODO_BOT.getMessage(), telegramClient,
+                ReplyKeyboardMarkup
+                        .builder()
+                        .keyboardRow(new KeyboardRow(BotLabels.LIST_ALL_ITEMS.getLabel(), BotLabels.HIDE_MAIN_SCREEN.getLabel()))
+                        .build());
+    }
+
+    private BotConversationState getConversationState() {
+        return CONVERSATIONS.computeIfAbsent(chatId, ignored -> new BotConversationState());
+    }
+
+    private void handleTitleStep(BotConversationState conversationState) {
+        String title = extractFormattedValue(requestText, TITLE_PREFIX, TITLE_PREFIX_ALT);
+        if (title == null) {
+            BotHelper.sendMessageToTelegram(chatId, BotMessages.INVALID_TITLE_FORMAT.getMessage(), telegramClient, null);
+            return;
+        }
+
+        conversationState.setTitle(title);
+        conversationState.setStep(BotConversationState.Step.WAITING_ASSIGNEE);
+        BotHelper.sendMessageToTelegram(chatId, BotMessages.TYPE_TASK_ASSIGNEE.getMessage(), telegramClient, null);
+    }
+
+    private void handleAssigneeStep(BotConversationState conversationState) {
+        String assignee = extractFormattedValue(requestText, ASSIGNEE_PREFIX);
+        if (assignee == null) {
+            BotHelper.sendMessageToTelegram(chatId, BotMessages.INVALID_ASSIGNEE_FORMAT.getMessage(), telegramClient, null);
+            return;
+        }
+
+        conversationState.setAssignee(assignee);
+        conversationState.setStep(BotConversationState.Step.WAITING_COMPLEXITY);
+        BotHelper.sendMessageToTelegram(chatId, BotMessages.TYPE_TASK_COMPLEXITY.getMessage(), telegramClient, null);
+    }
+
+    private void handleComplexityStep(BotConversationState conversationState) {
+        String complexity = extractFormattedValue(requestText, COMPLEXITY_PREFIX);
+        String normalizedComplexity = normalizeComplexity(complexity);
+
+        if (normalizedComplexity == null) {
+            BotHelper.sendMessageToTelegram(chatId, BotMessages.INVALID_COMPLEXITY_FORMAT.getMessage(), telegramClient, null);
+            return;
+        }
+
+        OffsetDateTime startTime = OffsetDateTime.now();
+        ToDoItem newItem = new ToDoItem();
+        newItem.setTitle(conversationState.getTitle());
+        newItem.setDescription(conversationState.getTitle());
+        newItem.setAssignee(conversationState.getAssignee());
+        newItem.setComplexity(normalizedComplexity);
+        newItem.setCreation_ts(startTime);
+        newItem.setStartTime(startTime);
+        newItem.setDone(false);
+        todoService.addToDoItem(newItem);
+
+        conversationState.reset();
+        BotHelper.sendMessageToTelegram(chatId,
+                BotMessages.NEW_ITEM_ADDED.getMessage()
+                        + "\nResumen: " + newItem.getTitle()
+                        + " | Asignado: " + newItem.getAssignee()
+                        + " | Complejidad: " + newItem.getComplexity(),
+                telegramClient,
+                null);
+    }
+
+    private String extractFormattedValue(String message, String... prefixes) {
+        if (message == null) {
+            return null;
+        }
+
+        String trimmedMessage = message.trim();
+        for (String prefix : prefixes) {
+            if (trimmedMessage.regionMatches(true, 0, prefix, 0, prefix.length())) {
+                String extractedValue = trimmedMessage.substring(prefix.length()).trim();
+                return extractedValue.isEmpty() ? null : extractedValue;
+            }
+        }
+
+        return null;
+    }
+
+    private String normalizeComplexity(String complexity) {
+        if (complexity == null) {
+            return null;
+        }
+
+        String normalizedComplexity = complexity.trim().toUpperCase();
+        if ("LOW".equals(normalizedComplexity) || "BAJA".equals(normalizedComplexity)) {
+            return "Low";
+        }
+        if ("HIGH".equals(normalizedComplexity) || "ALTA".equals(normalizedComplexity)) {
+            return "High";
+        }
+        if ("MEDIUM".equals(normalizedComplexity) || "MEDIA".equals(normalizedComplexity)) {
+            return "Medium";
+        }
+
+        return null;
+    }
+
+    private String buildTaskLabel(ToDoItem item) {
+        String title = item.getTitle() != null && !item.getTitle().trim().isEmpty()
+                ? item.getTitle()
+                : item.getDescription();
+        String assignee = item.getAssignee() != null && !item.getAssignee().trim().isEmpty()
+                ? item.getAssignee()
+                : "Unassigned";
+        String complexity = item.getComplexity() != null && !item.getComplexity().trim().isEmpty()
+                ? item.getComplexity()
+                : "Medium";
+
+        return title + " | " + assignee + " | " + complexity;
     }
 
 
