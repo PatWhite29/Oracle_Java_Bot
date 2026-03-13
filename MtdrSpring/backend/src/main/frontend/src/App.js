@@ -26,7 +26,6 @@ const pendingTaskSeed = [
     id: 'pending-1',
     title: 'Hacer Video Demo de app',
     assignee: 'Ana Torres',
-    estimatedHours: 6,
     complexity: 'High',
     status: 'Pending',
   },
@@ -34,7 +33,6 @@ const pendingTaskSeed = [
     id: 'pending-2',
     title: 'Documentar horas por desarrollador',
     assignee: 'Luis García',
-    estimatedHours: 4,
     complexity: 'Medium',
     status: 'Pending',
   },
@@ -42,7 +40,6 @@ const pendingTaskSeed = [
     id: 'pending-3',
     title: 'Revisar backlog Sprint 0',
     assignee: 'María Pérez',
-    estimatedHours: 3,
     complexity: 'Low',
     status: 'Pending',
   },
@@ -53,21 +50,21 @@ const completedTaskSeed = [
     id: 'completed-1',
     title: 'Configurar base de datos',
     assignee: 'Carlos Vega',
-    workedHours: 8,
+    complexity: 'Medium',
     status: 'Completed',
   },
   {
     id: 'completed-2',
     title: 'Conectar backend con Telegram',
     assignee: 'Sofía Rojas',
-    workedHours: 10,
+    complexity: 'High',
     status: 'Completed',
   },
   {
     id: 'completed-3',
     title: 'Crear modelo relacional',
     assignee: 'Diego Ruiz',
-    workedHours: 5,
+    complexity: 'Medium',
     status: 'Completed',
   },
 ];
@@ -75,7 +72,6 @@ const completedTaskSeed = [
 const pendingColumns = [
   { key: 'title', label: 'Title' },
   { key: 'assignee', label: 'Assignee' },
-  { key: 'estimatedHours', label: 'Estimated Hours' },
   { key: 'complexity', label: 'Complexity' },
   { key: 'status', label: 'Status' },
 ];
@@ -83,14 +79,13 @@ const pendingColumns = [
 const completedColumns = [
   { key: 'title', label: 'Title' },
   { key: 'assignee', label: 'Assignee' },
-  { key: 'workedHours', label: 'Worked Hours' },
+  { key: 'complexity', label: 'Complexity' },
   { key: 'status', label: 'Status' },
 ];
 
 const initialFormState = {
   title: '',
   assignee: '',
-  estimatedHours: '',
   complexity: 'Medium',
 };
 
@@ -116,16 +111,14 @@ function mergeTasksByTitle(...taskGroups) {
 }
 
 function mapApiTask(item) {
-  const title = item.description || 'New task from bot';
+  const title = item.title || item.description || 'New task from bot';
 
   return {
     id: `api-${item.id ?? item.ID}`,
     apiId: item.id ?? item.ID,
     title,
-    assignee: 'Telegram Bot',
-    estimatedHours: '—',
-    workedHours: '—',
-    complexity: 'Medium',
+    assignee: item.assignee || 'Unassigned',
+    complexity: item.complexity || 'Medium',
     status: item.done ? 'Completed' : 'Pending',
     source: 'api',
     createdAt: item.createdAt || item.creation_ts || null,
@@ -221,7 +214,7 @@ function App() {
   function handleCreateTask(event) {
     event.preventDefault();
 
-    if (!formData.title.trim() || !formData.assignee.trim() || !formData.estimatedHours) {
+    if (!formData.title.trim() || !formData.assignee.trim()) {
       return;
     }
 
@@ -229,7 +222,6 @@ function App() {
       id: `pending-${Date.now()}`,
       title: formData.title.trim(),
       assignee: formData.assignee.trim(),
-      estimatedHours: Number(formData.estimatedHours),
       complexity: formData.complexity,
       status: 'Pending',
       source: 'local',
@@ -287,7 +279,7 @@ function App() {
         id: `completed-${taskToMove.id}`,
         title: taskToMove.title,
         assignee: taskToMove.assignee,
-        workedHours: taskToMove.estimatedHours,
+        complexity: taskToMove.complexity,
         status: 'Completed',
       },
       ...currentTasks,
@@ -344,18 +336,6 @@ function App() {
                 value={formData.assignee}
                 onChange={handleInputChange}
                 placeholder="Enter team member"
-              />
-            </label>
-
-            <label>
-              <span>Estimated hours</span>
-              <input
-                name="estimatedHours"
-                type="number"
-                min="1"
-                value={formData.estimatedHours}
-                onChange={handleInputChange}
-                placeholder="0"
               />
             </label>
 
