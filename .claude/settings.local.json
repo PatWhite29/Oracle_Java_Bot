@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm -f /c/Proyectos/Oracle_Java_Bot/MtdrSpring/backend/src/main/java/com/springboot/MyTodoList/security/WebSecurityConfiguration.java)",
+      "Bash(rm -f /c/Proyectos/Oracle_Java_Bot/MtdrSpring/backend/src/main/java/com/springboot/MyTodoList/model/User.java)",
+      "Bash(rm -f /c/Proyectos/Oracle_Java_Bot/MtdrSpring/backend/src/main/java/com/springboot/MyTodoList/model/ToDoItem.java)",
+      "Bash(rm -f /c/Proyectos/Oracle_Java_Bot/MtdrSpring/backend/src/main/java/com/springboot/MyTodoList/repository/UserRepository.java)",
+      "Bash(rm -f /c/Proyectos/Oracle_Java_Bot/MtdrSpring/backend/src/main/java/com/springboot/MyTodoList/repository/ToDoItemRepository.java)",
+      "Bash(git add *)"
+    ]
+  }
+}
