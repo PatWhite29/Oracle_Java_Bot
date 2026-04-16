@@ -12,6 +12,7 @@
  */
 import React, { useEffect, useMemo, useState } from 'react';
 import API_LIST from './API';
+import AnalyticsDashboard from './components/analytics/AnalyticsDashboard';
 import SummaryCard from './components/SummaryCard';
 import TaskTable from './components/TaskTable';
 
@@ -123,6 +124,9 @@ function mapApiTask(item) {
     source: 'api',
     createdAt: item.createdAt || item.creation_ts || null,
     done: Boolean(item.done),
+    sprint: item.sprint || 'Sprint 1',
+    realHours: item.realHours || 0,
+    completedAt: item.completedAt || item.endTime || null,
   };
 }
 
@@ -356,6 +360,8 @@ function App() {
           </div>
         </form>
       </section>
+
+      <AnalyticsDashboard />
 
       <TaskTable
         title="Pending Tasks"

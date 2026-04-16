@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Team 33 – Documentación de Cambios</title>
+  <style>
+    :root {
+      --red: #c74634;
+      --red-dark: #8b2e20;
+      --black: #1f1f1f;
+      --gray: #5f6368;
+      --border: #dadde1;
+      --bg: #f7f7f7;
+      --surface: #ffffff;
+      --green: #2e7d32;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--black);
+      font-size: 14px;
+      line-height: 1.7;
+      padding: 40px 24px;
+    }
+
+    .page {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    /* ── Header ── */
+    header {
+      background: var(--surface);
+      border-top: 6px solid var(--red);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px 36px 28px;
+      margin-bottom: 32px;
+      box-shadow: 0 6px 20px rgba(0,0,0,.06);
+    }
+
+    header .eyebrow {
+      display: inline-block;
+      background: #f5ecea;
+      color: var(--red);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+    }
+
+    header h1 {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--black);
+      margin-bottom: 6px;
+    }
+
+    header p {
+      color: var(--gray);
+      font-size: 14px;
+    }
+
+    header .meta {
+      margin-top: 16px;
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    header .meta span {
+      font-size: 12px;
+      color: var(--gray);
+    }
+
+    header .meta span strong {
+      color: var(--black);
+    }
+
+    /* ── Section containers ── */
+    .section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px 32px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.04);
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .section-title .badge {
+      background: var(--red);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      padding: 4px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .section-title .badge.green {
+      background: var(--green);
+    }
+
+    .section-title h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--black);
+    }
+
+    /* ── Sub-sections ── */
+    h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--red-dark);
+      margin: 20px 0 8px;
+    }
+
+    h3:first-of-type {
+      margin-top: 4px;
+    }
+
+    p { margin-bottom: 10px; }
+
+    ul, ol {
+      padding-left: 20px;
+      margin-bottom: 12px;
+    }
+
+    li { margin-bottom: 4px; }
+
+    /* ── Code blocks ── */
+    pre {
+      background: #f3f4f6;
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--red);
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+      font-size: 12.5px;
+      line-height: 1.6;
+      overflow-x: auto;
+      margin: 12px 0 16px;
+      color: #1f1f1f;
+    }
+
+    code {
+      background: #f3f4f6;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+      font-size: 12px;
+    }
+
+    /* ── Table ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0 16px;
+      font-size: 13px;
+    }
+
+    th {
+      background: #f3f4f6;
+      color: var(--gray);
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: .05em;
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      text-align: left;
+    }
+
+    td {
+      padding: 9px 12px;
+      border: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    tr:nth-child(even) td { background: #fafafa; }
+
+    /* ── Flow diagram ── */
+    .flow {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin: 14px 0 18px;
+    }
+
+    .flow-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .flow-line {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 28px;
+    }
+
+    .flow-dot {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--red);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .flow-connector {
+      width: 2px;
+      height: 28px;
+      background: var(--border);
+    }
+
+    .flow-content {
+      padding: 4px 0 16px;
+    }
+
+    .flow-content strong {
+      display: block;
+      font-size: 13px;
+      color: var(--black);
+      margin-bottom: 2px;
+    }
+
+    .flow-content span {
+      font-size: 12.5px;
+      color: var(--gray);
+    }
+
+    /* ── KPI box ── */
+    .kpi-box {
+      background: #fff8f7;
+      border: 1px solid #f0d4cf;
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin: 14px 0;
+    }
+
+    .kpi-box .formula {
+      font-family: 'SF Mono', monospace;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--red-dark);
+      text-align: center;
+      padding: 10px 0 6px;
+    }
+
+    .kpi-box p {
+      font-size: 13px;
+      color: var(--gray);
+      margin: 0;
+      text-align: center;
+    }
+
+    /* ── E2E summary ── */
+    .e2e {
+      background: linear-gradient(135deg, #fff5f2 0%, #fff 100%);
+      border: 1px solid #f0d4cf;
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-top: 4px;
+    }
+
+    .e2e pre {
+      background: transparent;
+      border: none;
+      border-left: 4px solid var(--red);
+      padding: 10px 14px;
+      margin: 0;
+    }
+
+    /* ── Print ── */
+    @media print {
+      body { background: #fff; padding: 0; }
+      .section, header { box-shadow: none; }
+      pre { break-inside: avoid; }
+      h2, h3 { break-after: avoid; }
+    }
+  </style>
+</head>
+<body>
+<div class="page">
+
+  <!-- ── HEADER ─────────────────────────────────── -->
+  <header>
+    <span class="eyebrow">Team 33 · Software Manager Tool</span>
+    <h1>Documentación de Cambios</h1>
+    <p>Resumen técnico del flujo conversacional del bot, KPI de productividad y actualización del dashboard.</p>
+    <div class="meta">
+      <span><strong>Proyecto:</strong> Oracle Java Bot · MyTodoList</span>
+      <span><strong>Fecha:</strong> Marzo 2026</span>
+      <span><strong>Stack:</strong> Spring Boot · React · Telegram Bot API</span>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════════
+       BACKEND
+  ══════════════════════════════════════════════ -->
+
+  <!-- 1. MODELO -->
+  <div class="section">
+    <div class="section-title">
+      <span class="badge">Backend – 1</span>
+      <h2>Modelo <code>ToDoItem.java</code></h2>
+    </div>
+
+    <p>Se extendió la entidad JPA para almacenar los datos capturados por el bot y los tiempos necesarios para calcular el KPI.</p>
+
+    <h3>Campos nuevos</h3>
+    <table>
+      <thead>
+        <tr><th>Campo</th><th>Tipo</th><th>Descripción</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>title</code></td><td>String</td><td>Título limpio de la tarea (separado de <code>description</code>)</td></tr>
+        <tr><td><code>assignee</code></td><td>String</td><td>Nombre del responsable ingresado por el usuario</td></tr>
+        <tr><td><code>complexity</code></td><td>String</td><td>Complejidad normalizada: <code>Low</code>, <code>Medium</code> o <code>High</code></td></tr>
+        <tr><td><code>startTime</code></td><td>OffsetDateTime</td><td>Momento en que se creó / inició la tarea</td></tr>
+        <tr><td><code>endTime</code></td><td>OffsetDateTime</td><td>Momento en que la tarea se marcó como completada</td></tr>
+      </tbody>
+    </table>
+
+    <h3>KPI de Productividad <code>@Transient</code></h3>
+    <p>El método <code>getProductivityKpi()</code> se calcula en tiempo de ejecución y <strong>no se guarda</strong> en la base de datos. Se expone en el JSON de la API para que el cliente lo consuma.</p>
+
+    <div class="kpi-box">
+      <div class="formula">KPI = (peso_complejidad × 60) / minutos_trabajados</div>
+      <p>Peso: High = 3 · Medium = 2 · Low = 1 · Tiempo mínimo: 1 min</p>
+    </div>
+
+    <p>Si la tarea no está completada todavía, usa <code>OffsetDateTime.now()</code> como <code>endTime</code> provisional para mostrar un KPI en progreso.</p>
+  </div>
+
+  <!-- 2. SERVICIO -->
+  <div class="section">
+    <div class="section-title">
+      <span class="badge">Backend – 2</span>
+      <h2>Servicio <code>ToDoItemService.java</code></h2>
+    </div>
+
+    <h3>Método <code>applyTaskDefaults()</code></h3>
+    <p>Se invoca en cada operación de escritura (<code>add</code> y <code>update</code>). Garantiza integridad de datos:</p>
+    <ul>
+      <li>Si no hay <code>title</code>, usa <code>description</code> como respaldo y viceversa.</li>
+      <li>Si no hay <code>assignee</code>, queda como <code>"Unassigned"</code>.</li>
+      <li>Si no hay <code>complexity</code>, queda como <code>"Medium"</code>.</li>
+      <li>Si no hay <code>startTime</code>, se fija igual a <code>creation_ts</code>.</li>
+      <li>Si la tarea está completada y no tiene <code>endTime</code>, se fija en <code>now()</code>.</li>
+      <li>Si la tarea se revierte a pendiente (<code>Undo</code>), se borra <code>endTime</code>.</li>
+    </ul>
+
+    <h3>Método <code>normalizeComplexity()</code></h3>
+    <p>Acepta variaciones en español e inglés (<code>Alta</code>, <code>High</code>, <code>Baja</code>, <code>Low</code>) y las unifica al formato estándar.</p>
+  </div>
+
+  <!-- 3. BOT CONVERSACIONAL -->
+  <div class="section">
+    <div class="section-title">
+      <span class="badge">Backend – 3</span>
+      <h2>Flujo Conversacional del Bot</h2>
+    </div>
+
+    <p>Antes del cambio, cualquier mensaje libre se convertía en tarea sin datos adicionales. Ahora el bot guía al usuario paso a paso usando un estado por conversación.</p>
+
+    <h3>Clase <code>BotConversationState.java</code></h3>
+    <p>Almacena el estado de cada chat activo en un <code>ConcurrentHashMap&lt;Long, BotConversationState&gt;</code> (clave = <code>chatId</code>). Los estados posibles son:</p>
+    <pre>IDLE → WAITING_TITLE → WAITING_ASSIGNEE → WAITING_COMPLEXITY → IDLE</pre>
+
+    <h3>Flujo completo desde Telegram</h3>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-line"><div class="flow-dot">1</div><div class="flow-connector"></div></div>
+        <div class="flow-content">
+          <strong>Usuario envía /start</strong>
+          <span>Bot responde con mensaje de bienvenida y pide el título en formato: <code>TITULO: &lt;nombre de la tarea&gt;</code>. Estado pasa a WAITING_TITLE.</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line"><div class="flow-dot">2</div><div class="flow-connector"></div></div>
+        <div class="flow-content">
+          <strong>Usuario envía <code>TITULO: Hacer video demo</code></strong>
+          <span>Bot extrae el valor, lo guarda en estado y avanza a WAITING_ASSIGNEE. Pide formato: <code>ASIGNADO: &lt;nombre&gt;</code>.</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line"><div class="flow-dot">3</div><div class="flow-connector"></div></div>
+        <div class="flow-content">
+          <strong>Usuario envía <code>ASIGNADO: Ana Torres</code></strong>
+          <span>Bot guarda el asignado y avanza a WAITING_COMPLEXITY. Pide formato: <code>COMPLEJIDAD: Low | Medium | High</code>.</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line"><div class="flow-dot">4</div><div class="flow-connector"></div></div>
+        <div class="flow-content">
+          <strong>Usuario envía <code>COMPLEJIDAD: High</code></strong>
+          <span>Bot crea la tarea en BD con todos los campos, fija <code>startTime = now()</code> y responde con resumen. Estado vuelve a IDLE.</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-line"><div class="flow-dot">✓</div></div>
+        <div class="flow-content">
+          <strong>Tarea completada (ID-DONE)</strong>
+          <span>Bot fija <code>endTime</code>, calcula el KPI y responde con el valor numérico de productividad.</span>
+        </div>
+      </div>
+    </div>
+
+    <h3>Validación de formato</h3>
+    <p>Si el usuario escribe sin el prefijo correcto (ej. escribe solo "Ana" en vez de "ASIGNADO: Ana"), el bot responde con el mensaje de error y <strong>no avanza</strong> al siguiente paso.</p>
+    <pre>Formato inválido. Usa exactamente: ASIGNADO: &lt;nombre del responsable&gt;</pre>
+
+    <h3>Archivos modificados</h3>
+    <ul>
+      <li><code>BotConversationState.java</code> — nuevo archivo, manejo de estado por chat</li>
+      <li><code>BotActions.java</code> — nuevos métodos: <code>fnCollectTaskData()</code>, <code>handleTitleStep()</code>, <code>handleAssigneeStep()</code>, <code>handleComplexityStep()</code></li>
+      <li><code>BotMessages.java</code> — nuevos mensajes de instrucción y error para cada paso</li>
+      <li><code>ToDoItemBotController.java</code> — se agregó <code>actions.fnCollectTaskData()</code> al pipeline del bot</li>
+    </ul>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       FRONTEND
+  ══════════════════════════════════════════════ -->
+
+  <!-- 4. SINCRONIZACIÓN -->
+  <div class="section">
+    <div class="section-title">
+      <span class="badge green">Frontend – 1</span>
+      <h2>Sincronización Automática con el Backend</h2>
+    </div>
+
+    <p>El dashboard se actualiza solo cada 5 segundos usando <code>setInterval</code> dentro de un <code>useEffect</code>. No requiere recargar la página para ver tareas nuevas del bot.</p>
+
+    <h3>Función <code>mapApiTask(item)</code></h3>
+    <p>Transforma cada item devuelto por <code>GET /todolist</code> al formato que entiende el dashboard:</p>
+    <pre>{
+  id:         "api-{ID}",
+  apiId:      {ID},        // para PUT al completar
+  title:      item.title || item.description,
+  assignee:   item.assignee || "Unassigned",
+  complexity: item.complexity || "Medium",
+  status:     item.done ? "Completed" : "Pending",
+  done:       item.done,
+  source:     "api",       // distingue de tareas locales del formulario
+  createdAt:  item.creation_ts
+}</pre>
+
+    <h3>Función <code>mergeTasksByTitle()</code></h3>
+    <p>Combina 3 fuentes sin duplicados, priorizando en este orden:</p>
+    <ol>
+      <li>Tareas del backend (API)</li>
+      <li>Tareas creadas con el formulario del dashboard (locales)</li>
+      <li>Datos mock de demo (fallback visual)</li>
+    </ol>
+    <p>La deduplicación es por título normalizado (minúsculas, sin espacios extra), descartando el segundo si ya existe el primero.</p>
+  </div>
+
+  <!-- 5. FORMULARIO -->
+  <div class="section">
+    <div class="section-title">
+      <span class="badge green">Frontend – 2</span>
+      <h2>Formulario "Create Task"</h2>
+    </div>
+
+    <p>El formulario recolecta <strong>título</strong>, <strong>asignado</strong> y <strong>complejidad</strong>. Se eliminó el campo de horas estimadas.</p>
+
+    <h3>Campos actuales</h3>
+    <table>
+      <thead><tr><th>Campo</th><th>Validación</th></tr></thead>
+      <tbody>
+        <tr><td>Task title</td><td>Requerido, no vacío</td></tr>
+        <tr><td>Assignee</td><td>Requerido, no vacío</td></tr>
+        <tr><td>Complexity</td><td>Select: Low / Medium / High (default Medium)</td></tr>
+      </tbody>
+    </table>
+
+    <p>Las tareas creadas desde el formulario se guardan en estado local React (<code>localPendingTasks</code>) con <code>source: "local"</code> para distinguirlas de las del backend.</p>
+  </div>
+
+  <!-- 6. COMPLETAR TAREA -->
+  <div class="section">
+    <div class="section-title">
+      <span class="badge green">Frontend – 3</span>
+      <h2>Completar Tarea</h2>
+    </div>
+
+    <p>La función <code>handleCompleteTask(taskId)</code> tiene comportamiento diferente según el origen de la tarea:</p>
+
+    <table>
+      <thead><tr><th>Origen</th><th>Comportamiento</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>API</strong> (<code>source: "api"</code>)</td>
+          <td>Hace <code>PUT /todolist/{id}</code> con <code>done: true</code>. El backend fija <code>endTime</code> y calcula el KPI. Actualiza estado local de <code>apiTasks</code>.</td>
+        </tr>
+        <tr>
+          <td><strong>Local</strong> (<code>source: "local"</code>)</td>
+          <td>Mueve la tarea de <code>localPendingTasks</code> a <code>localCompletedTasks</code> sin llamar al backend.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 7. COLUMNAS -->
+  <div class="section">
+    <div class="section-title">
+      <span class="badge green">Frontend – 4</span>
+      <h2>Columnas del Dashboard</h2>
+    </div>
+
+    <table>
+      <thead><tr><th>Sección</th><th>Columnas mostradas</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Pending Tasks</strong></td><td>Title · Assignee · Complexity · Status · Botón "Complete"</td></tr>
+        <tr><td><strong>Completed Tasks</strong></td><td>Title · Assignee · Complexity · Status</td></tr>
+      </tbody>
+    </table>
+
+    <p>Horas estimadas y horas trabajadas fueron <strong>eliminadas</strong> de las dos tablas.</p>
+  </div>
+
+  <!-- 8. FLUJO E2E -->
+  <div class="section">
+    <div class="section-title">
+      <span class="badge">Resumen</span>
+      <h2>Flujo End-to-End</h2>
+    </div>
+
+    <div class="e2e">
+      <pre>
+[Telegram]
+  /start
+    → Bot pide: TITULO: &lt;título&gt;
+    → Bot pide: ASIGNADO: &lt;nombre&gt;
+    → Bot pide: COMPLEJIDAD: Low | Medium | High
+    → Tarea guardada en BD con startTime = now()
+
+[Dashboard — cada 5 seg]
+  GET /todolist
+    → Tarea nueva aparece en "Pending Tasks"
+    → Muestra: Título, Asignado, Complejidad
+
+[Dashboard — botón Complete]
+  PUT /todolist/{id} { done: true }
+    → Backend fija endTime = now()
+    → KPI = (peso × 60) / minutos_trabajados
+    → Tarea pasa a "Completed Tasks"
+
+[Telegram — ID-DONE]
+  → Mismo efecto que Complete en dashboard
+  → Bot responde con valor numérico del KPI
+      </pre>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

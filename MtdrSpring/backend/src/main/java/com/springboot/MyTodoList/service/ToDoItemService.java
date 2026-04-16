@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 
@@ -62,13 +63,21 @@ public class ToDoItemService {
             toDoItem.setDescription(firstNonBlank(td.getDescription(), td.getTitle(), toDoItem.getDescription(), toDoItem.getTitle()));
             toDoItem.setAssignee(firstNonBlank(td.getAssignee(), toDoItem.getAssignee(), "Unassigned"));
             toDoItem.setComplexity(normalizeComplexity(firstNonBlank(td.getComplexity(), toDoItem.getComplexity(), "Medium")));
+            toDoItem.setSprint(firstNonBlank(td.getSprint(), toDoItem.getSprint(), deriveSprintLabel(toDoItem.getCreation_ts())));
+            toDoItem.setRealHours(td.getRealHours() != null ? td.getRealHours() : toDoItem.getRealHours());
             toDoItem.setStartTime(td.getStartTime() != null ? td.getStartTime() : toDoItem.getStartTime());
             toDoItem.setDone(td.isDone());
             if (toDoItem.isDone()) {
-                toDoItem.setEndTime(td.getEndTime() != null ? td.getEndTime() :
-                        (toDoItem.getEndTime() != null ? toDoItem.getEndTime() : OffsetDateTime.now()));
+                OffsetDateTime completedAt = td.getCompletedAt() != null ? td.getCompletedAt() :
+                        (td.getEndTime() != null ? td.getEndTime() :
+                                (toDoItem.getCompletedAt() != null ? toDoItem.getCompletedAt() :
+                                        (toDoItem.getEndTime() != null ? toDoItem.getEndTime() : OffsetDateTime.now())));
+                toDoItem.setCompletedAt(completedAt);
+                toDoItem.setEndTime(td.getEndTime() != null ? td.getEndTime() : completedAt);
             } else {
                 toDoItem.setEndTime(null);
+                toDoItem.setCompletedAt(null);
+                toDoItem.setRealHours(null);
             }
             applyTaskDefaults(toDoItem);
             return toDoItemRepository.save(toDoItem);
@@ -89,6 +98,8 @@ public class ToDoItemService {
             toDoItem.setCreation_ts(now);
         }
 
+        toDoItem.setSprint(firstNonBlank(toDoItem.getSprint(), deriveSprintLabel(toDoItem.getCreation_ts())));
+
         if (toDoItem.getStartTime() == null) {
             toDoItem.setStartTime(toDoItem.getCreation_ts());
         }
@@ -97,9 +108,52 @@ public class ToDoItemService {
             toDoItem.setEndTime(now);
         }
 
+        if (toDoItem.isDone() && toDoItem.getCompletedAt() == null) {
+            toDoItem.setCompletedAt(toDoItem.getEndTime() != null ? toDoItem.getEndTime() : now);
+        }
+
+        if (toDoItem.isDone() && toDoItem.getRealHours() == null) {
+            toDoItem.setRealHours(calculateRealHours(toDoItem));
+        }
+
         if (!toDoItem.isDone()) {
             toDoItem.setEndTime(null);
+            toDoItem.setCompletedAt(null);
         }
+    }
+
+    private Double calculateRealHours(ToDoItem toDoItem) {
+        OffsetDateTime start = toDoItem.getStartTime() != null ? toDoItem.getStartTime() : toDoItem.getCreation_ts();
+        OffsetDateTime end = toDoItem.getCompletedAt() != null ? toDoItem.getCompletedAt() : toDoItem.getEndTime();
+
+        if (start != null && end != null && end.isAfter(start)) {
+            double hours = Duration.between(start, end).toMinutes() / 60.0;
+            return roundToTwoDecimals(Math.max(0.25d, hours));
+        }
+
+        String normalizedComplexity = normalizeComplexity(toDoItem.getComplexity());
+        if ("High".equalsIgnoreCase(normalizedComplexity)) {
+            return 4.0;
+        }
+        if ("Low".equalsIgnoreCase(normalizedComplexity)) {
+            return 1.0;
+        }
+
+        return 2.0;
+    }
+
+    private double roundToTwoDecimals(double value) {
+        return Math.round(value * 100.0d) / 100.0d;
+    }
+
+    private String deriveSprintLabel(OffsetDateTime reference) {
+        if (reference == null) {
+            return "Sprint 1";
+        }
+
+        int weekOfYear = reference.get(java.time.temporal.WeekFields.ISO.weekOfWeekBasedYear());
+        int sprintNumber = weekOfYear <= 0 ? 1 : weekOfYear;
+        return "Sprint " + sprintNumber;
     }
 
     private String firstNonBlank(String... values) {

@@ -25,6 +25,12 @@ public class ToDoItem {
     String assignee;
     @Column(name = "COMPLEXITY")
     String complexity;
+    @Column(name = "SPRINT")
+    String sprint;
+    @Column(name = "REAL_HOURS")
+    Double realHours;
+    @Column(name = "COMPLETED_AT")
+    OffsetDateTime completedAt;
     @Column(name = "CREATION_TS")
     OffsetDateTime creation_ts;
     @Column(name = "START_TIME")
@@ -37,12 +43,16 @@ public class ToDoItem {
 
     }
     public ToDoItem(int ID, String title, String description, String assignee, String complexity,
+                    String sprint, Double realHours, OffsetDateTime completedAt,
                     OffsetDateTime creation_ts, OffsetDateTime startTime, OffsetDateTime endTime, boolean done) {
         this.ID = ID;
         this.title = title;
         this.description = description;
         this.assignee = assignee;
         this.complexity = complexity;
+        this.sprint = sprint;
+        this.realHours = realHours;
+        this.completedAt = completedAt;
         this.creation_ts = creation_ts;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -87,6 +97,30 @@ public class ToDoItem {
 
     public void setComplexity(String complexity) {
         this.complexity = complexity;
+    }
+
+    public String getSprint() {
+        return sprint;
+    }
+
+    public void setSprint(String sprint) {
+        this.sprint = sprint;
+    }
+
+    public Double getRealHours() {
+        return realHours;
+    }
+
+    public void setRealHours(Double realHours) {
+        this.realHours = realHours;
+    }
+
+    public OffsetDateTime getCompletedAt() {
+        return completedAt;
+    }
+
+    public void setCompletedAt(OffsetDateTime completedAt) {
+        this.completedAt = completedAt;
     }
 
     public OffsetDateTime getCreation_ts() {
@@ -151,6 +185,9 @@ public class ToDoItem {
                 ", description='" + description + '\'' +
                 ", assignee='" + assignee + '\'' +
                 ", complexity='" + complexity + '\'' +
+                ", sprint='" + sprint + '\'' +
+                ", realHours=" + realHours +
+                ", completedAt=" + completedAt +
                 ", creation_ts=" + creation_ts +
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
