@@ -1,4 +1,4 @@
-          /*
+/*
 ## MyToDoReact version 1.0.
 ##
 ## Copyright (c) 2022 Oracle, Inc.
@@ -12,7 +12,7 @@
  */
 import React, { useEffect, useMemo, useState } from 'react';
 import API_LIST from './API';
-import AnalyticsDashboard from './components/analytics/AnalyticsDashboard';
+import AnalyticsDashboard from './components/analytics/AnalyticsDashboard.jsx';
 import SummaryCard from './components/SummaryCard';
 import TaskTable from './components/TaskTable';
 
@@ -96,17 +96,29 @@ function normalizeTaskTitle(title) {
   return (title || '').trim().toLowerCase();
 }
 
-function mergeTasksByTitle(...taskGroups) {
-  const seenTitles = new Set();
+function buildTaskIdentity(task) {
+  if (task.source === 'api' && task.apiId != null) {
+    return `api-${task.apiId}`;
+  }
+
+  if (task.id != null) {
+    return String(task.id);
+  }
+
+  return `${normalizeTaskTitle(task.title)}-${task.assignee || ''}`;
+}
+
+function mergeTasksByIdentity(...taskGroups) {
+  const seenIds = new Set();
 
   return taskGroups.flat().filter((task) => {
-    const normalizedTitle = normalizeTaskTitle(task.title);
+    const taskIdentity = buildTaskIdentity(task);
 
-    if (!normalizedTitle || seenTitles.has(normalizedTitle)) {
+    if (!taskIdentity || seenIds.has(taskIdentity)) {
       return false;
     }
 
-    seenTitles.add(normalizedTitle);
+    seenIds.add(taskIdentity);
     return true;
   });
 }
@@ -180,7 +192,7 @@ function App() {
 
   const pendingTasks = useMemo(
     () =>
-      mergeTasksByTitle(
+      mergeTasksByIdentity(
         apiTasks.filter((task) => !task.done),
         localPendingTasks,
         pendingTaskSeed
@@ -190,7 +202,7 @@ function App() {
 
   const completedTasks = useMemo(
     () =>
-      mergeTasksByTitle(
+      mergeTasksByIdentity(
         apiTasks.filter((task) => task.done),
         localCompletedTasks,
         completedTaskSeed
