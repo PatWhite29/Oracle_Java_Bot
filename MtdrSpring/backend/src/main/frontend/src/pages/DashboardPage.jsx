@@ -40,7 +40,7 @@ export default function DashboardPage() {
   useEffect(() => {
     setLoading(true);
     Promise.allSettled([
-      dashboardService.sprintSummary(project.id),
+      dashboardService.sprintSummary(project.id, selectedSprintId || null),
       dashboardService.velocity(project.id),
       dashboardService.burndown(project.id),
       dashboardService.workload(project.id),

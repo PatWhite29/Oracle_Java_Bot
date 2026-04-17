@@ -28,12 +28,18 @@ public class DashboardService {
     private final TaskRepository taskRepository;
 
     @Transactional(readOnly = true)
-    public SprintSummaryResponse getSprintSummary(Long userId, Long projectId) {
+    public SprintSummaryResponse getSprintSummary(Long userId, Long projectId, Long sprintId) {
         Project project = projectService.findProject(projectId);
         projectService.requireParticipant(userId, project);
-        List<Sprint> active = sprintRepository.findByProjectAndStatus(project, SprintStatus.ACTIVE);
-        if (active.isEmpty()) return null;
-        Sprint sprint = active.get(0);
+        Sprint sprint;
+        if (sprintId != null) {
+            sprint = sprintRepository.findById(sprintId).orElse(null);
+            if (sprint == null || !sprint.getProject().getId().equals(projectId)) return null;
+        } else {
+            List<Sprint> active = sprintRepository.findByProjectAndStatus(project, SprintStatus.ACTIVE);
+            if (active.isEmpty()) return null;
+            sprint = active.get(0);
+        }
         List<Task> tasks = taskRepository.findByProject(project).stream()
                 .filter(t -> sprint.equals(t.getSprint())).toList();
 

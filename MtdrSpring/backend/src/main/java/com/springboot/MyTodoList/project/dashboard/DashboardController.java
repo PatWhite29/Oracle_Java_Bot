@@ -18,9 +18,11 @@ public class DashboardController {
     private final DashboardService dashboardService;
 
     @GetMapping("/sprint-summary")
-    @Operation(summary = "Active sprint summary")
-    public ResponseEntity<SprintSummaryResponse> sprintSummary(@PathVariable Long projectId, Authentication auth) {
-        return ResponseEntity.ok(dashboardService.getSprintSummary(uid(auth), projectId));
+    @Operation(summary = "Sprint summary — uses active sprint if sprintId is omitted")
+    public ResponseEntity<SprintSummaryResponse> sprintSummary(@PathVariable Long projectId,
+                                                                @RequestParam(required = false) Long sprintId,
+                                                                Authentication auth) {
+        return ResponseEntity.ok(dashboardService.getSprintSummary(uid(auth), projectId, sprintId));
     }
 
     @GetMapping("/velocity")
