@@ -13,7 +13,7 @@ public class NotificationService {
     private final NotificationLogRepository notificationLogRepository;
 
     public void send(User recipient, String eventType, String message) {
-        NotificationLog log = NotificationLog.builder()
+        NotificationLog entry = NotificationLog.builder()
                 .recipient(recipient)
                 .eventType(eventType)
                 .channel("TELEGRAM")
@@ -23,12 +23,12 @@ public class NotificationService {
         try {
             // TODO: integrate with ChuvaBot to send Telegram message when bot is available
             if (recipient.getTelegramChatId() != null) {
-                log.setDeliveryStatus("SENT");
+                entry.setDeliveryStatus("SENT");
             }
         } catch (Exception e) {
             log.warn("Notification delivery failed for user {}: {}", recipient.getId(), e.getMessage());
         }
-        notificationLogRepository.save(log);
+        notificationLogRepository.save(entry);
     }
 
     public void retryFailed() {

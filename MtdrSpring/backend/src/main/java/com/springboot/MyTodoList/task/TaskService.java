@@ -10,7 +10,6 @@ import com.springboot.MyTodoList.project.Project;
 import com.springboot.MyTodoList.project.ProjectService;
 import com.springboot.MyTodoList.sprint.Sprint;
 import com.springboot.MyTodoList.sprint.SprintRepository;
-import com.springboot.MyTodoList.sprint.SprintService;
 import com.springboot.MyTodoList.task.activity.TaskActivity;
 import com.springboot.MyTodoList.task.activity.TaskActivityRepository;
 import com.springboot.MyTodoList.user.User;
@@ -28,7 +27,6 @@ public class TaskService {
     private final TaskActivityRepository activityRepository;
     private final SprintRepository sprintRepository;
     private final ProjectService projectService;
-    private final SprintService sprintService;
     private final UserService userService;
     private final AuditLogService auditLogService;
     private final NotificationService notificationService;

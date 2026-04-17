@@ -11,7 +11,6 @@ import com.springboot.MyTodoList.sprint.SprintRepository;
 import com.springboot.MyTodoList.task.Task;
 import com.springboot.MyTodoList.task.TaskRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
