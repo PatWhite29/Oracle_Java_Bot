@@ -5,8 +5,6 @@ services:
     container_name: chuvabot-db
     environment:
       ORACLE_PASSWORD: admin123
-      APP_USER: chuvabot
-      APP_USER_PASSWORD: chuvabot123
     ports:
       - "1521:1521"
     volumes:

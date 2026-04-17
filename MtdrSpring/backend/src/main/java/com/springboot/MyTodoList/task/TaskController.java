@@ -72,8 +72,8 @@ public class TaskController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{taskId}/status")
-    @Operation(summary = "Change task status")
+    @PatchMapping("/{taskId}/status")
+    @Operation(summary = "Change task status — PATCH /api/v1/projects/{projectId}/tasks/{taskId}/status")
     public ResponseEntity<TaskResponse> changeStatus(@PathVariable Long projectId,
                                                       @PathVariable Long taskId,
                                                       @Valid @RequestBody StatusChangeRequest request,
@@ -81,8 +81,8 @@ public class TaskController {
         return ResponseEntity.ok(taskService.changeStatus(uid(auth), projectId, taskId, request));
     }
 
-    @PutMapping("/{taskId}/sprint")
-    @Operation(summary = "Move task to sprint or backlog")
+    @PatchMapping("/{taskId}/sprint")
+    @Operation(summary = "Move task to sprint or backlog — PATCH /api/v1/projects/{projectId}/tasks/{taskId}/sprint")
     public ResponseEntity<TaskResponse> changeSprint(@PathVariable Long projectId,
                                                       @PathVariable Long taskId,
                                                       @RequestBody SprintChangeRequest request,
