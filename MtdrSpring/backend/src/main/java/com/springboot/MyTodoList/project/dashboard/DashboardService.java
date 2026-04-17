@@ -62,14 +62,27 @@ public class DashboardService {
     }
 
     @Transactional(readOnly = true)
-    public VelocityResponse getVelocity(Long userId, Long projectId, int sprintCount) {
+    public VelocityResponse getVelocity(Long userId, Long projectId, int sprintCount, Long sprintId) {
         Project project = projectService.findProject(projectId);
         projectService.requireParticipant(userId, project);
-        List<Sprint> closedSprints = sprintRepository.findByProjectAndStatus(project, SprintStatus.CLOSED);
-        List<Sprint> recent = closedSprints.stream()
-                .sorted((a, b) -> b.getEndDate().compareTo(a.getEndDate()))
-                .limit(sprintCount)
+
+        List<Sprint> closedSprints = sprintRepository.findByProjectAndStatus(project, SprintStatus.CLOSED)
+                .stream()
+                .sorted((a, b) -> a.getEndDate().compareTo(b.getEndDate()))
                 .toList();
+
+        // If a non-closed sprint is selected, append it as the last data point
+        Sprint selectedSprint = sprintId != null ? sprintRepository.findById(sprintId).orElse(null) : null;
+        boolean appendSelected = selectedSprint != null
+                && selectedSprint.getProject().getId().equals(projectId)
+                && selectedSprint.getStatus() != SprintStatus.CLOSED;
+
+        int closedLimit = appendSelected ? sprintCount - 1 : sprintCount;
+        List<Sprint> recent = closedSprints.stream()
+                .skip(Math.max(0, closedSprints.size() - closedLimit))
+                .collect(Collectors.toList());
+
+        if (appendSelected) recent.add(selectedSprint);
 
         List<VelocityResponse.SprintVelocity> velocities = recent.stream().map(s -> {
             Long sp = taskRepository.sumStoryPointsBySprintAndStatus(s, TaskStatus.DONE);

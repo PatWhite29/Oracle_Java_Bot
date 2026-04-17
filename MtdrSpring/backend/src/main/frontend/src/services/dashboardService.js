@@ -4,8 +4,8 @@ export const dashboardService = {
   sprintSummary: (projectId, sprintId) =>
     apiFetch(`/projects/${projectId}/dashboard/sprint-summary${sprintId ? `?sprintId=${sprintId}` : ''}`),
 
-  velocity: (projectId) =>
-    apiFetch(`/projects/${projectId}/dashboard/velocity`),
+  velocity: (projectId, sprintId) =>
+    apiFetch(`/projects/${projectId}/dashboard/velocity${sprintId ? `?sprintId=${sprintId}` : ''}`),
 
   burndown: (projectId, sprintId) =>
     apiFetch(`/projects/${projectId}/dashboard/burndown${sprintId ? `?sprintId=${sprintId}` : ''}`),

@@ -41,7 +41,7 @@ export default function DashboardPage() {
     setLoading(true);
     Promise.allSettled([
       dashboardService.sprintSummary(project.id, selectedSprintId || null),
-      dashboardService.velocity(project.id),
+      dashboardService.velocity(project.id, selectedSprintId || null),
       dashboardService.burndown(project.id),
       dashboardService.workload(project.id),
       dashboardService.backlog(project.id),
@@ -76,7 +76,7 @@ export default function DashboardPage() {
             <SprintSummary data={summary} />
           </Section>
           <Section title="Velocity (SP per sprint)">
-            <VelocityChart data={velocity} />
+            <VelocityChart data={velocity} selectedSprintId={selectedSprintId} />
           </Section>
           <Section title="Burndown">
             <BurndownChart data={burndown} />

@@ -26,17 +26,20 @@ public class DashboardController {
     }
 
     @GetMapping("/velocity")
-    @Operation(summary = "Velocity trend for last N closed sprints")
+    @Operation(summary = "Velocity trend for last N sprints")
     public ResponseEntity<VelocityResponse> velocity(@PathVariable Long projectId,
                                                       @RequestParam(defaultValue = "5") int sprints,
+                                                      @RequestParam(required = false) Long sprintId,
                                                       Authentication auth) {
-        return ResponseEntity.ok(dashboardService.getVelocity(uid(auth), projectId, sprints));
+        return ResponseEntity.ok(dashboardService.getVelocity(uid(auth), projectId, sprints, sprintId));
     }
 
     @GetMapping("/burndown")
-    @Operation(summary = "Burndown of active sprint")
-    public ResponseEntity<BurndownResponse> burndown(@PathVariable Long projectId, Authentication auth) {
-        return ResponseEntity.ok(dashboardService.getBurndown(uid(auth), projectId));
+    @Operation(summary = "Burndown — uses active sprint if sprintId is omitted")
+    public ResponseEntity<BurndownResponse> burndown(@PathVariable Long projectId,
+                                                      @RequestParam(required = false) Long sprintId,
+                                                      Authentication auth) {
+        return ResponseEntity.ok(dashboardService.getBurndown(uid(auth), projectId, sprintId));
     }
 
     @GetMapping("/workload")
