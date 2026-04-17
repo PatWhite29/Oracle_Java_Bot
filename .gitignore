@@ -49,3 +49,8 @@ frontend/npm-debug.log*
 frontend/yarn-debug.log*
 frontend/yarn-error.log*
 /MtdrSpring/backend/wallet
+
+# Docker env files con credenciales
+.env.prod
+.env
+MtdrSpring/.env.prod

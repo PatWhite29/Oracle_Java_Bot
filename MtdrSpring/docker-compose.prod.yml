@@ -1,0 +1,18 @@
+services:
+
+  app:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: chuvabot-app
+    ports:
+      - "8080:8080"
+    volumes:
+      - ${WALLET_DIR}:/wallet:ro
+    environment:
+      DB_URL: "jdbc:oracle:thin:@${TODO_PDB_NAME}_tp?TNS_ADMIN=/wallet"
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-86400000}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}

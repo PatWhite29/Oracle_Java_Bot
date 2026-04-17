@@ -1,7 +1,14 @@
-FROM openjdk:22-jdk
-#COPY pom.xml /tmp/
-#COPY src /tmp/src/
-WORKDIR /tmp/
+# Stage 1: Build
+FROM maven:3.9.6-eclipse-temurin-17 AS build
+WORKDIR /app
+COPY pom.xml .
+RUN mvn dependency:go-offline -q
+COPY src ./src
+RUN mvn clean package -DskipTests -q
+
+# Stage 2: Run
+FROM eclipse-temurin:17-jre
+WORKDIR /app
+COPY --from=build /app/target/MyTodoList-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8080
-COPY target/MyTodoList-0.0.1-SNAPSHOT.jar MyTodoList.jar
-ENTRYPOINT ["java","-jar","MyTodoList.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]

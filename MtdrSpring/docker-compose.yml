@@ -1,0 +1,41 @@
+services:
+
+  db:
+    image: gvenzl/oracle-xe:21-slim
+    container_name: chuvabot-db
+    environment:
+      ORACLE_PASSWORD: admin123
+      APP_USER: chuvabot
+      APP_USER_PASSWORD: chuvabot123
+    ports:
+      - "1521:1521"
+    volumes:
+      - oracle_data:/opt/oracle/oradata
+      - ./docker/initdb:/container-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 20s
+      timeout: 10s
+      retries: 20
+      start_period: 60s
+
+  app:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: chuvabot-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:oracle:thin:@//db:1521/XEPDB1
+      DB_USERNAME: chuvabot
+      DB_PASSWORD: chuvabot123
+      JWT_SECRET: "chuvabot_local_dev_secret_key_minimo32chars!!"
+      JWT_EXPIRATION_MS: 86400000
+      TELEGRAM_BOT_TOKEN: ""
+
+volumes:
+  oracle_data:
