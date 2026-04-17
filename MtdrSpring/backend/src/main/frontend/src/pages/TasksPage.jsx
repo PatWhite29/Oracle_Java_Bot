@@ -21,7 +21,8 @@ export default function TasksPage() {
   const [showForm, setShowForm] = useState(false);
   const [editTask, setEditTask] = useState(null);
   const [saving, setSaving] = useState(false);
-  const [filters, setFilters] = useState({ status: '', sprintId: '', priority: '' });
+  const [filters, setFilters] = useState({ status: '', sprint: '', priority: '' });
+  const [showClosed, setShowClosed] = useState(false);
 
   const isManager = userRole === 'MANAGER';
 
@@ -81,6 +82,17 @@ export default function TasksPage() {
     ? [project.manager, ...members.filter((m) => m.id !== project.manager.id)]
     : members;
 
+  const visibleSprints = showClosed ? sprints : sprints.filter((s) => s.status !== 'CLOSED');
+
+  const handleShowClosedToggle = (e) => {
+    const checked = e.target.checked;
+    setShowClosed(checked);
+    if (!checked) {
+      const selectedSprintClosed = sprints.find((s) => String(s.id) === filters.sprint)?.status === 'CLOSED';
+      if (selectedSprintClosed) setFilters((f) => ({ ...f, sprint: '' }));
+    }
+  };
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
@@ -98,22 +110,35 @@ export default function TasksPage() {
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-3 mb-5">
+      <div className="flex flex-wrap items-center gap-3 mb-5">
         <select value={filters.status} onChange={(e) => setFilters((f) => ({ ...f, status: e.target.value }))}
           className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none">
           <option value="">All statuses</option>
           {['TODO', 'IN_PROGRESS', 'BLOCKED', 'DONE'].map((s) => <option key={s}>{s}</option>)}
         </select>
-        <select value={filters.sprintId} onChange={(e) => setFilters((f) => ({ ...f, sprintId: e.target.value }))}
+        <select value={filters.sprint} onChange={(e) => setFilters((f) => ({ ...f, sprint: e.target.value }))}
           className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none">
           <option value="">All sprints</option>
-          {sprints.map((s) => <option key={s.id} value={s.id}>{s.sprintName}</option>)}
+          {visibleSprints.map((s) => (
+            <option key={s.id} value={s.id}>
+              {s.sprintName}{s.status === 'CLOSED' ? ' (closed)' : ''}
+            </option>
+          ))}
         </select>
         <select value={filters.priority} onChange={(e) => setFilters((f) => ({ ...f, priority: e.target.value }))}
           className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none">
           <option value="">All priorities</option>
           {['LOW', 'MEDIUM', 'HIGH'].map((p) => <option key={p}>{p}</option>)}
         </select>
+        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer select-none ml-1">
+          <input
+            type="checkbox"
+            checked={showClosed}
+            onChange={handleShowClosedToggle}
+            className="w-4 h-4 rounded border-gray-300 accent-gray-800 cursor-pointer"
+          />
+          Show closed sprints
+        </label>
       </div>
 
       {error && <p className="text-sm text-red-600 mb-4">{error}</p>}
@@ -136,12 +161,12 @@ export default function TasksPage() {
       </Modal>
 
       <Modal open={showForm} onClose={() => setShowForm(false)} title="New task">
-        <TaskForm sprints={sprints} members={allMembers} onSubmit={handleCreate} onCancel={() => setShowForm(false)} loading={saving} />
+        <TaskForm sprints={visibleSprints} members={allMembers} onSubmit={handleCreate} onCancel={() => setShowForm(false)} loading={saving} />
       </Modal>
 
       <Modal open={!!editTask} onClose={() => setEditTask(null)} title="Edit task">
         {editTask && (
-          <TaskForm initial={editTask} sprints={sprints} members={allMembers} onSubmit={handleUpdate} onCancel={() => setEditTask(null)} loading={saving} />
+          <TaskForm initial={editTask} sprints={visibleSprints} members={allMembers} onSubmit={handleUpdate} onCancel={() => setEditTask(null)} loading={saving} />
         )}
       </Modal>
     </div>

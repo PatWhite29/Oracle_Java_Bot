@@ -39,21 +39,20 @@ export default function DashboardPage() {
 
   useEffect(() => {
     setLoading(true);
-    Promise.all([
-      dashboardService.sprintSummary(project.id, selectedSprintId || null),
+    Promise.allSettled([
+      dashboardService.sprintSummary(project.id),
       dashboardService.velocity(project.id),
-      dashboardService.burndown(project.id, selectedSprintId || null),
+      dashboardService.burndown(project.id),
       dashboardService.workload(project.id),
       dashboardService.backlog(project.id),
     ])
       .then(([sum, vel, burn, work, back]) => {
-        setSummary(sum);
-        setVelocity(vel);
-        setBurndown(burn);
-        setWorkload(work);
-        setBacklog(back);
+        setSummary(sum.status === 'fulfilled' ? sum.value : null);
+        setVelocity(vel.status === 'fulfilled' ? (vel.value?.sprints || []) : []);
+        setBurndown(burn.status === 'fulfilled' ? burn.value : null);
+        setWorkload(work.status === 'fulfilled' ? (work.value?.members || []) : []);
+        setBacklog(back.status === 'fulfilled' ? back.value : null);
       })
-      .catch(() => {})
       .finally(() => setLoading(false));
   }, [project.id, selectedSprintId]);
 

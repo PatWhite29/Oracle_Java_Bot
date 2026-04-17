@@ -3,17 +3,17 @@ import { useProject } from '../context/ProjectContext';
 import { taskService } from '../services/taskService';
 import { sprintService } from '../services/sprintService';
 import TaskTable from '../components/tasks/TaskTable';
-import TaskDetail from '../components/tasks/TaskDetail';
 import Modal from '../components/common/Modal';
-import Button from '../components/common/Button';
+import Badge from '../components/common/Badge';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 
 export default function BacklogPage() {
-  const { project, members, userRole } = useProject();
+  const { project, userRole } = useProject();
   const [tasks, setTasks] = useState([]);
   const [sprints, setSprints] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedTask, setSelectedTask] = useState(null);
+  const [moving, setMoving] = useState(false);
   const [error, setError] = useState('');
 
   const isManager = userRole === 'MANAGER';
@@ -21,7 +21,7 @@ export default function BacklogPage() {
   const load = () => {
     setLoading(true);
     Promise.all([
-      taskService.list(project.id, { sprintId: 'null' }),
+      taskService.list(project.id, {}),
       sprintService.list(project.id),
     ])
       .then(([taskData, sprintData]) => {
@@ -34,28 +34,17 @@ export default function BacklogPage() {
 
   useEffect(load, [project.id]);
 
-  const handleMoveToSprint = async (task, sprintId) => {
+  const handleMoveToSprint = async (sprintId) => {
+    setMoving(true);
     try {
-      await taskService.changeSprint(project.id, task.id, sprintId);
-      load();
-    } catch (err) { alert(err.message); }
-  };
-
-  const handleStatusChange = async (task, status) => {
-    try {
-      const updated = await taskService.changeStatus(project.id, task.id, status);
-      setSelectedTask(updated);
-      load();
-    } catch (err) { alert(err.message); }
-  };
-
-  const handleDelete = async (task) => {
-    if (!window.confirm(`Delete "${task.taskName}"?`)) return;
-    try {
-      await taskService.delete(project.id, task.id);
+      await taskService.changeSprint(project.id, selectedTask.id, sprintId);
       setSelectedTask(null);
       load();
-    } catch (err) { alert(err.message); }
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setMoving(false);
+    }
   };
 
   return (
@@ -71,29 +60,44 @@ export default function BacklogPage() {
         </>
       )}
 
-      <Modal open={!!selectedTask} onClose={() => setSelectedTask(null)} title="Task detail" size="lg">
+      <Modal open={!!selectedTask} onClose={() => setSelectedTask(null)} title="Assign to sprint">
         {selectedTask && (
-          <>
-            <TaskDetail
-              task={selectedTask}
-              onClose={() => setSelectedTask(null)}
-              onStatusChange={handleStatusChange}
-              onEdit={() => {}}
-              onDelete={handleDelete}
-            />
-            {isManager && sprints.length > 0 && (
-              <div className="mt-4 pt-4 border-t border-gray-100">
-                <p className="text-sm font-medium text-gray-700 mb-2">Move to sprint</p>
-                <div className="flex flex-wrap gap-2">
+          <div className="space-y-4">
+            <div className="bg-gray-50 rounded-lg px-4 py-3 space-y-2">
+              <p className="text-sm font-semibold text-gray-900">{selectedTask.taskName}</p>
+              <div className="flex flex-wrap gap-2">
+                <Badge value={selectedTask.status} />
+                {selectedTask.priority && <Badge value={selectedTask.priority} />}
+                <span className="text-xs text-gray-400">{selectedTask.storyPoints} SP</span>
+                {selectedTask.assignedTo && (
+                  <span className="text-xs text-gray-400">→ {selectedTask.assignedTo.fullName}</span>
+                )}
+              </div>
+            </div>
+
+            {!isManager ? (
+              <p className="text-sm text-gray-400">Only the project manager can assign tasks to a sprint.</p>
+            ) : sprints.length === 0 ? (
+              <p className="text-sm text-gray-400">No active or planning sprints available.</p>
+            ) : (
+              <div className="space-y-2">
+                <p className="text-sm text-gray-500">Select a sprint to move this task:</p>
+                <div className="flex flex-col gap-2">
                   {sprints.map((s) => (
-                    <Button key={s.id} variant="secondary" onClick={() => handleMoveToSprint(selectedTask, s.id)}>
-                      {s.sprintName}
-                    </Button>
+                    <button
+                      key={s.id}
+                      disabled={moving}
+                      onClick={() => handleMoveToSprint(s.id)}
+                      className="flex items-center justify-between w-full px-4 py-3 rounded-lg border border-gray-200 hover:bg-gray-50 hover:border-gray-300 transition-colors text-sm text-left disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <span className="font-medium text-gray-800">{s.sprintName}</span>
+                      <Badge value={s.status} />
+                    </button>
                   ))}
                 </div>
               </div>
             )}
-          </>
+          </div>
         )}
       </Modal>
     </div>

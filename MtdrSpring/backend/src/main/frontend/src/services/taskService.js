@@ -36,7 +36,7 @@ export const taskService = {
       .then((data) => data?.content || []),
 
   addComment: (projectId, taskId, content) =>
-    apiFetch(`/projects/${projectId}/tasks/${taskId}/comment`, {
+    apiFetch(`/projects/${projectId}/tasks/${taskId}/comments`, {
       method: 'POST',
       body: JSON.stringify({ content }),
     }),

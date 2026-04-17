@@ -32,3 +32,5 @@ logging:
   level:
     root: INFO
     com.springboot.MyTodoList: DEBUG
+  pattern:
+    console: "%d{HH:mm:ss} [%X{requestId:--}] %-5level %logger{36} - %msg%n"

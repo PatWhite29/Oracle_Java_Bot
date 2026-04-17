@@ -11,6 +11,7 @@ export default function TaskDetail({ task, onClose, onStatusChange, onEdit, onDe
   const [activities, setActivities] = useState([]);
   const [comment, setComment] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [commentError, setCommentError] = useState('');
 
   useEffect(() => {
     taskService.getActivities(project.id, task.id)
@@ -22,11 +23,14 @@ export default function TaskDetail({ task, onClose, onStatusChange, onEdit, onDe
     e.preventDefault();
     if (!comment.trim()) return;
     setSubmitting(true);
+    setCommentError('');
     try {
       await taskService.addComment(project.id, task.id, comment);
       setComment('');
       const updated = await taskService.getActivities(project.id, task.id);
       setActivities(updated);
+    } catch (err) {
+      setCommentError(err.message || 'Failed to post comment');
     } finally {
       setSubmitting(false);
     }
@@ -90,14 +94,17 @@ export default function TaskDetail({ task, onClose, onStatusChange, onEdit, onDe
         </div>
       </div>
 
-      <form onSubmit={handleComment} className="flex gap-2">
-        <input
-          value={comment}
-          onChange={(e) => setComment(e.target.value)}
-          placeholder="Add a comment..."
-          className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
-        />
-        <Button type="submit" disabled={submitting || !comment.trim()}>Post</Button>
+      <form onSubmit={handleComment} className="space-y-1">
+        <div className="flex gap-2">
+          <input
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            placeholder="Add a comment..."
+            className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
+          />
+          <Button type="submit" disabled={submitting || !comment.trim()}>Post</Button>
+        </div>
+        {commentError && <p className="text-xs text-red-600">{commentError}</p>}
       </form>
     </div>
   );

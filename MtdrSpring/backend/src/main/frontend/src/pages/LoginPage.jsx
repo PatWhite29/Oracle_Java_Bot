@@ -12,6 +12,8 @@ export default function LoginPage() {
 
   const set = (field) => (e) => setForm((f) => ({ ...f, [field]: e.target.value }));
 
+  const isValid = form.email.trim().length > 0 && form.password.length > 0;
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -43,7 +45,7 @@ export default function LoginPage() {
             className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
           />
         </div>
-        <Button type="submit" disabled={loading} className="w-full justify-center">
+        <Button type="submit" disabled={loading || !isValid} className="w-full justify-center">
           {loading ? 'Signing in...' : 'Sign in'}
         </Button>
       </form>

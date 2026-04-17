@@ -19,7 +19,7 @@ export default function AddMemberForm({ onAdd, loading }) {
         placeholder="user@example.com"
         className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
       />
-      <Button type="submit" disabled={loading}>{loading ? 'Adding...' : 'Add member'}</Button>
+      <Button type="submit" disabled={loading || !email.trim()}>{loading ? 'Adding...' : 'Add member'}</Button>
     </form>
   );
 }

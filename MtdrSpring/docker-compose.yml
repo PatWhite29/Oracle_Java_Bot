@@ -34,6 +34,8 @@ services:
       JWT_SECRET: "chuvabot_local_dev_secret_key_minimo32chars!!"
       JWT_EXPIRATION_MS: 86400000
       TELEGRAM_BOT_TOKEN: ""
+      # Activar para ver queries SQL en docker logs:
+      # SPRING_PROFILES_ACTIVE: local
 
 volumes:
   oracle_data:

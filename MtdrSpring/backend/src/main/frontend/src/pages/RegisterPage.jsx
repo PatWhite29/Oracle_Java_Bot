@@ -12,6 +12,11 @@ export default function RegisterPage() {
 
   const set = (field) => (e) => setForm((f) => ({ ...f, [field]: e.target.value }));
 
+  const isValid =
+    form.fullName.trim().length > 0 &&
+    form.email.trim().length > 0 &&
+    form.password.length >= 6;
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -49,7 +54,7 @@ export default function RegisterPage() {
             className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
           />
         </div>
-        <Button type="submit" disabled={loading} className="w-full justify-center">
+        <Button type="submit" disabled={loading || !isValid} className="w-full justify-center">
           {loading ? 'Creating...' : 'Create account'}
         </Button>
       </form>

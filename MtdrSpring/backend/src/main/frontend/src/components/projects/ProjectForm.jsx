@@ -10,6 +10,8 @@ export default function ProjectForm({ initial = {}, onSubmit, onCancel, loading 
 
   const set = (field) => (e) => setForm((f) => ({ ...f, [field]: e.target.value }));
 
+  const isValid = form.projectName.trim().length > 0;
+
   return (
     <form onSubmit={(e) => { e.preventDefault(); onSubmit(form); }} className="space-y-4">
       <div>
@@ -36,7 +38,7 @@ export default function ProjectForm({ initial = {}, onSubmit, onCancel, loading 
       )}
       <div className="flex justify-end gap-2 pt-2">
         <Button type="button" variant="secondary" onClick={onCancel}>Cancel</Button>
-        <Button type="submit" disabled={loading}>{loading ? 'Saving...' : 'Save'}</Button>
+        <Button type="submit" disabled={loading || !isValid}>{loading ? 'Saving...' : 'Save'}</Button>
       </div>
     </form>
   );

@@ -17,6 +17,11 @@ export default function TaskForm({ initial = {}, sprints = [], members = [], onS
 
   const set = (field) => (e) => setForm((f) => ({ ...f, [field]: e.target.value }));
 
+  const isValid =
+    form.taskName.trim().length > 0 &&
+    form.storyPoints !== '' &&
+    Number(form.storyPoints) >= 0;
+
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit({
@@ -87,7 +92,7 @@ export default function TaskForm({ initial = {}, sprints = [], members = [], onS
       </div>
       <div className="flex justify-end gap-2 pt-2">
         <Button type="button" variant="secondary" onClick={onCancel}>Cancel</Button>
-        <Button type="submit" disabled={loading}>{loading ? 'Saving...' : 'Save'}</Button>
+        <Button type="submit" disabled={loading || !isValid}>{loading ? 'Saving...' : 'Save'}</Button>
       </div>
     </form>
   );

@@ -3,7 +3,6 @@ package com.springboot.MyTodoList.project.dashboard;
 import com.springboot.MyTodoList.common.enums.SprintStatus;
 import com.springboot.MyTodoList.common.enums.TaskPriority;
 import com.springboot.MyTodoList.common.enums.TaskStatus;
-import com.springboot.MyTodoList.common.exception.ConflictException;
 import com.springboot.MyTodoList.project.Project;
 import com.springboot.MyTodoList.project.ProjectService;
 import com.springboot.MyTodoList.sprint.Sprint;
@@ -32,7 +31,9 @@ public class DashboardService {
     public SprintSummaryResponse getSprintSummary(Long userId, Long projectId) {
         Project project = projectService.findProject(projectId);
         projectService.requireParticipant(userId, project);
-        Sprint sprint = getActiveSprint(project);
+        List<Sprint> active = sprintRepository.findByProjectAndStatus(project, SprintStatus.ACTIVE);
+        if (active.isEmpty()) return null;
+        Sprint sprint = active.get(0);
         List<Task> tasks = taskRepository.findByProject(project).stream()
                 .filter(t -> sprint.equals(t.getSprint())).toList();
 
@@ -76,7 +77,9 @@ public class DashboardService {
     public BurndownResponse getBurndown(Long userId, Long projectId) {
         Project project = projectService.findProject(projectId);
         projectService.requireParticipant(userId, project);
-        Sprint sprint = getActiveSprint(project);
+        List<Sprint> active = sprintRepository.findByProjectAndStatus(project, SprintStatus.ACTIVE);
+        if (active.isEmpty()) return null;
+        Sprint sprint = active.get(0);
 
         Long total = taskRepository.sumStoryPointsBySprint(sprint);
         Long completed = taskRepository.sumStoryPointsBySprintAndStatus(sprint, TaskStatus.DONE);
@@ -135,11 +138,4 @@ public class DashboardService {
         );
     }
 
-    private Sprint getActiveSprint(Project project) {
-        List<Sprint> active = sprintRepository.findByProjectAndStatus(project, SprintStatus.ACTIVE);
-        if (active.isEmpty()) {
-            throw new ConflictException("No active sprint found for project: " + project.getId());
-        }
-        return active.get(0);
-    }
 }
