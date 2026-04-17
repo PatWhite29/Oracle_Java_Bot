@@ -1,0 +1,18 @@
+import { apiFetch } from './api';
+
+export const dashboardService = {
+  sprintSummary: (projectId, sprintId) =>
+    apiFetch(`/projects/${projectId}/dashboard/sprint-summary${sprintId ? `?sprintId=${sprintId}` : ''}`),
+
+  velocity: (projectId) =>
+    apiFetch(`/projects/${projectId}/dashboard/velocity`),
+
+  burndown: (projectId, sprintId) =>
+    apiFetch(`/projects/${projectId}/dashboard/burndown${sprintId ? `?sprintId=${sprintId}` : ''}`),
+
+  workload: (projectId) =>
+    apiFetch(`/projects/${projectId}/dashboard/workload`),
+
+  backlog: (projectId) =>
+    apiFetch(`/projects/${projectId}/dashboard/backlog`),
+};

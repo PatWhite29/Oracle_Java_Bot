@@ -30,6 +30,12 @@ public class UserController {
         return ResponseEntity.ok(userService.updateMe(currentUserId(auth), request));
     }
 
+    @GetMapping("/search")
+    @Operation(summary = "Search user by email")
+    public ResponseEntity<UserSummary> searchByEmail(@RequestParam String email) {
+        return ResponseEntity.ok(userService.findByEmail(email));
+    }
+
     private Long currentUserId(Authentication auth) {
         return Long.parseLong(auth.getName());
     }

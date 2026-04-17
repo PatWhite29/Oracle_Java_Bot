@@ -32,6 +32,14 @@ public class UserService {
         return userMapper.toResponse(user);
     }
 
+    @Transactional(readOnly = true)
+    public UserSummary findByEmail(String email) {
+        User user = userRepository.findByEmail(email)
+                .filter(User::isActive)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found: " + email));
+        return new UserSummary(user.getId(), user.getFullName(), user.getEmail());
+    }
+
     public User findActiveUserById(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found: " + userId));
