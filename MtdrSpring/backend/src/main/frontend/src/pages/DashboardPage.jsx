@@ -42,8 +42,8 @@ export default function DashboardPage() {
     Promise.allSettled([
       dashboardService.sprintSummary(project.id, selectedSprintId || null),
       dashboardService.velocity(project.id, selectedSprintId || null),
-      dashboardService.burndown(project.id),
-      dashboardService.workload(project.id),
+      dashboardService.burndown(project.id, selectedSprintId || null),
+      dashboardService.workload(project.id, selectedSprintId || null),
       dashboardService.backlog(project.id),
     ])
       .then(([sum, vel, burn, work, back]) => {

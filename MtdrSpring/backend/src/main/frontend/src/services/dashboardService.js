@@ -10,8 +10,8 @@ export const dashboardService = {
   burndown: (projectId, sprintId) =>
     apiFetch(`/projects/${projectId}/dashboard/burndown${sprintId ? `?sprintId=${sprintId}` : ''}`),
 
-  workload: (projectId) =>
-    apiFetch(`/projects/${projectId}/dashboard/workload`),
+  workload: (projectId, sprintId) =>
+    apiFetch(`/projects/${projectId}/dashboard/workload${sprintId ? `?sprintId=${sprintId}` : ''}`),
 
   backlog: (projectId) =>
     apiFetch(`/projects/${projectId}/dashboard/backlog`),

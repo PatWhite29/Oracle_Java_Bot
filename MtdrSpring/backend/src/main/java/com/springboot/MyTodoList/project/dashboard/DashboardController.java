@@ -43,9 +43,11 @@ public class DashboardController {
     }
 
     @GetMapping("/workload")
-    @Operation(summary = "Workload per member")
-    public ResponseEntity<WorkloadResponse> workload(@PathVariable Long projectId, Authentication auth) {
-        return ResponseEntity.ok(dashboardService.getWorkload(uid(auth), projectId));
+    @Operation(summary = "Workload per member — filtered by sprint if sprintId is provided")
+    public ResponseEntity<WorkloadResponse> workload(@PathVariable Long projectId,
+                                                      @RequestParam(required = false) Long sprintId,
+                                                      Authentication auth) {
+        return ResponseEntity.ok(dashboardService.getWorkload(uid(auth), projectId, sprintId));
     }
 
     @GetMapping("/backlog")

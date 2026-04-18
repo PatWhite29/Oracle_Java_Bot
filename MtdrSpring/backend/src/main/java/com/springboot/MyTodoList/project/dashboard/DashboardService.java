@@ -93,12 +93,18 @@ public class DashboardService {
     }
 
     @Transactional(readOnly = true)
-    public BurndownResponse getBurndown(Long userId, Long projectId) {
+    public BurndownResponse getBurndown(Long userId, Long projectId, Long sprintId) {
         Project project = projectService.findProject(projectId);
         projectService.requireParticipant(userId, project);
-        List<Sprint> active = sprintRepository.findByProjectAndStatus(project, SprintStatus.ACTIVE);
-        if (active.isEmpty()) return null;
-        Sprint sprint = active.get(0);
+        Sprint sprint;
+        if (sprintId != null) {
+            sprint = sprintRepository.findById(sprintId).orElse(null);
+            if (sprint == null || !sprint.getProject().getId().equals(projectId)) return null;
+        } else {
+            List<Sprint> active = sprintRepository.findByProjectAndStatus(project, SprintStatus.ACTIVE);
+            if (active.isEmpty()) return null;
+            sprint = active.get(0);
+        }
 
         Long total = taskRepository.sumStoryPointsBySprint(sprint);
         Long completed = taskRepository.sumStoryPointsBySprintAndStatus(sprint, TaskStatus.DONE);
@@ -116,11 +122,14 @@ public class DashboardService {
     }
 
     @Transactional(readOnly = true)
-    public WorkloadResponse getWorkload(Long userId, Long projectId) {
+    public WorkloadResponse getWorkload(Long userId, Long projectId, Long sprintId) {
         Project project = projectService.findProject(projectId);
         projectService.requireParticipant(userId, project);
+        Sprint sprint = sprintId != null ? sprintRepository.findById(sprintId).orElse(null) : null;
         List<Task> allTasks = taskRepository.findByProject(project).stream()
-                .filter(t -> t.getAssignedTo() != null).toList();
+                .filter(t -> t.getAssignedTo() != null)
+                .filter(t -> sprint == null ? true : sprint.equals(t.getSprint()))
+                .toList();
 
         Map<Long, List<Task>> byUser = allTasks.stream()
                 .collect(Collectors.groupingBy(t -> t.getAssignedTo().getId()));

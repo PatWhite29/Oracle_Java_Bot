@@ -37,7 +37,15 @@ export default function TasksPage() {
   useEffect(load, [load]);
 
   useEffect(() => {
-    sprintService.list(project.id).then(setSprints).catch(() => {});
+    sprintService.list(project.id).then((data) => {
+      setSprints(data);
+      const active = data.find((s) => s.status === 'ACTIVE');
+      const fallback = data
+        .filter((s) => s.status === 'PLANNING')
+        .sort((a, b) => a.startDate.localeCompare(b.startDate))[0];
+      const defaultSprint = active || fallback;
+      if (defaultSprint) setFilters((f) => ({ ...f, sprint: String(defaultSprint.id) }));
+    }).catch(() => {});
   }, [project.id]);
 
   const handleCreate = async (form) => {
@@ -117,7 +125,7 @@ export default function TasksPage() {
           {['TODO', 'IN_PROGRESS', 'BLOCKED', 'DONE'].map((s) => <option key={s}>{s}</option>)}
         </select>
         <select value={filters.sprint} onChange={(e) => setFilters((f) => ({ ...f, sprint: e.target.value }))}
-          className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none">
+          className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none max-w-[180px]">
           <option value="">All sprints</option>
           {visibleSprints.map((s) => (
             <option key={s.id} value={s.id}>
@@ -144,7 +152,7 @@ export default function TasksPage() {
       {error && <p className="text-sm text-red-600 mb-4">{error}</p>}
       {loading ? <LoadingSpinner /> : (
         view === 'kanban'
-          ? <KanbanBoard tasks={tasks} onTaskClick={setSelectedTask} />
+          ? <KanbanBoard tasks={tasks} onTaskClick={setSelectedTask} onStatusChange={handleStatusChange} />
           : <TaskTable tasks={tasks} onTaskClick={setSelectedTask} />
       )}
 

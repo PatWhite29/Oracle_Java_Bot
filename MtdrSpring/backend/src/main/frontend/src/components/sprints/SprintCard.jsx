@@ -2,6 +2,12 @@ import React from 'react';
 import Badge from '../common/Badge';
 import Button from '../common/Button';
 
+const fmt = (iso) => {
+  if (!iso) return '';
+  const [y, m, d] = iso.split('-');
+  return `${d}-${m}-${y}`;
+};
+
 export default function SprintCard({ sprint, isManager, onActivate, onClose, onSelect }) {
   return (
     <div
@@ -16,7 +22,7 @@ export default function SprintCard({ sprint, isManager, onActivate, onClose, onS
         <Badge value={sprint.status} />
       </div>
       <div className="text-xs text-gray-400">
-        {sprint.startDate} → {sprint.endDate}
+        {fmt(sprint.startDate)} → {fmt(sprint.endDate)}
       </div>
       {isManager && sprint.status !== 'CLOSED' && (
         <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>

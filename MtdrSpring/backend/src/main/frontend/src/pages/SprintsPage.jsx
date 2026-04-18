@@ -114,6 +114,17 @@ export default function SprintsPage() {
     ? [project.manager, ...members.filter((m) => m.id !== project.manager.id)]
     : members;
 
+  const byDate = (a, b) => a.startDate.localeCompare(b.startDate);
+
+  const openSprints = [
+    ...sprints.filter((s) => s.status === 'ACTIVE'),
+    ...sprints.filter((s) => s.status === 'PLANNING').sort(byDate),
+  ];
+
+  const closedSprints = sprints.filter((s) => s.status === 'CLOSED').sort(byDate);
+
+  const listProps = { isManager, onActivate: handleActivate, onClose: handleClose, onSelect: loadSprintTasks };
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
@@ -123,13 +134,18 @@ export default function SprintsPage() {
 
       {error && <p className="text-sm text-red-600 mb-4">{error}</p>}
       {loading ? <LoadingSpinner /> : (
-        <SprintList
-          sprints={sprints}
-          isManager={isManager}
-          onActivate={handleActivate}
-          onClose={handleClose}
-          onSelect={loadSprintTasks}
-        />
+        <div className="space-y-8">
+          <div>
+            <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Active & Planning</h2>
+            <SprintList sprints={openSprints} {...listProps} />
+          </div>
+          {closedSprints.length > 0 && (
+            <div>
+              <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Closed</h2>
+              <SprintList sprints={closedSprints} {...listProps} />
+            </div>
+          )}
+        </div>
       )}
 
       {/* Sprint tasks modal */}
