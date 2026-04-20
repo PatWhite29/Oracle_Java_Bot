@@ -1,120 +1,128 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProject } from '../context/ProjectContext';
-import { dashboardService } from '../services/dashboardService';
 import { sprintService } from '../services/sprintService';
 import SprintSummary from '../components/dashboard/SprintSummary';
+import CompletionRate from '../components/dashboard/CompletionRate';
+import AvgHoursPerSP from '../components/dashboard/AvgHoursPerSP';
+import BlockedAlert from '../components/dashboard/BlockedAlert';
 import VelocityChart from '../components/dashboard/VelocityChart';
-import BurndownChart from '../components/dashboard/BurndownChart';
-import WorkloadChart from '../components/dashboard/WorkloadChart';
+import EfficiencyChart from '../components/dashboard/EfficiencyChart';
+import WorkloadTable from '../components/dashboard/WorkloadTable';
+import HoursPerMember from '../components/dashboard/HoursPerMember';
 import BacklogSummary from '../components/dashboard/BacklogSummary';
-import LoadingSpinner from '../components/common/LoadingSpinner';
 
-function Section({ title, children }) {
+function Widget({ title, children, className = '' }) {
   return (
-    <div className="bg-white border border-gray-100 rounded-xl p-5 shadow-sm space-y-3">
+    <div className={`bg-white border border-gray-100 rounded-xl p-5 shadow-sm space-y-4 ${className}`}>
       <h2 className="text-sm font-semibold text-gray-700">{title}</h2>
       {children}
     </div>
   );
 }
 
+function sprintLabel(s) {
+  const tag = s.status === 'ACTIVE' ? ' (active)' : s.status === 'CLOSED' ? ' (closed)' : ' (planning)';
+  return s.sprintName + tag;
+}
+
 export default function DashboardPage() {
   const { project, userRole } = useProject();
   const navigate = useNavigate();
   const isManager = userRole === 'MANAGER';
+
   const [sprints, setSprints] = useState([]);
-  const [selectedSprintId, setSelectedSprintId] = useState('');
-  const [summary, setSummary] = useState(null);
-  const [velocity, setVelocity] = useState([]);
-  const [burndown, setBurndown] = useState(null);
-  const [workload, setWorkload] = useState([]);
-  const [backlog, setBacklog] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [selectedSprintId, setSelectedSprintId] = useState(null);
 
   useEffect(() => {
     sprintService.list(project.id).then((data) => {
       setSprints(data);
       const active = data.find((s) => s.status === 'ACTIVE');
-      if (active) setSelectedSprintId(String(active.id));
+      if (active) setSelectedSprintId(active.id);
     }).catch(() => {});
   }, [project.id]);
 
-  useEffect(() => {
-    setLoading(true);
-    Promise.allSettled([
-      dashboardService.sprintSummary(project.id, selectedSprintId || null),
-      dashboardService.velocity(project.id, selectedSprintId || null),
-      dashboardService.burndown(project.id, selectedSprintId || null),
-      dashboardService.workload(project.id, selectedSprintId || null),
-      dashboardService.backlog(project.id),
-    ])
-      .then(([sum, vel, burn, work, back]) => {
-        setSummary(sum.status === 'fulfilled' ? sum.value : null);
-        setVelocity(vel.status === 'fulfilled' ? (vel.value?.sprints || []) : []);
-        setBurndown(burn.status === 'fulfilled' ? burn.value : null);
-        setWorkload(work.status === 'fulfilled' ? (work.value?.members || []) : []);
-        setBacklog(back.status === 'fulfilled' ? back.value : null);
-      })
-      .finally(() => setLoading(false));
-  }, [project.id, selectedSprintId]);
+  const sid = selectedSprintId || null;
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-xl font-bold text-gray-900">Dashboard — {project.projectName}</h1>
         <select
-          value={selectedSprintId}
-          onChange={(e) => setSelectedSprintId(e.target.value)}
-          className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none"
+          value={selectedSprintId ?? ''}
+          onChange={(e) => setSelectedSprintId(e.target.value ? Number(e.target.value) : null)}
+          className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none max-w-[220px]"
         >
-          <option value="">All sprints</option>
-          {sprints.map((s) => <option key={s.id} value={s.id}>{s.sprintName}</option>)}
+          <option value="">No sprint selected</option>
+          {sprints.map((s) => (
+            <option key={s.id} value={s.id}>{sprintLabel(s)}</option>
+          ))}
         </select>
       </div>
 
-      {loading ? <LoadingSpinner /> : (
-        <div className="grid gap-4 lg:grid-cols-2">
-          <Section title="Sprint Summary">
-            <SprintSummary data={summary} />
-          </Section>
-          <Section title="Velocity (SP per sprint)">
-            <VelocityChart data={velocity} selectedSprintId={selectedSprintId} />
-          </Section>
-          <Section title="Burndown">
-            <BurndownChart data={burndown} />
-          </Section>
-          <Section title="Workload">
-            <WorkloadChart data={workload} />
-          </Section>
-          <Section title="Backlog">
-            <BacklogSummary data={backlog} />
-          </Section>
-          {isManager && (
-            <Section title="Manager actions">
-              <div className="grid grid-cols-2 gap-2">
-                {[
-                  { label: 'Manage members', path: 'members' },
-                  { label: 'Manage sprints', path: 'sprints' },
-                  { label: 'View backlog', path: 'backlog' },
-                  { label: 'Manage tasks', path: 'tasks' },
-                ].map(({ label, path }) => (
-                  <button
-                    key={path}
-                    onClick={() => navigate(`/projects/${project.id}/${path}`)}
-                    className="flex items-center gap-2 px-3 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-colors text-left"
-                  >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 text-amber-500 shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M2 19h20v2H2v-2zM2 6l5 7 5-7 5 7 5-7v11H2V6z"/>
-                    </svg>
-                    {label}
-                  </button>
-                ))}
-              </div>
-            </Section>
-          )}
-        </div>
-      )}
+      <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+
+        {/* Row 1 — full width */}
+        <Widget title="Sprint Summary" className="md:col-span-6">
+          <SprintSummary sprintId={sid} />
+        </Widget>
+
+        {/* Row 2 — three equal columns */}
+        <Widget title="Completion Rate" className="md:col-span-2">
+          <CompletionRate sprintId={sid} />
+        </Widget>
+        <Widget title="Avg Hours / Story Point" className="md:col-span-2">
+          <AvgHoursPerSP sprintId={sid} />
+        </Widget>
+        <Widget title="Blocked Tasks" className="md:col-span-2">
+          <BlockedAlert sprintId={sid} />
+        </Widget>
+
+        {/* Row 3 — two halves */}
+        <Widget title="Velocity (SP per sprint)" className="md:col-span-3">
+          <VelocityChart />
+        </Widget>
+        <Widget title="Efficiency (SP vs Hours)" className="md:col-span-3">
+          <EfficiencyChart sprintId={sid} />
+        </Widget>
+
+        {/* Row 4 — two halves */}
+        <Widget title="Workload" className="md:col-span-3">
+          <WorkloadTable sprintId={sid} />
+        </Widget>
+        <Widget title="Hours per Member" className="md:col-span-3">
+          <HoursPerMember sprintId={sid} />
+        </Widget>
+
+        {/* Row 5 — full width */}
+        <Widget title="Backlog Summary" className="md:col-span-6">
+          <BacklogSummary />
+        </Widget>
+
+        {isManager && (
+          <Widget title="Manager actions" className="md:col-span-6">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {[
+                { label: 'Manage members', path: 'members' },
+                { label: 'Manage sprints', path: 'sprints' },
+                { label: 'View backlog', path: 'backlog' },
+                { label: 'Manage tasks', path: 'tasks' },
+              ].map(({ label, path }) => (
+                <button
+                  key={path}
+                  onClick={() => navigate(`/projects/${project.id}/${path}`)}
+                  className="flex items-center gap-2 px-3 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-colors text-left"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 text-amber-500 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M2 19h20v2H2v-2zM2 6l5 7 5-7 5 7 5-7v11H2V6z" />
+                  </svg>
+                  {label}
+                </button>
+              ))}
+            </div>
+          </Widget>
+        )}
+      </div>
     </div>
   );
 }

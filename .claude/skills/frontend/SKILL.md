@@ -61,11 +61,16 @@ Use this skill when working with React components, pages, routing, styling, or a
 - Add/remove members (manager only).
 
 ### Dashboard / KPIs
-- Sprint Summary: tasks by status, SP committed vs completed, completion percentage.
-- Velocity chart: SP completed per sprint over last N sprints.
-- Burndown: current SP completed vs ideal line.
-- Workload: tasks per member grouped by status.
-- Backlog summary: total tasks, total SP, priority distribution.
+
+- **Sprint Summary**: cards showing tasks by status, SP committed vs completed, completion %, blocked count. Simple and complete.
+- **Velocity**: bar chart of SP completed per sprint over last N closed sprints. Useful for comparing sprint output over time.
+- **Efficiency**: bar chart per member comparing SP completed vs actual_hours worked in the active sprint. Derived from TASK.actual_hours (populated on DONE).
+- **Completion Rate**: single large number (with green/yellow/red color) showing % of committed tasks that reached DONE in the active sprint.
+- **Avg Hours per Story Point**: single large number showing actual_hours / story_points averaged across DONE tasks in the active sprint. Helps calibrate future estimations.
+- **Workload**: scrollable table where each row is a member and columns are task statuses (TODO, IN_PROGRESS, BLOCKED, DONE). Toggle between task count and story points. Table layout scales correctly with any team size — no chart distortion with few or many members.
+- **Hours per Member**: ranked list of members by total actual_hours on DONE tasks in the active sprint, displayed as a list with relative progress bars (scaled to the highest value). Scales well with any team size.
+- **Blocked Alert**: counter of currently BLOCKED tasks with a list showing task name, assignee, and time blocked (derived from TASK_ACTIVITY timestamps).
+- **Backlog Summary**: cards with total backlog tasks, total SP, and priority distribution (LOW/MEDIUM/HIGH).
 
 ### Profile
 - View/edit own profile (full_name, email).
@@ -129,8 +134,12 @@ src/
 │   └── dashboard/
 │       ├── SprintSummary.jsx
 │       ├── VelocityChart.jsx
-│       ├── BurndownChart.jsx
-│       ├── WorkloadChart.jsx
+│       ├── EfficiencyChart.jsx
+│       ├── CompletionRate.jsx
+│       ├── AvgHoursPerSP.jsx
+│       ├── WorkloadTable.jsx
+│       ├── HoursPerMember.jsx
+│       ├── BlockedAlert.jsx
 │       └── BacklogSummary.jsx
 ├── pages/                   → Route-level page components
 │   ├── LoginPage.jsx

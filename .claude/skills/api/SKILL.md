@@ -85,7 +85,8 @@ GET    /api/v1/projects/{projectId}/tasks/{taskId}/activity          → List al
 GET    /api/v1/projects/{projectId}/dashboard/sprint-summary        → Active sprint summary: tasks by status, SP committed vs completed, % completion, blocked count. Permission: PARTICIPANT.
 GET    /api/v1/projects/{projectId}/dashboard/velocity              → Velocity trend: SP completed per sprint for last N closed sprints. Query: ?sprints=5. Permission: PARTICIPANT.
 GET    /api/v1/projects/{projectId}/dashboard/burndown              → Burndown of active sprint: current SP completed vs ideal line based on elapsed time. Permission: PARTICIPANT.
-GET    /api/v1/projects/{projectId}/dashboard/workload              → Workload per member: tasks assigned per person, grouped by status. Permission: PARTICIPANT.
+GET    /api/v1/projects/{projectId}/dashboard/workload              → Workload per member: tasks assigned per person, grouped by status. Returns both task count and story points per member per status to support toggle. Permission: PARTICIPANT.
+GET    /api/v1/projects/{projectId}/dashboard/efficiency            → Efficiency per member in the active sprint: SP completed vs actual_hours on DONE tasks. Also returns totals for AvgHoursPerSP calculation. Returns 404 if no active sprint exists. Permission: PARTICIPANT.
 GET    /api/v1/projects/{projectId}/dashboard/backlog               → Backlog summary: total tasks, total SP, distribution by priority. Permission: PARTICIPANT.
 
 ### User

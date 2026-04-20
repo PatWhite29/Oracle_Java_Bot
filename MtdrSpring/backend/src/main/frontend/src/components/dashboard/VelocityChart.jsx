@@ -1,31 +1,36 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import { useProject } from '../../context/ProjectContext';
+import { dashboardService } from '../../services/dashboardService';
 
-export default function VelocityChart({ data, selectedSprintId }) {
-  if (!data || data.length === 0) return <p className="text-sm text-gray-400">No velocity data.</p>;
+function Skeleton() { return <div className="animate-pulse h-48 bg-gray-50 rounded-lg" />; }
 
-  const max = Math.max(...data.map((d) => d.storyPointsCompleted || 0), 1);
+export default function VelocityChart() {
+  const { project } = useProject();
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    dashboardService.velocity(project.id)
+      .then(setData)
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, [project.id]);
+
+  if (loading) return <Skeleton />;
+  if (error) return <p className="text-xs text-red-500">{error}</p>;
+  if (!data.length) return <p className="text-sm text-gray-400">No closed sprints yet.</p>;
 
   return (
-    <div className="space-y-2">
-      {data.map((d) => {
-        const isSelected = selectedSprintId && String(d.sprintId) === String(selectedSprintId);
-        return (
-          <div key={d.sprintId} className={`flex items-center gap-3 text-sm rounded-lg px-2 py-0.5 ${isSelected ? 'bg-gray-50 ring-1 ring-gray-300' : ''}`}>
-            <span className={`w-32 truncate ${isSelected ? 'font-semibold text-gray-800' : 'text-gray-500'}`}>
-              {d.sprintName}
-            </span>
-            <div className="flex-1 bg-gray-100 rounded-full h-4 overflow-hidden">
-              <div
-                className={`h-4 rounded-full transition-all ${isSelected ? 'bg-gray-600' : 'bg-gray-800'}`}
-                style={{ width: `${((d.storyPointsCompleted || 0) / max) * 100}%` }}
-              />
-            </div>
-            <span className={`w-10 text-right ${isSelected ? 'font-semibold text-gray-800' : 'text-gray-600'}`}>
-              {d.storyPointsCompleted}
-            </span>
-          </div>
-        );
-      })}
-    </div>
+    <ResponsiveContainer width="100%" height={200}>
+      <BarChart data={data} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+        <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" vertical={false} />
+        <XAxis dataKey="sprintName" tick={{ fontSize: 11, fill: '#9ca3af' }} />
+        <YAxis tick={{ fontSize: 11, fill: '#9ca3af' }} />
+        <Tooltip formatter={(v) => [`${v} SP`, 'Completed']} />
+        <Bar dataKey="spCompleted" fill="#1f2937" radius={[3, 3, 0, 0]} maxBarSize={48} />
+      </BarChart>
+    </ResponsiveContainer>
   );
 }

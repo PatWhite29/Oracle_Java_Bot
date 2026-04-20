@@ -3,22 +3,13 @@ package com.springboot.MyTodoList.project.dashboard;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-import java.util.List;
+import java.util.Map;
 
 @Getter
 @AllArgsConstructor
 public class WorkloadResponse {
-    private List<MemberWorkload> members;
-
-    @Getter
-    @AllArgsConstructor
-    public static class MemberWorkload {
-        private Long userId;
-        private String fullName;
-        private long totalTasks;
-        private long todoTasks;
-        private long inProgressTasks;
-        private long blockedTasks;
-        private long doneTasks;
-    }
+    private Long userId;
+    private String fullName;
+    private Map<String, Long> taskCounts;
+    private Map<String, Long> storyPoints;
 }

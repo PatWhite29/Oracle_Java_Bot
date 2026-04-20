@@ -9,7 +9,7 @@ import Modal from '../components/common/Modal';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 
 export default function MembersPage() {
-  const { project, userRole } = useProject();
+  const { project, userRole, setMembers: setContextMembers } = useProject();
   const { user } = useAuth();
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,6 +24,7 @@ export default function MembersPage() {
     setLoading(true);
     memberService.list(project.id)
       .then((data) => {
+        setContextMembers(data);
         const allMembers = project.manager
           ? [project.manager, ...data.filter((m) => m.id !== project.manager.id)]
           : data;

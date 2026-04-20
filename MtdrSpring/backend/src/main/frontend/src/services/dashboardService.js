@@ -1,18 +1,35 @@
 import { apiFetch } from './api';
 
 export const dashboardService = {
-  sprintSummary: (projectId, sprintId) =>
-    apiFetch(`/projects/${projectId}/dashboard/sprint-summary${sprintId ? `?sprintId=${sprintId}` : ''}`),
+  sprintSummary: (projectId, sprintId) => {
+    const q = sprintId ? `?sprintId=${sprintId}` : '';
+    return apiFetch(`/projects/${projectId}/dashboard/sprint-summary${q}`);
+  },
 
-  velocity: (projectId, sprintId) =>
-    apiFetch(`/projects/${projectId}/dashboard/velocity${sprintId ? `?sprintId=${sprintId}` : ''}`),
+  velocity: (projectId, count = 5) =>
+    apiFetch(`/projects/${projectId}/dashboard/velocity?sprints=${count}`),
 
-  burndown: (projectId, sprintId) =>
-    apiFetch(`/projects/${projectId}/dashboard/burndown${sprintId ? `?sprintId=${sprintId}` : ''}`),
+  efficiency: (projectId, sprintId) => {
+    const q = sprintId ? `?sprintId=${sprintId}` : '';
+    return apiFetch(`/projects/${projectId}/dashboard/efficiency${q}`);
+  },
 
-  workload: (projectId, sprintId) =>
-    apiFetch(`/projects/${projectId}/dashboard/workload${sprintId ? `?sprintId=${sprintId}` : ''}`),
+  workload: (projectId, sprintId) => {
+    const q = sprintId ? `?sprintId=${sprintId}` : '';
+    return apiFetch(`/projects/${projectId}/dashboard/workload${q}`);
+  },
 
   backlog: (projectId) =>
     apiFetch(`/projects/${projectId}/dashboard/backlog`),
+
+  burndown: (projectId, sprintId) => {
+    const q = sprintId ? `?sprintId=${sprintId}` : '';
+    return apiFetch(`/projects/${projectId}/dashboard/burndown${q}`);
+  },
+
+  blockedTasks: (projectId, sprintId) => {
+    const q = new URLSearchParams({ status: 'BLOCKED' });
+    if (sprintId) q.set('sprint', sprintId);
+    return apiFetch(`/projects/${projectId}/tasks?${q}`).then((d) => d?.content || []);
+  },
 };
