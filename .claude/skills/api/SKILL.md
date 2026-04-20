@@ -72,7 +72,7 @@ GET    /api/v1/projects/{projectId}/tasks                           → List tas
 GET    /api/v1/projects/{projectId}/tasks/{taskId}                  → Task detail (includes latest activity). Permission: PARTICIPANT.
 PUT    /api/v1/projects/{projectId}/tasks/{taskId}                  → Edit task (full replacement). Permission: MANAGER.
 DELETE /api/v1/projects/{projectId}/tasks/{taskId}                  → Delete task. Permission: MANAGER.
-PATCH  /api/v1/projects/{projectId}/tasks/{taskId}/status           → Change task status. Body: { status }. Permission: MANAGER or ASSIGNED.
+PATCH  /api/v1/projects/{projectId}/tasks/{taskId}/status           → Change task status. Body: { status, actual_hours? }. actual_hours is required when status = DONE; omitting it returns 400. Permission: MANAGER or ASSIGNED.
 PATCH  /api/v1/projects/{projectId}/tasks/{taskId}/sprint           → Move task to sprint or backlog. Body: { sprint_id } (null for backlog). Permission: MANAGER.
 
 ### Task Activity

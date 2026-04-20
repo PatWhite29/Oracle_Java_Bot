@@ -45,7 +45,7 @@ Comparte el mismo proceso, el mismo service layer, y el mismo connection pool qu
 | MyProjectsHandler | /my_projects | Lista proyectos donde el usuario es manager o miembro |
 | MyTasksHandler | /my_tasks | Lista tareas asignadas al usuario |
 | TaskHandler | /task {id} | Detalle de una tarea (estado, prioridad, asignado, deadline) |
-| TaskStatusHandler | /task_status {id} {status} | Cambia estado de una tarea vía TaskService.changeStatus |
+| TaskStatusHandler | /task_status {id} {status} [hours] | Cambia estado de una tarea vía TaskService.changeStatus. Si status = DONE, hours es obligatorio (ej. /task_status 5 DONE 3.5); omitirlo devuelve error al usuario. |
 | CommentHandler | /comment {id} {text} | Agrega comentario vía TaskActivityService.addComment |
 
 ---

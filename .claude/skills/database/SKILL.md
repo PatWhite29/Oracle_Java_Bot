@@ -12,7 +12,7 @@ PROJECT_MEMBER: id, project (FK PROJECT), employee (FK APP_USER), created_at. UN
 
 SPRINT: id, project (FK PROJECT), sprint_name, goal (nullable), start_date, end_date (must be > start_date), status (PLANNING/ACTIVE/CLOSED), created_at.
 
-TASK: id, project (FK PROJECT, NOT NULL), sprint (FK SPRINT, nullable — NULL = backlog), task_name, description (nullable), status (TODO/IN_PROGRESS/BLOCKED/DONE), priority (LOW/MEDIUM/HIGH, nullable), story_points (NUMBER, NOT NULL), assigned_to (FK APP_USER, nullable), created_by (FK APP_USER, NOT NULL), created_at. No due_date.
+TASK: id, project (FK PROJECT, NOT NULL), sprint (FK SPRINT, nullable — NULL = backlog), task_name, description (nullable), status (TODO/IN_PROGRESS/BLOCKED/DONE), priority (LOW/MEDIUM/HIGH, nullable), story_points (NUMBER, NOT NULL), assigned_to (FK APP_USER, nullable), created_by (FK APP_USER, NOT NULL), actual_hours (NUMBER decimal, nullable — required when marking DONE, supports decimals e.g. 1.5, overwritten on each DONE transition), created_at. No due_date.
 
 TASK_ACTIVITY: id, task (FK TASK), employee (FK APP_USER), activity_type (COMMENT/STATUS_CHANGE/SPRINT_CHANGE), content (nullable), created_at.
 
@@ -26,6 +26,7 @@ NOTIFICATION_LOG: id, recipient (FK APP_USER), event_type (SPRINT_DEADLINE/TASK_
 - All tables have created_at DEFAULT CURRENT_TIMESTAMP. No updated_at anywhere.
 - Status/type fields use VARCHAR2 with CHECK constraints.
 - Physical deletion for Projects and Tasks. Soft delete (is_active) only for APP_USER.
+- actual_hours is required when transitioning a task to DONE. Overwritten on each DONE transition. Reopening a task leaves actual_hours unchanged.
 - old_value/new_value in AUDIT_LOG stored as JSON in CLOB.
 
 ## Permission Model (affects queries)

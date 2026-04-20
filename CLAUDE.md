@@ -6,6 +6,23 @@ Task Management System with three components: Spring Boot REST API, React web po
 
 Tech stack: Java + Spring Boot, React, Oracle DB, Docker, OCI, Telegram Bot API.
 
+## Repository Structure
+
+Oracle_Java_Bot/
+├── MtdrSpring/backend/src/main/java/com/springboot/MyTodoList/  → All Java code
+├── MtdrSpring/backend/src/main/frontend/                       → React web portal
+├── MtdrSpring/backend/src/main/resources/                       → application config
+├── MtdrSpring/terraform/                                        → OCI infrastructure
+├── .claude/skills/                                              → Claude Code skills
+└── CLAUDE.md                                                    → This file
+
+Base package: com.springboot.MyTodoList
+Structure: by layer (controller/, model/, service/, repository/, dto/, etc.)
+
+For detailed package structure, see .claude/skills/architecture/SKILL.md
+For database schema details, see .claude/skills/database/SKILL.md
+For API endpoint catalog, see .claude/skills/api/SKILL.md
+
 ## Database Schema (8 tables)
 
 APP_USER: System identity. No global role. Fields: id, full_name, email, password_hash, telegram_chat_id (nullable unique), is_active (soft delete), created_at.
@@ -16,7 +33,7 @@ PROJECT_MEMBER: Junction table. Fields: id, project (FK PROJECT), employee (FK A
 
 SPRINT: Timebox within a project. Fields: id, project (FK PROJECT), sprint_name, goal (nullable), start_date, end_date, status (PLANNING/ACTIVE/CLOSED), created_at. end_date must be > start_date.
 
-TASK: Unit of work. Fields: id, project (FK PROJECT, NOT NULL), sprint (FK SPRINT, nullable — NULL means backlog), task_name, description, status (TODO/IN_PROGRESS/BLOCKED/DONE), priority (LOW/MEDIUM/HIGH, nullable), story_points (integer, NOT NULL), assigned_to (FK APP_USER, nullable), created_by (FK APP_USER, NOT NULL), created_at. No due_date — deadlines come from sprint end_date.
+TASK: Unit of work. Fields: id, project (FK PROJECT, NOT NULL), sprint (FK SPRINT, nullable — NULL means backlog), task_name, description, status (TODO/IN_PROGRESS/BLOCKED/DONE), priority (LOW/MEDIUM/HIGH, nullable), story_points (integer, NOT NULL), assigned_to (FK APP_USER, nullable), created_by (FK APP_USER, NOT NULL), actual_hours (NUMBER decimal, nullable — populated when task is marked DONE, supports decimals e.g. 1.5), created_at. No due_date — deadlines come from sprint end_date.
 
 TASK_ACTIVITY: Append-only log. Fields: id, task (FK TASK), employee (FK APP_USER), activity_type (COMMENT/STATUS_CHANGE/SPRINT_CHANGE), content (nullable), created_at.
 
@@ -53,6 +70,7 @@ No global roles. Permissions are 100% per project:
 - story_points is required (integer). priority is optional.
 - assigned_to is nullable (unassigned tasks allowed).
 - Physical deletion for Projects and Tasks. Soft delete (is_active) only for APP_USER.
+- actual_hours is required when transitioning a task to DONE status. The field is overwritten on each DONE transition. Reopening a task leaves actual_hours unchanged.
 
 ## Architecture
 
