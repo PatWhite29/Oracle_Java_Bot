@@ -29,12 +29,8 @@ if [ -z "$OCI_REGION" ]; then
     exit 1
 fi
 
-if [ -z "$UI_USERNAME" ]; then
-    echo "UI_USERNAME not set. Will get it with state_get"
-    export UI_USERNAME=$(state_get UI_USERNAME)
-fi
-if [ -z "$UI_USERNAME" ]; then
-    echo "Error: UI_USERNAME env variable needs to be set!"
+if [ -z "$TELEGRAM_BOT_USERNAME" ]; then
+    echo "Error: TELEGRAM_BOT_USERNAME env variable needs to be set!"
     exit 1
 fi
 
@@ -51,7 +47,7 @@ sed -e "s|%TODO_PDB_NAME%|${TODO_PDB_NAME}|g" todolistapp-springboot-${CURRENTTI
 mv -- /tmp/todolistapp-springboot-$CURRENTTIME.yaml todolistapp-springboot-$CURRENTTIME.yaml
 sed -e "s|%OCI_REGION%|${OCI_REGION}|g" todolistapp-springboot-${CURRENTTIME}.yaml > /tmp/todolistapp-springboot-$CURRENTTIME.yaml
 mv -- /tmp/todolistapp-springboot-$CURRENTTIME.yaml todolistapp-springboot-$CURRENTTIME.yaml
-sed -e "s|%UI_USERNAME%|${UI_USERNAME}|g" todolistapp-springboot-${CURRENTTIME}.yaml > /tmp/todolistapp-springboot-$CURRENTTIME.yaml
+sed -e "s|%TELEGRAM_BOT_USERNAME%|${TELEGRAM_BOT_USERNAME}|g" todolistapp-springboot-${CURRENTTIME}.yaml > /tmp/todolistapp-springboot-$CURRENTTIME.yaml
 mv -- /tmp/todolistapp-springboot-$CURRENTTIME.yaml todolistapp-springboot-$CURRENTTIME.yaml
 if [ -z "$1" ]; then
     kubectl apply -f $SCRIPT_DIR/todolistapp-springboot-$CURRENTTIME.yaml -n mtdrworkshop

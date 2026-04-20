@@ -15,7 +15,6 @@ spec:
   selector:
     app: todolistapp-springboot
 ---
-#this is new stuff for hosting on the load balancer
 apiVersion: v1
 kind: Service
 metadata:
@@ -48,33 +47,37 @@ spec:
           image: %DOCKER_REGISTRY%/todolistapp-springboot:0.1
           imagePullPolicy: Always
           env:
-            - name: db_user
-              value: "TODOUSER"
-            - name: db_url
-              value: "jdbc:oracle:thin:@%TODO_PDB_NAME%_tp?TNS_ADMIN=/mtdrworkshop/creds"
-            - name: todo.table.name
-              value: "todoitem"
-            - name: driver_class_name
-              value: "oracle.jdbc.OracleDriver"
+            - name: DB_URL
+              value: "jdbc:oracle:thin:@%TODO_PDB_NAME%_tp?TNS_ADMIN=/wallet"
+            - name: DB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: password
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: jwt-secret
+            - name: JWT_EXPIRATION_MS
+              value: "86400000"
+            - name: TELEGRAM_BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: telegram-bot-token
+            - name: TELEGRAM_BOT_USERNAME
+              value: "%TELEGRAM_BOT_USERNAME%"
             - name: OCI_REGION
               value: "%OCI_REGION%"
-            - name: dbpassword
-              valueFrom:
-                secretKeyRef:
-                  name: dbuser
-                  key: dbpassword
-                  optional: true
-            - name: ui_username
-              value: "%UI_USERNAME%"
-            - name: ui_password
-              valueFrom:
-                secretKeyRef:
-                  name: frontendadmin
-                  key: password
-                  optional: true
           volumeMounts:
             - name: creds
-              mountPath: /mtdrworkshop/creds
+              mountPath: /wallet
           ports:
             - containerPort: 8080
       restartPolicy: Always
