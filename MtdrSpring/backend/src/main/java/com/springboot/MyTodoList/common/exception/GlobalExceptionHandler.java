@@ -32,6 +32,20 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse("FORBIDDEN", ex.getMessage(), 403));
     }
 
+    @ExceptionHandler(NotProjectParticipantException.class)
+    public ResponseEntity<ErrorResponse> handleNotParticipant(NotProjectParticipantException ex, HttpServletRequest req) {
+        log.warn("[403] {} {}: {}", req.getMethod(), req.getRequestURI(), ex.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new ErrorResponse("FORBIDDEN", ex.getMessage(), 403));
+    }
+
+    @ExceptionHandler(ClosedSprintException.class)
+    public ResponseEntity<ErrorResponse> handleClosedSprint(ClosedSprintException ex, HttpServletRequest req) {
+        log.warn("[403] {} {}: {}", req.getMethod(), req.getRequestURI(), ex.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new ErrorResponse("CLOSED_SPRINT", ex.getMessage(), 403));
+    }
+
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity<ErrorResponse> handleConflict(ConflictException ex, HttpServletRequest req) {
         log.warn("[409] {} {}: {}", req.getMethod(), req.getRequestURI(), ex.getMessage());

@@ -18,4 +18,7 @@ export const projectService = {
 
   confirmClose: (projectId) =>
     apiFetch(`/projects/${projectId}/close`, { method: 'POST' }),
+
+  transfer: (projectId, newManagerId) =>
+    apiFetch(`/projects/${projectId}/transfer`, { method: 'POST', body: JSON.stringify({ newManagerId }) }),
 };

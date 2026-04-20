@@ -15,7 +15,7 @@ export default function ProjectForm({ initial = {}, onSubmit, onCancel, loading 
   return (
     <form onSubmit={(e) => { e.preventDefault(); onSubmit(form); }} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Project name *</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Project name <span className="text-red-500">*</span></label>
         <input
           required value={form.projectName} onChange={set('projectName')}
           className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300"

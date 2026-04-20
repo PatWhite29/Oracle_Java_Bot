@@ -19,6 +19,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class TaskService {
@@ -181,6 +183,31 @@ public class TaskService {
         return taskMapper.toResponse(task);
     }
 
+    @Transactional(readOnly = true)
+    public List<TaskResponse> getMyAssignedTasks(Long userId) {
+        User user = userService.findActiveUserById(userId);
+        return taskRepository.findActiveTasksByAssignedTo(user).stream()
+                .map(taskMapper::toResponse)
+                .toList();
+    }
+
+    @Transactional
+    public TaskResponse changeStatusById(Long userId, Long taskId, TaskStatus status) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found: " + taskId));
+        StatusChangeRequest req = new StatusChangeRequest();
+        req.setStatus(status);
+        return changeStatus(userId, task.getProject().getId(), taskId, req);
+    }
+
+    @Transactional(readOnly = true)
+    public TaskResponse getTaskForUser(Long userId, Long taskId) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found: " + taskId));
+        projectService.requireParticipant(userId, task.getProject());
+        return taskMapper.toResponse(task);
+    }
+
     public Task findTask(Long taskId, Project project) {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found: " + taskId));
@@ -203,7 +230,8 @@ public class TaskService {
     private void requireNotClosedSprint(Task task) {
         if (task.getSprint() != null &&
                 task.getSprint().getStatus() == com.springboot.MyTodoList.common.enums.SprintStatus.CLOSED) {
-            throw new ForbiddenException("Tasks in closed sprints are read-only (except sprint assignment)");
+            throw new com.springboot.MyTodoList.common.exception.ClosedSprintException(
+                    "Task belongs to closed sprint '" + task.getSprint().getSprintName() + "' and is read-only");
         }
     }
 

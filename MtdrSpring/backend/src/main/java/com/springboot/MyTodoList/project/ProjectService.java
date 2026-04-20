@@ -7,7 +7,10 @@ import com.springboot.MyTodoList.common.enums.EntityType;
 import com.springboot.MyTodoList.common.enums.ProjectStatus;
 import com.springboot.MyTodoList.common.enums.SprintStatus;
 import com.springboot.MyTodoList.common.exception.ForbiddenException;
+import com.springboot.MyTodoList.common.exception.NotProjectParticipantException;
 import com.springboot.MyTodoList.common.exception.ResourceNotFoundException;
+import com.springboot.MyTodoList.project.member.ProjectMember;
+import com.springboot.MyTodoList.project.member.ProjectMemberRepository;
 import com.springboot.MyTodoList.sprint.Sprint;
 import com.springboot.MyTodoList.sprint.SprintRepository;
 import com.springboot.MyTodoList.task.Task;
@@ -26,6 +29,7 @@ import java.util.List;
 public class ProjectService {
 
     private final ProjectRepository projectRepository;
+    private final ProjectMemberRepository memberRepository;
     private final SprintRepository sprintRepository;
     private final TaskRepository taskRepository;
     private final UserService userService;
@@ -42,6 +46,7 @@ public class ProjectService {
                 .manager(manager)
                 .build();
         projectRepository.save(project);
+        memberRepository.save(ProjectMember.builder().project(project).employee(manager).build());
         auditLogService.log(manager, EntityType.PROJECT, project.getId(), AuditAction.CREATE, null, project);
         return projectMapper.toResponse(project);
     }
@@ -118,6 +123,9 @@ public class ProjectService {
         Project project = findProject(projectId);
         requireManager(userId, project);
         User newManager = userService.findActiveUserById(request.getNewManagerId());
+        if (!memberRepository.existsByProjectAndEmployee(project, newManager)) {
+            throw new ForbiddenException("The new manager must be a member of the project");
+        }
         project.setManager(newManager);
         projectRepository.save(project);
         auditLogService.log(actor, EntityType.PROJECT, project.getId(), AuditAction.UPDATE, null, project);
@@ -144,7 +152,7 @@ public class ProjectService {
                     org.springframework.data.domain.Pageable.unpaged()).stream()
                     .anyMatch(p -> p.getId().equals(project.getId()));
             if (!isMember) {
-                throw new ForbiddenException("You are not a participant of this project");
+                throw new NotProjectParticipantException("You are not a participant of this project");
             }
         }
     }

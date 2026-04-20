@@ -129,7 +129,11 @@ export default function SprintsPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-xl font-bold text-gray-900">Sprints — {project.projectName}</h1>
-        {isManager && <Button onClick={() => setShowCreate(true)}>New sprint</Button>}
+        {isManager ? (
+          <Button onClick={() => setShowCreate(true)}>New sprint</Button>
+        ) : (
+          <span className="text-xs text-gray-400 italic">Only managers can create sprints</span>
+        )}
       </div>
 
       {error && <p className="text-sm text-red-600 mb-4">{error}</p>}

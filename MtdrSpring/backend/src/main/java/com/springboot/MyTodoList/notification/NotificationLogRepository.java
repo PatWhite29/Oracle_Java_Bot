@@ -9,5 +9,6 @@ import java.util.List;
 
 public interface NotificationLogRepository extends JpaRepository<NotificationLog, Long> {
     List<NotificationLog> findByRecipientAndDeliveryStatus(User recipient, String deliveryStatus);
+    List<NotificationLog> findByDeliveryStatus(String deliveryStatus);
     Page<NotificationLog> findByRecipient(User recipient, Pageable pageable);
 }

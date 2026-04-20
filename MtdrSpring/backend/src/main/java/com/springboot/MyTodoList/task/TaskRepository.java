@@ -38,6 +38,13 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     List<Task> findByProjectAndSprintIsNull(Project project);
 
+    @Query("""
+            SELECT t FROM Task t
+            WHERE t.assignedTo = :assignedTo
+            AND (t.sprint IS NULL OR t.sprint.status <> com.springboot.MyTodoList.common.enums.SprintStatus.CLOSED)
+            """)
+    List<Task> findActiveTasksByAssignedTo(@Param("assignedTo") User assignedTo);
+
     @Query("SELECT COUNT(t) FROM Task t WHERE t.sprint = :sprint AND t.status = :status")
     long countBySprintAndStatus(@Param("sprint") Sprint sprint, @Param("status") TaskStatus status);
 

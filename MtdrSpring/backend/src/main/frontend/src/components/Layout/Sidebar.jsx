@@ -20,7 +20,7 @@ function NavItem({ to, children }) {
 
 export default function Sidebar() {
   const { user, logout } = useAuth();
-  const { project } = useProject();
+  const { project, userRole } = useProject();
   const { projectId } = useParams();
   const navigate = useNavigate();
 
@@ -42,9 +42,16 @@ export default function Sidebar() {
         {project && projectId && (
           <>
             <div className="pt-3 pb-1 px-3">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider truncate">
-                {project.projectName}
-              </p>
+              <div className="flex items-center gap-1.5">
+                {userRole === 'MANAGER' && (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3 text-amber-500 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M2 19h20v2H2v-2zM2 6l5 7 5-7 5 7 5-7v11H2V6z"/>
+                  </svg>
+                )}
+                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider truncate">
+                  {project.projectName}
+                </p>
+              </div>
             </div>
             <NavItem to={`/projects/${projectId}/tasks`}>Tasks</NavItem>
             <NavItem to={`/projects/${projectId}/sprints`}>Sprints</NavItem>

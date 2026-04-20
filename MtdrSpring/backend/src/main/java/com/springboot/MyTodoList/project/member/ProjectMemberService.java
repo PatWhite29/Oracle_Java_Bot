@@ -35,9 +35,6 @@ public class ProjectMemberService {
         if (memberRepository.existsByProjectAndEmployee(project, newMember)) {
             throw new ConflictException("User is already a member of this project");
         }
-        if (project.getManager().getId().equals(request.getUserId())) {
-            throw new ConflictException("Manager cannot be added as a member");
-        }
 
         ProjectMember membership = ProjectMember.builder()
                 .project(project)

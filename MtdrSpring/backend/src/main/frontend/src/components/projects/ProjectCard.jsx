@@ -19,7 +19,12 @@ export default function ProjectCard({ project, currentUserId }) {
         <p className="text-xs text-gray-500 line-clamp-2">{project.description}</p>
       )}
       <div className="flex items-center justify-between text-xs text-gray-400">
-        <span className={`font-medium ${isManager ? 'text-gray-700' : 'text-gray-400'}`}>
+        <span className={`flex items-center gap-1 font-medium ${isManager ? 'text-amber-600' : 'text-gray-400'}`}>
+          {isManager && (
+            <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M2 19h20v2H2v-2zM2 6l5 7 5-7 5 7 5-7v11H2V6z"/>
+            </svg>
+          )}
           {isManager ? 'Manager' : 'Member'}
         </span>
         <span>{new Date(project.createdAt).toLocaleDateString()}</span>

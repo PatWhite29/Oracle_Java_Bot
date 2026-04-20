@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useProject } from '../context/ProjectContext';
 import { dashboardService } from '../services/dashboardService';
 import { sprintService } from '../services/sprintService';
@@ -19,7 +20,9 @@ function Section({ title, children }) {
 }
 
 export default function DashboardPage() {
-  const { project } = useProject();
+  const { project, userRole } = useProject();
+  const navigate = useNavigate();
+  const isManager = userRole === 'MANAGER';
   const [sprints, setSprints] = useState([]);
   const [selectedSprintId, setSelectedSprintId] = useState('');
   const [summary, setSummary] = useState(null);
@@ -87,6 +90,29 @@ export default function DashboardPage() {
           <Section title="Backlog">
             <BacklogSummary data={backlog} />
           </Section>
+          {isManager && (
+            <Section title="Manager actions">
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { label: 'Manage members', path: 'members' },
+                  { label: 'Manage sprints', path: 'sprints' },
+                  { label: 'View backlog', path: 'backlog' },
+                  { label: 'Manage tasks', path: 'tasks' },
+                ].map(({ label, path }) => (
+                  <button
+                    key={path}
+                    onClick={() => navigate(`/projects/${project.id}/${path}`)}
+                    className="flex items-center gap-2 px-3 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-colors text-left"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 text-amber-500 shrink-0" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M2 19h20v2H2v-2zM2 6l5 7 5-7 5 7 5-7v11H2V6z"/>
+                    </svg>
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </Section>
+          )}
         </div>
       )}
     </div>

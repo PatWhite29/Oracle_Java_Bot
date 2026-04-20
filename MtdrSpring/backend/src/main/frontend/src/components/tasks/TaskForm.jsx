@@ -19,6 +19,7 @@ export default function TaskForm({ initial = {}, sprints = [], members = [], onS
 
   const isValid =
     form.taskName.trim().length > 0 &&
+    form.priority !== '' &&
     form.storyPoints !== '' &&
     Number(form.storyPoints) >= 0;
 
@@ -35,7 +36,7 @@ export default function TaskForm({ initial = {}, sprints = [], members = [], onS
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Task name *</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1">Task name <span className="text-red-500">*</span></label>
         <input
           required
           value={form.taskName}
@@ -60,14 +61,14 @@ export default function TaskForm({ initial = {}, sprints = [], members = [], onS
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Priority</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Priority <span className="text-red-500">*</span></label>
           <select value={form.priority} onChange={set('priority')} className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300">
-            <option value="">— none —</option>
+            <option value="">— select —</option>
             {PRIORITIES.map((p) => <option key={p}>{p}</option>)}
           </select>
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Story points *</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Story points <span className="text-red-500">*</span></label>
           <input
             type="number" min={0} required
             value={form.storyPoints}

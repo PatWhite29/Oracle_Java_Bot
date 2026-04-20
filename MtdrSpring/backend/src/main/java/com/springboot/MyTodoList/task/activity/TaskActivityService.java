@@ -40,6 +40,14 @@ public class TaskActivityService {
         return activityMapper.toResponse(activity);
     }
 
+    @Transactional
+    public TaskActivityResponse addCommentById(Long userId, Long taskId, String content) {
+        Long projectId = taskService.getTaskForUser(userId, taskId).getProjectId();
+        CommentRequest req = new CommentRequest();
+        req.setContent(content);
+        return addComment(userId, projectId, taskId, req);
+    }
+
     @Transactional(readOnly = true)
     public PagedResponse<TaskActivityResponse> listActivity(Long userId, Long projectId, Long taskId, Pageable pageable) {
         Project project = projectService.findProject(projectId);

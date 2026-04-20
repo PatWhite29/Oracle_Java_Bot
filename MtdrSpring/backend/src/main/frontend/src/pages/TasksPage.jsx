@@ -114,7 +114,11 @@ export default function TasksPage() {
             onClick={() => setView('list')}
             className={`text-sm px-3 py-1.5 rounded-lg transition-colors ${view === 'list' ? 'bg-gray-900 text-white' : 'text-gray-500 hover:bg-gray-100'}`}
           >List</button>
-          {isManager && <Button onClick={() => setShowForm(true)}>New task</Button>}
+          {isManager ? (
+            <Button onClick={() => setShowForm(true)}>New task</Button>
+          ) : (
+            <span className="text-xs text-gray-400 italic">Only managers can create tasks</span>
+          )}
         </div>
       </div>
 
