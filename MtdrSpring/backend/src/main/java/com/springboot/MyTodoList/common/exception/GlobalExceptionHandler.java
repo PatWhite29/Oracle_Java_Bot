@@ -46,6 +46,13 @@ public class GlobalExceptionHandler {
                 .body(new ErrorResponse("CLOSED_SPRINT", ex.getMessage(), 403));
     }
 
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<ErrorResponse> handleValidationBusiness(ValidationException ex, HttpServletRequest req) {
+        log.warn("[400] {} {}: {}", req.getMethod(), req.getRequestURI(), ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse("VALIDATION_ERROR", ex.getMessage(), 400));
+    }
+
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity<ErrorResponse> handleConflict(ConflictException ex, HttpServletRequest req) {
         log.warn("[409] {} {}: {}", req.getMethod(), req.getRequestURI(), ex.getMessage());

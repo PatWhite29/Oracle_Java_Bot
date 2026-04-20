@@ -82,6 +82,7 @@ CREATE TABLE task (
     story_points    NUMBER          NOT NULL,
     assigned_to     NUMBER,
     created_by      NUMBER          NOT NULL,
+    actual_hours    NUMBER(10,2),
     created_at      TIMESTAMP       DEFAULT CURRENT_TIMESTAMP NOT NULL,
     CONSTRAINT pk_task PRIMARY KEY (id),
     CONSTRAINT fk_task_project FOREIGN KEY (project) REFERENCES project (id),

@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -131,6 +132,14 @@ public class TaskService {
             throw new ForbiddenException("Only the project manager or assigned user can change task status");
         }
 
+        if (request.getStatus() == TaskStatus.DONE) {
+            if (request.getActualHours() == null || request.getActualHours().compareTo(BigDecimal.ZERO) <= 0) {
+                throw new com.springboot.MyTodoList.common.exception.ValidationException(
+                        "actual_hours is required and must be greater than zero when marking a task as DONE");
+            }
+            task.setActualHours(request.getActualHours());
+        }
+
         TaskStatus oldStatus = task.getStatus();
         task.setStatus(request.getStatus());
         taskRepository.save(task);
@@ -192,11 +201,12 @@ public class TaskService {
     }
 
     @Transactional
-    public TaskResponse changeStatusById(Long userId, Long taskId, TaskStatus status) {
+    public TaskResponse changeStatusById(Long userId, Long taskId, TaskStatus status, BigDecimal actualHours) {
         Task task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found: " + taskId));
         StatusChangeRequest req = new StatusChangeRequest();
         req.setStatus(status);
+        req.setActualHours(actualHours);
         return changeStatus(userId, task.getProject().getId(), taskId, req);
     }
 

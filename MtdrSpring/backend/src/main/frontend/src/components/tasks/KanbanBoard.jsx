@@ -28,6 +28,7 @@ export default function KanbanBoard({ tasks, onTaskClick, onStatusChange }) {
     const task = tasks.find((t) => t.id === taskId);
     setDraggingTaskId(null);
     if (!task || task.status === newStatus) return;
+    suppressNextClick.current = true;
     onStatusChange(task, newStatus);
   };
 

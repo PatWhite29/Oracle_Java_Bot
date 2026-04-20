@@ -23,6 +23,8 @@ export default function TasksPage() {
   const [saving, setSaving] = useState(false);
   const [filters, setFilters] = useState({ status: '', sprint: '', priority: '' });
   const [showClosed, setShowClosed] = useState(false);
+  const [donePrompt, setDonePrompt] = useState(null);
+  const [actualHoursInput, setActualHoursInput] = useState('');
 
   const isManager = userRole === 'MANAGER';
 
@@ -70,9 +72,29 @@ export default function TasksPage() {
   };
 
   const handleStatusChange = async (task, status) => {
+    if (status === 'DONE') {
+      setDonePrompt({ task, status });
+      setActualHoursInput('');
+      return;
+    }
     try {
       const updated = await taskService.changeStatus(project.id, task.id, status);
-      setSelectedTask(updated);
+      if (selectedTask?.id === updated.id) setSelectedTask(updated);
+      load();
+    } catch (err) { alert(err.message); }
+  };
+
+  const handleDoneConfirm = async () => {
+    const hours = parseFloat(actualHoursInput);
+    if (!actualHoursInput || isNaN(hours) || hours <= 0) {
+      alert('Please enter a valid number of hours greater than 0.');
+      return;
+    }
+    const { task } = donePrompt;
+    setDonePrompt(null);
+    try {
+      const updated = await taskService.changeStatus(project.id, task.id, 'DONE', hours);
+      if (selectedTask?.id === updated.id) setSelectedTask(updated);
       load();
     } catch (err) { alert(err.message); }
   };
@@ -180,6 +202,34 @@ export default function TasksPage() {
         {editTask && (
           <TaskForm initial={editTask} sprints={visibleSprints} members={allMembers} onSubmit={handleUpdate} onCancel={() => setEditTask(null)} loading={saving} />
         )}
+      </Modal>
+
+      <Modal open={!!donePrompt} onClose={() => setDonePrompt(null)} title="Mark as DONE">
+        <div className="space-y-4">
+          <p className="text-sm text-gray-600">
+            Enter the actual hours spent on <span className="font-medium">{donePrompt?.task?.taskName}</span>.
+          </p>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Actual hours <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="number"
+              min="0.1"
+              step="0.5"
+              value={actualHoursInput}
+              onChange={(e) => setActualHoursInput(e.target.value)}
+              placeholder="e.g. 3.5"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
+              autoFocus
+              onKeyDown={(e) => { if (e.key === 'Enter') handleDoneConfirm(); }}
+            />
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button variant="secondary" onClick={() => setDonePrompt(null)}>Cancel</Button>
+            <Button onClick={handleDoneConfirm}>Confirm DONE</Button>
+          </div>
+        </div>
       </Modal>
     </div>
   );

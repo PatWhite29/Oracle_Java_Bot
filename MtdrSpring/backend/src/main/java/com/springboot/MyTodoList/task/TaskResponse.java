@@ -7,6 +7,7 @@ import com.springboot.MyTodoList.user.UserSummary;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
@@ -23,5 +24,6 @@ public class TaskResponse {
     private Integer storyPoints;
     private UserSummary assignedTo;
     private UserSummary createdBy;
+    private BigDecimal actualHours;
     private LocalDateTime createdAt;
 }

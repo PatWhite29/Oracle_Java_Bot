@@ -19,10 +19,10 @@ export const taskService = {
   delete: (projectId, taskId) =>
     apiFetch(`/projects/${projectId}/tasks/${taskId}`, { method: 'DELETE' }),
 
-  changeStatus: (projectId, taskId, status) =>
+  changeStatus: (projectId, taskId, status, actualHours) =>
     apiFetch(`/projects/${projectId}/tasks/${taskId}/status`, {
       method: 'PATCH',
-      body: JSON.stringify({ status }),
+      body: JSON.stringify({ status, ...(actualHours != null ? { actualHours } : {}) }),
     }),
 
   changeSprint: (projectId, taskId, sprintId) =>

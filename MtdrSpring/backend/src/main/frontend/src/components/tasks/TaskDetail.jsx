@@ -59,6 +59,9 @@ export default function TaskDetail({ task, onClose, onStatusChange, onEdit, onDe
         <Badge value={task.status} />
         {task.priority && <Badge value={task.priority} />}
         <span className="text-gray-500">{task.storyPoints} SP</span>
+        {task.actualHours != null && (
+          <span className="text-gray-500">{task.actualHours}h actual</span>
+        )}
         {task.assignedTo && <span className="text-gray-500">→ {task.assignedTo.fullName}</span>}
         {task.sprint && <span className="text-gray-500">{task.sprint.sprintName}</span>}
       </div>
