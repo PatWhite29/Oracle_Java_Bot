@@ -34,6 +34,7 @@ services:
       JWT_SECRET: ${JWT_SECRET:-chuvabot_local_dev_secret_key_minimo32chars!!}
       JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-86400000}
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
       # Activar para ver queries SQL en docker logs:
       # SPRING_PROFILES_ACTIVE: local
 

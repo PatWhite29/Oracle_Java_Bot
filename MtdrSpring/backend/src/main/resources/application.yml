@@ -22,6 +22,10 @@ telegram:
     token: ${TELEGRAM_BOT_TOKEN:}
     username: ${TELEGRAM_BOT_USERNAME:}
 
+anthropic:
+  api:
+    key: ${ANTHROPIC_API_KEY:}
+
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
