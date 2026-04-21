@@ -1,21 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { useProject } from '../context/ProjectContext';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import { memberService } from '../services/memberService';
 import { projectService } from '../services/projectService';
 import MemberList from '../components/members/MemberList';
 import AddMemberForm from '../components/members/AddMemberForm';
 import Modal from '../components/common/Modal';
+import ConfirmDialog from '../components/common/ConfirmDialog';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 
 export default function MembersPage() {
   const { project, userRole, setMembers: setContextMembers } = useProject();
   const { user } = useAuth();
+  const toast = useToast();
   const [members, setMembers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [adding, setAdding] = useState(false);
   const [transferTarget, setTransferTarget] = useState(null);
   const [transferring, setTransferring] = useState(false);
+  const [confirmRemove, setConfirmRemove] = useState(null);
+  const [removing, setRemoving] = useState(false);
   const [error, setError] = useState('');
 
   const isManager = userRole === 'MANAGER';
@@ -45,12 +50,18 @@ export default function MembersPage() {
     finally { setAdding(false); }
   };
 
-  const handleRemove = async (member) => {
-    if (!window.confirm(`Remove ${member.fullName} from this project?`)) return;
+  const handleRemove = (member) => {
+    setConfirmRemove(member);
+  };
+
+  const doRemove = async () => {
+    setRemoving(true);
     try {
-      await memberService.remove(project.id, member.id);
+      await memberService.remove(project.id, confirmRemove.id);
+      setConfirmRemove(null);
       load();
     } catch (err) { setError(err.message); }
+    finally { setRemoving(false); }
   };
 
   const handleTransfer = async () => {
@@ -117,6 +128,17 @@ export default function MembersPage() {
           </div>
         </div>
       </Modal>
+
+      <ConfirmDialog
+        open={!!confirmRemove}
+        onClose={() => setConfirmRemove(null)}
+        onConfirm={doRemove}
+        title="Remove member"
+        message={`Remove ${confirmRemove?.fullName} from this project?`}
+        confirmLabel="Remove"
+        variant="danger"
+        loading={removing}
+      />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useProject } from '../context/ProjectContext';
+import { useToast } from '../context/ToastContext';
 import { taskService } from '../services/taskService';
 import { sprintService } from '../services/sprintService';
 import KanbanBoard from '../components/tasks/KanbanBoard';
@@ -7,11 +8,13 @@ import TaskTable from '../components/tasks/TaskTable';
 import TaskDetail from '../components/tasks/TaskDetail';
 import TaskForm from '../components/tasks/TaskForm';
 import Modal from '../components/common/Modal';
+import ConfirmDialog from '../components/common/ConfirmDialog';
 import Button from '../components/common/Button';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 
 export default function TasksPage() {
   const { project, members, userRole } = useProject();
+  const toast = useToast();
   const [tasks, setTasks] = useState([]);
   const [sprints, setSprints] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -25,6 +28,8 @@ export default function TasksPage() {
   const [showClosed, setShowClosed] = useState(false);
   const [donePrompt, setDonePrompt] = useState(null);
   const [actualHoursInput, setActualHoursInput] = useState('');
+  const [confirmDelete, setConfirmDelete] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   const isManager = userRole === 'MANAGER';
 
@@ -56,7 +61,7 @@ export default function TasksPage() {
       await taskService.create(project.id, form);
       setShowForm(false);
       load();
-    } catch (err) { alert(err.message); }
+    } catch (err) { toast.error(err.message); }
     finally { setSaving(false); }
   };
 
@@ -67,7 +72,7 @@ export default function TasksPage() {
       setEditTask(null);
       setSelectedTask(null);
       load();
-    } catch (err) { alert(err.message); }
+    } catch (err) { toast.error(err.message); }
     finally { setSaving(false); }
   };
 
@@ -81,13 +86,13 @@ export default function TasksPage() {
       const updated = await taskService.changeStatus(project.id, task.id, status);
       if (selectedTask?.id === updated.id) setSelectedTask(updated);
       load();
-    } catch (err) { alert(err.message); }
+    } catch (err) { toast.error(err.message); }
   };
 
   const handleDoneConfirm = async () => {
     const hours = parseFloat(actualHoursInput);
     if (!actualHoursInput || isNaN(hours) || hours <= 0) {
-      alert('Please enter a valid number of hours greater than 0.');
+      toast.warning('Please enter a valid number of hours greater than 0.');
       return;
     }
     const { task } = donePrompt;
@@ -96,16 +101,25 @@ export default function TasksPage() {
       const updated = await taskService.changeStatus(project.id, task.id, 'DONE', hours);
       if (selectedTask?.id === updated.id) setSelectedTask(updated);
       load();
-    } catch (err) { alert(err.message); }
+    } catch (err) { toast.error(err.message); }
   };
 
-  const handleDelete = async (task) => {
-    if (!window.confirm(`Delete "${task.taskName}"?`)) return;
+  const handleDelete = (task) => {
+    setConfirmDelete(task);
+  };
+
+  const doDelete = async () => {
+    setDeleting(true);
     try {
-      await taskService.delete(project.id, task.id);
+      await taskService.delete(project.id, confirmDelete.id);
+      setConfirmDelete(null);
       setSelectedTask(null);
       load();
-    } catch (err) { alert(err.message); }
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setDeleting(false);
+    }
   };
 
   const allMembers = project.manager
@@ -231,6 +245,17 @@ export default function TasksPage() {
           </div>
         </div>
       </Modal>
+
+      <ConfirmDialog
+        open={!!confirmDelete}
+        onClose={() => setConfirmDelete(null)}
+        onConfirm={doDelete}
+        title="Delete task"
+        message={`"${confirmDelete?.taskName}" will be permanently deleted. This cannot be undone.`}
+        confirmLabel="Delete"
+        variant="danger"
+        loading={deleting}
+      />
     </div>
   );
 }

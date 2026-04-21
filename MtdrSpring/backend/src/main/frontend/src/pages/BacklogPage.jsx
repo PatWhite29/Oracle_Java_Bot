@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useProject } from '../context/ProjectContext';
+import { useToast } from '../context/ToastContext';
 import { taskService } from '../services/taskService';
 import { sprintService } from '../services/sprintService';
 import TaskTable from '../components/tasks/TaskTable';
@@ -9,6 +10,7 @@ import LoadingSpinner from '../components/common/LoadingSpinner';
 
 export default function BacklogPage() {
   const { project, userRole } = useProject();
+  const toast = useToast();
   const [tasks, setTasks] = useState([]);
   const [sprints, setSprints] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -41,7 +43,7 @@ export default function BacklogPage() {
       setSelectedTask(null);
       load();
     } catch (err) {
-      alert(err.message);
+      toast.error(err.message);
     } finally {
       setMoving(false);
     }

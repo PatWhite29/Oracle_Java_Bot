@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useProject } from '../context/ProjectContext';
+import { useToast } from '../context/ToastContext';
 import { sprintService } from '../services/sprintService';
 import { taskService } from '../services/taskService';
 import SprintList from '../components/sprints/SprintList';
@@ -8,12 +9,14 @@ import TaskTable from '../components/tasks/TaskTable';
 import TaskDetail from '../components/tasks/TaskDetail';
 import TaskForm from '../components/tasks/TaskForm';
 import Modal from '../components/common/Modal';
+import ConfirmDialog from '../components/common/ConfirmDialog';
 import Badge from '../components/common/Badge';
 import Button from '../components/common/Button';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 
 export default function SprintsPage() {
   const { project, members, userRole } = useProject();
+  const toast = useToast();
   const [sprints, setSprints] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -27,6 +30,10 @@ export default function SprintsPage() {
   const [selectedTask, setSelectedTask] = useState(null);
   const [editTask, setEditTask] = useState(null);
   const [taskSaving, setTaskSaving] = useState(false);
+
+  const [confirmCloseSprint, setConfirmCloseSprint] = useState(null);
+  const [confirmDeleteTask, setConfirmDeleteTask] = useState(null);
+  const [actionLoading, setActionLoading] = useState(false);
 
   const isManager = userRole === 'MANAGER';
 
@@ -63,7 +70,7 @@ export default function SprintsPage() {
       await sprintService.create(project.id, form);
       setShowCreate(false);
       load();
-    } catch (err) { alert(err.message); }
+    } catch (err) { toast.error(err.message); }
     finally { setSaving(false); }
   };
 
@@ -71,15 +78,21 @@ export default function SprintsPage() {
     try {
       await sprintService.activate(project.id, sprint.id);
       load();
-    } catch (err) { alert(err.message); }
+    } catch (err) { toast.error(err.message); }
   };
 
-  const handleClose = async (sprint) => {
-    if (!window.confirm(`Close sprint "${sprint.sprintName}"? This cannot be undone.`)) return;
+  const handleClose = (sprint) => {
+    setConfirmCloseSprint(sprint);
+  };
+
+  const doCloseSprint = async () => {
+    setActionLoading(true);
     try {
-      await sprintService.close(project.id, sprint.id);
+      await sprintService.close(project.id, confirmCloseSprint.id);
+      setConfirmCloseSprint(null);
       load();
-    } catch (err) { alert(err.message); }
+    } catch (err) { toast.error(err.message); }
+    finally { setActionLoading(false); }
   };
 
   const handleStatusChange = async (task, status) => {
@@ -87,7 +100,7 @@ export default function SprintsPage() {
       const updated = await taskService.changeStatus(project.id, task.id, status);
       setSelectedTask(updated);
       reloadSprintTasks();
-    } catch (err) { alert(err.message); }
+    } catch (err) { toast.error(err.message); }
   };
 
   const handleTaskUpdate = async (form) => {
@@ -97,17 +110,23 @@ export default function SprintsPage() {
       setEditTask(null);
       setSelectedTask(null);
       reloadSprintTasks();
-    } catch (err) { alert(err.message); }
+    } catch (err) { toast.error(err.message); }
     finally { setTaskSaving(false); }
   };
 
-  const handleDelete = async (task) => {
-    if (!window.confirm(`Delete "${task.taskName}"?`)) return;
+  const handleDelete = (task) => {
+    setConfirmDeleteTask(task);
+  };
+
+  const doDeleteTask = async () => {
+    setActionLoading(true);
     try {
-      await taskService.delete(project.id, task.id);
+      await taskService.delete(project.id, confirmDeleteTask.id);
+      setConfirmDeleteTask(null);
       setSelectedTask(null);
       reloadSprintTasks();
-    } catch (err) { alert(err.message); }
+    } catch (err) { toast.error(err.message); }
+    finally { setActionLoading(false); }
   };
 
   const allMembers = project.manager
@@ -218,6 +237,28 @@ export default function SprintsPage() {
       <Modal open={showCreate} onClose={() => setShowCreate(false)} title="New sprint">
         <SprintForm onSubmit={handleCreate} onCancel={() => setShowCreate(false)} loading={saving} />
       </Modal>
+
+      <ConfirmDialog
+        open={!!confirmCloseSprint}
+        onClose={() => setConfirmCloseSprint(null)}
+        onConfirm={doCloseSprint}
+        title="Close sprint"
+        message={`Close "${confirmCloseSprint?.sprintName}"? All tasks will be frozen and this cannot be undone.`}
+        confirmLabel="Close sprint"
+        variant="warning"
+        loading={actionLoading}
+      />
+
+      <ConfirmDialog
+        open={!!confirmDeleteTask}
+        onClose={() => setConfirmDeleteTask(null)}
+        onConfirm={doDeleteTask}
+        title="Delete task"
+        message={`"${confirmDeleteTask?.taskName}" will be permanently deleted. This cannot be undone.`}
+        confirmLabel="Delete"
+        variant="danger"
+        loading={actionLoading}
+      />
     </div>
   );
 }
