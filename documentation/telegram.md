@@ -26,8 +26,8 @@ Comparte el mismo proceso, el mismo service layer, y el mismo connection pool qu
 | Dependencias Maven (telegrambots 9.1.0) | ✅ Funcional |
 | Activación condicional (@ConditionalOnExpression) | ✅ Funcional |
 | ChuvaBot.java — long polling + TelegramClient | ✅ Funcional |
-| Enrutamiento de comandos en ChuvaBot.consume() | 🔲 TODO |
-| 8 handlers creados como stubs | 🔲 TODO (lógica de negocio) |
+| Enrutamiento de comandos en ChuvaBot.consume() | ✅ Funcional |
+| 8 handlers implementados con lógica de negocio | ✅ Funcional |
 | NotificationService — envío real de mensajes | 🔲 TODO |
 
 ---
