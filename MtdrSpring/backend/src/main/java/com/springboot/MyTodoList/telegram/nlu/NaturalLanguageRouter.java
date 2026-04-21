@@ -65,7 +65,7 @@ public class NaturalLanguageRouter {
         }
     }
 
-    private String callAnthropicApi(String userMessage) {
+    private String callAnthropicApi(String userMessage) throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("x-api-key", anthropicApiKey);
@@ -84,9 +84,20 @@ public class NaturalLanguageRouter {
         return root.path("content").get(0).path("text").asText();
     }
 
+    private String stripMarkdown(String text) {
+        String s = text.trim();
+        if (s.startsWith("```")) {
+            int firstNewline = s.indexOf('\n');
+            if (firstNewline != -1) s = s.substring(firstNewline + 1);
+            int lastFence = s.lastIndexOf("```");
+            if (lastFence != -1) s = s.substring(0, lastFence);
+        }
+        return s.trim();
+    }
+
     @SuppressWarnings("unchecked")
     private NluResult parseResponse(String json) throws Exception {
-        JsonNode node = objectMapper.readTree(json);
+        JsonNode node = objectMapper.readTree(stripMarkdown(json));
         String statusStr = node.path("status").asText("unknown").toLowerCase();
 
         NluResult result = new NluResult();
