@@ -20,12 +20,16 @@ public class NaturalLanguageRouter {
 
     private static final String ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
     private static final String ANTHROPIC_VERSION = "2023-06-01";
-    private static final String MODEL = "claude-haiku-4-5-20251001";
+    private static final String MODEL = "claude-sonnet-4-6";
 
     private static final String SYSTEM_PROMPT =
             "You are a command classifier for a task management Telegram bot." +
             "Your only job is to map the user's message to one of the available commands and extract parameters." +
             "You must ALWAYS respond with valid JSON only. No explanations, no markdown, no extra text.\n" +
+            "IMPORTANT: When extracting parameters, ignore Spanish and English articles and prepositions " +
+            "(el, la, los, las, un, una, de, a, the). " +
+            "The 'id' param must ALWAYS be a plain integer (digits only, e.g. 18). " +
+            "Never include words like 'el', 'la', 'tarea' as param values.\n" +
             "Available commands:\n" +
             "- start: greet the user or show the main menu. No params.\n" +
             "- help: show available commands. No params.\n" +

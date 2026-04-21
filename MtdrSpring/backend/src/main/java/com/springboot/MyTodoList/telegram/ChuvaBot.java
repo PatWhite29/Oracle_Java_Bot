@@ -2,10 +2,14 @@ package com.springboot.MyTodoList.telegram;
 
 import com.springboot.MyTodoList.telegram.handler.*;
 import com.springboot.MyTodoList.telegram.SyntheticUpdateFactory;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import com.springboot.MyTodoList.telegram.nlu.NluErrorMessages;
 import com.springboot.MyTodoList.telegram.nlu.NluResult;
 import com.springboot.MyTodoList.telegram.nlu.NluStatus;
 import com.springboot.MyTodoList.telegram.nlu.NaturalLanguageRouter;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -34,6 +38,7 @@ public class ChuvaBot implements SpringLongPollingBot, LongPollingSingleThreadUp
     private final TaskStatusHandler taskStatusHandler;
     private final CommentHandler commentHandler;
     private final NaturalLanguageRouter nluRouter;
+    private final ObjectMapper objectMapper;
 
     public ChuvaBot(
             @Value("${telegram.bot.token}") String botToken,
@@ -46,7 +51,8 @@ public class ChuvaBot implements SpringLongPollingBot, LongPollingSingleThreadUp
             TaskHandler taskHandler,
             TaskStatusHandler taskStatusHandler,
             CommentHandler commentHandler,
-            NaturalLanguageRouter nluRouter) {
+            NaturalLanguageRouter nluRouter,
+            ObjectMapper objectMapper) {
         this.botToken = botToken;
         this.telegramClient = telegramClient;
         this.startHandler = startHandler;
@@ -58,6 +64,7 @@ public class ChuvaBot implements SpringLongPollingBot, LongPollingSingleThreadUp
         this.taskStatusHandler = taskStatusHandler;
         this.commentHandler = commentHandler;
         this.nluRouter = nluRouter;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -105,9 +112,15 @@ public class ChuvaBot implements SpringLongPollingBot, LongPollingSingleThreadUp
         NluResult result = nluRouter.classify(text);
 
         if (result.getStatus() == NluStatus.OK) {
+            List<String> invalidParams = validateNluParams(result);
+            if (!invalidParams.isEmpty()) {
+                String message = NluErrorMessages.getErrorMessage(result.getCommand(), invalidParams);
+                TelegramHelper.send(telegramClient, chatId, message);
+                return;
+            }
             String syntheticText = buildSyntheticCommand(result);
             log.debug("NLU mapped to command '{}' for chatId {}", result.getCommand(), chatId);
-            Update syntheticUpdate = SyntheticUpdateFactory.withText(update, syntheticText);
+            Update syntheticUpdate = SyntheticUpdateFactory.withText(update, syntheticText, objectMapper);
             routeCommand("/" + result.getCommand(), syntheticUpdate);
         } else if (result.getStatus() == NluStatus.MISSING_PARAMS) {
             String message = NluErrorMessages.getErrorMessage(result.getCommand(), result.getMissing());
@@ -135,6 +148,17 @@ public class ChuvaBot implements SpringLongPollingBot, LongPollingSingleThreadUp
             }
         }
         return sb.toString();
+    }
+
+    private List<String> validateNluParams(NluResult result) {
+        List<String> invalid = new ArrayList<>();
+        Map<String, String> params = result.getParams();
+        if (params == null) return invalid;
+        if (List.of("task", "task_status", "comment").contains(result.getCommand())) {
+            String id = params.get("id");
+            if (id != null && !id.matches("\\d+")) invalid.add("id");
+        }
+        return invalid;
     }
 
     private void appendParam(StringBuilder sb, NluResult result, String key) {
