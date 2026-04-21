@@ -38,7 +38,15 @@ export default function DashboardPage() {
     sprintService.list(project.id).then((data) => {
       setSprints(data);
       const active = data.find((s) => s.status === 'ACTIVE');
-      if (active) setSelectedSprintId(active.id);
+      if (active) {
+        setSelectedSprintId(active.id);
+      } else {
+        const closed = data
+          .filter((s) => s.status === 'CLOSED')
+          .sort((a, b) => new Date(b.endDate) - new Date(a.endDate));
+        if (closed.length > 0) setSelectedSprintId(closed[0].id);
+        else if (data.length > 0) setSelectedSprintId(data[0].id);
+      }
     }).catch(() => {});
   }, [project.id]);
 

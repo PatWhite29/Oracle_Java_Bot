@@ -15,6 +15,6 @@ public interface TaskMapper {
 
     default SprintSummary toSprintSummary(Sprint sprint) {
         if (sprint == null) return null;
-        return new SprintSummary(sprint.getId(), sprint.getSprintName());
+        return new SprintSummary(sprint.getId(), sprint.getSprintName(), sprint.getStatus());
     }
 }

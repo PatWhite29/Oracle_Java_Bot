@@ -1,5 +1,6 @@
 package com.springboot.MyTodoList.telegram.handler;
 
+import com.springboot.MyTodoList.common.enums.SprintStatus;
 import com.springboot.MyTodoList.task.TaskResponse;
 import com.springboot.MyTodoList.task.TaskService;
 import com.springboot.MyTodoList.telegram.TelegramHelper;
@@ -35,16 +36,41 @@ public class MyTasksHandler {
             return;
         }
 
-        StringBuilder sb = new StringBuilder("✅ Your tasks:\n\n");
-        for (TaskResponse t : tasks) {
-            sb.append("• [").append(t.getId()).append("] ")
-              .append(t.getTaskName()).append("\n")
-              .append("  Status: ").append(t.getStatus());
-            if (t.getPriority() != null) sb.append(" · ").append(t.getPriority());
-            if (t.getSprint() != null) sb.append(" · ").append(t.getSprint().getSprintName());
-            sb.append("\n");
+        List<TaskResponse> activeTasks = tasks.stream()
+                .filter(t -> t.getSprint() != null && t.getSprint().getStatus() == SprintStatus.ACTIVE)
+                .toList();
+        List<TaskResponse> planningTasks = tasks.stream()
+                .filter(t -> t.getSprint() != null && t.getSprint().getStatus() == SprintStatus.PLANNING)
+                .toList();
+        List<TaskResponse> backlogTasks = tasks.stream()
+                .filter(t -> t.getSprint() == null)
+                .toList();
+
+        StringBuilder sb = new StringBuilder("📋 Your tasks:\n");
+
+        if (!activeTasks.isEmpty()) {
+            sb.append("\n🟢 Active sprint\n");
+            appendTasks(sb, activeTasks);
+        }
+        if (!planningTasks.isEmpty()) {
+            sb.append("\n🔵 Planning sprint\n");
+            appendTasks(sb, planningTasks);
+        }
+        if (!backlogTasks.isEmpty()) {
+            sb.append("\n📦 Backlog\n");
+            appendTasks(sb, backlogTasks);
         }
 
         TelegramHelper.send(client, chatId, sb.toString().trim());
+    }
+
+    private void appendTasks(StringBuilder sb, List<TaskResponse> tasks) {
+        for (TaskResponse t : tasks) {
+            sb.append("• [").append(t.getId()).append("] ").append(t.getTaskName()).append("\n");
+            sb.append("  ").append(t.getStatus());
+            if (t.getPriority() != null) sb.append(" · ").append(t.getPriority());
+            if (t.getStoryPoints() != null) sb.append(" · ").append(t.getStoryPoints()).append("SP");
+            sb.append("\n");
+        }
     }
 }

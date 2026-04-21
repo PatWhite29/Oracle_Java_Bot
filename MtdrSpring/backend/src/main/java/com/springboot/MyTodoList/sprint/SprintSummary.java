@@ -1,5 +1,6 @@
 package com.springboot.MyTodoList.sprint;
 
+import com.springboot.MyTodoList.common.enums.SprintStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,4 +13,5 @@ import lombok.Setter;
 public class SprintSummary {
     private Long id;
     private String sprintName;
+    private SprintStatus status;
 }

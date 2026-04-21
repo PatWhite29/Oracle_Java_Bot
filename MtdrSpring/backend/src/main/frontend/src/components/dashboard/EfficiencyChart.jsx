@@ -12,6 +12,7 @@ export default function EfficiencyChart({ sprintId }) {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    if (!sprintId) { setLoading(false); setData(null); return; }
     setLoading(true);
     dashboardService.efficiency(project.id, sprintId)
       .then(setData)
@@ -21,8 +22,9 @@ export default function EfficiencyChart({ sprintId }) {
 
   if (loading) return <Skeleton />;
   if (error) return <p className="text-xs text-red-500">{error}</p>;
-  if (!data || !data.members?.length)
-    return <p className="text-sm text-gray-400">No completed tasks in the active sprint.</p>;
+  if (!data) return <p className="text-sm text-gray-400">Select a sprint to view data.</p>;
+  if (!data.members?.length)
+    return <p className="text-sm text-gray-400">No completed tasks in this sprint.</p>;
 
   const chartData = data.members.map((m) => ({
     name: m.fullName.split(' ')[0],

@@ -40,8 +40,9 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     @Query("""
             SELECT t FROM Task t
+            LEFT JOIN t.sprint s
             WHERE t.assignedTo = :assignedTo
-            AND (t.sprint IS NULL OR t.sprint.status <> com.springboot.MyTodoList.common.enums.SprintStatus.CLOSED)
+            AND (s IS NULL OR s.status <> com.springboot.MyTodoList.common.enums.SprintStatus.CLOSED)
             """)
     List<Task> findActiveTasksByAssignedTo(@Param("assignedTo") User assignedTo);
 

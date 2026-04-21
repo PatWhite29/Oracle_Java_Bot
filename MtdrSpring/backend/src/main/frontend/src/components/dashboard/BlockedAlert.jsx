@@ -11,6 +11,7 @@ export default function BlockedAlert({ sprintId }) {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    if (!sprintId) { setLoading(false); setTasks([]); return; }
     setLoading(true);
     dashboardService.blockedTasks(project.id, sprintId)
       .then(setTasks)

@@ -14,6 +14,7 @@ export default function WorkloadTable({ sprintId }) {
   const [mode, setMode] = useState('tasks');
 
   useEffect(() => {
+    if (!sprintId) { setLoading(false); setData([]); return; }
     setLoading(true);
     dashboardService.workload(project.id, sprintId)
       .then(setData)
@@ -23,7 +24,7 @@ export default function WorkloadTable({ sprintId }) {
 
   if (loading) return <Skeleton />;
   if (error) return <p className="text-xs text-red-500">{error}</p>;
-  if (!data.length) return <p className="text-sm text-gray-400">No members found.</p>;
+  if (!data.length) return <p className="text-sm text-gray-400">Select a sprint to view data.</p>;
 
   const getValue = (member, status) =>
     mode === 'tasks'
