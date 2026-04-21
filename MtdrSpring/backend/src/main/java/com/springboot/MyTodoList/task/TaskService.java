@@ -116,6 +116,7 @@ public class TaskService {
         projectService.requireManager(userId, project);
         Task task = findTask(taskId, project);
         auditLogService.log(actor, EntityType.TASK, task.getId(), AuditAction.DELETE, task, null);
+        activityRepository.deleteByTask(task);
         taskRepository.delete(task);
     }
 
