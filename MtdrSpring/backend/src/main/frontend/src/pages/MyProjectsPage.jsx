@@ -19,6 +19,8 @@ export default function MyProjectsPage() {
   const [saving, setSaving] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const [editTarget, setEditTarget] = useState(null);
+  const [editSaving, setEditSaving] = useState(false);
 
   const load = () => {
     setLoading(true);
@@ -40,6 +42,21 @@ export default function MyProjectsPage() {
       toast.error(err.message);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleEditProject = async (form) => {
+    if (!editTarget) return;
+    setEditSaving(true);
+    try {
+      const updated = await projectService.update(editTarget.id, form);
+      setProjects((prev) => prev.map((p) => (p.id === editTarget.id ? updated : p)));
+      setEditTarget(null);
+      toast.success('Proyecto actualizado');
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setEditSaving(false);
     }
   };
 
@@ -76,6 +93,7 @@ export default function MyProjectsPage() {
             key={p.id}
             project={p}
             currentUserId={user?.id}
+            onEdit={setEditTarget}
             onDelete={setDeleteTarget}
           />
         ))}
@@ -83,6 +101,15 @@ export default function MyProjectsPage() {
 
       <Modal open={showCreate} onClose={() => setShowCreate(false)} title="New project">
         <ProjectForm onSubmit={handleCreate} onCancel={() => setShowCreate(false)} loading={saving} />
+      </Modal>
+
+      <Modal open={!!editTarget} onClose={() => setEditTarget(null)} title="Editar proyecto">
+        <ProjectForm
+          initial={editTarget || {}}
+          onSubmit={handleEditProject}
+          onCancel={() => setEditTarget(null)}
+          loading={editSaving}
+        />
       </Modal>
 
       <ConfirmDialog

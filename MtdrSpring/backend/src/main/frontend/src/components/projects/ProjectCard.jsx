@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Badge from '../common/Badge';
 
-export default function ProjectCard({ project, currentUserId, onDelete }) {
+export default function ProjectCard({ project, currentUserId, onDelete, onEdit }) {
   const navigate = useNavigate();
   const isManager = project.manager?.id === currentUserId;
 
@@ -15,6 +15,17 @@ export default function ProjectCard({ project, currentUserId, onDelete }) {
         <h3 className="font-semibold text-gray-900 text-sm">{project.projectName}</h3>
         <div className="flex items-center gap-2">
           <Badge value={project.status} />
+          {isManager && onEdit && (
+            <button
+              onClick={(e) => { e.stopPropagation(); onEdit(project); }}
+              className="text-gray-300 hover:text-blue-500 transition-colors"
+              title="Editar proyecto"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 000-1.41l-2.34-2.34a1 1 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+              </svg>
+            </button>
+          )}
           {isManager && onDelete && (
             <button
               onClick={(e) => { e.stopPropagation(); onDelete(project); }}
