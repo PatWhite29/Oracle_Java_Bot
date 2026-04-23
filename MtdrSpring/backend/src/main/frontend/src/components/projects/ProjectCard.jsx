@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Badge from '../common/Badge';
 
-export default function ProjectCard({ project, currentUserId }) {
+export default function ProjectCard({ project, currentUserId, onDelete }) {
   const navigate = useNavigate();
   const isManager = project.manager?.id === currentUserId;
 
@@ -13,7 +13,20 @@ export default function ProjectCard({ project, currentUserId }) {
     >
       <div className="flex items-start justify-between gap-2">
         <h3 className="font-semibold text-gray-900 text-sm">{project.projectName}</h3>
-        <Badge value={project.status} />
+        <div className="flex items-center gap-2">
+          <Badge value={project.status} />
+          {isManager && onDelete && (
+            <button
+              onClick={(e) => { e.stopPropagation(); onDelete(project); }}
+              className="text-gray-300 hover:text-red-500 transition-colors"
+              title="Eliminar proyecto"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M9 3h6l1 1h4v2H4V4h4L9 3zm-4 5h14l-1 13H6L5 8zm5 2v9h1v-9h-1zm4 0v9h1v-9h-1z"/>
+              </svg>
+            </button>
+          )}
+        </div>
       </div>
       {project.description && (
         <p className="text-xs text-gray-500 line-clamp-2">{project.description}</p>
@@ -22,7 +35,7 @@ export default function ProjectCard({ project, currentUserId }) {
         <span className={`flex items-center gap-1 font-medium ${isManager ? 'text-amber-600' : 'text-gray-400'}`}>
           {isManager && (
             <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M2 19h20v2H2v-2zM2 6l5 7 5-7 5 7 5-7v11H2V6z"/>
+              <path d="M2 19h20v2H2v-2zM2 6l5 7 5-7 5-7 5 7v11H2V6z"/>
             </svg>
           )}
           {isManager ? 'Manager' : 'Member'}

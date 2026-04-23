@@ -7,6 +7,7 @@ import ProjectForm from '../components/projects/ProjectForm';
 import Modal from '../components/common/Modal';
 import Button from '../components/common/Button';
 import LoadingSpinner from '../components/common/LoadingSpinner';
+import ConfirmDialog from '../components/common/ConfirmDialog';
 
 export default function MyProjectsPage() {
   const { user } = useAuth();
@@ -16,6 +17,8 @@ export default function MyProjectsPage() {
   const [error, setError] = useState('');
   const [showCreate, setShowCreate] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   const load = () => {
     setLoading(true);
@@ -40,6 +43,21 @@ export default function MyProjectsPage() {
     }
   };
 
+  const handleDeleteProject = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    try {
+      await projectService.delete(deleteTarget.id);
+      setProjects((prev) => prev.filter((p) => p.id !== deleteTarget.id));
+      setDeleteTarget(null);
+      toast.success('Proyecto eliminado');
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   return (
     <div className="max-w-4xl">
       <div className="flex items-center justify-between mb-6">
@@ -54,13 +72,27 @@ export default function MyProjectsPage() {
       )}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {projects.map((p) => (
-          <ProjectCard key={p.id} project={p} currentUserId={user?.id} />
+          <ProjectCard
+            key={p.id}
+            project={p}
+            currentUserId={user?.id}
+            onDelete={setDeleteTarget}
+          />
         ))}
       </div>
 
       <Modal open={showCreate} onClose={() => setShowCreate(false)} title="New project">
         <ProjectForm onSubmit={handleCreate} onCancel={() => setShowCreate(false)} loading={saving} />
       </Modal>
+
+      <ConfirmDialog
+        open={!!deleteTarget}
+        title="Eliminar proyecto"
+        message={`¿Eliminar "${deleteTarget?.projectName}" y todo su contenido? Esta acción no se puede deshacer.`}
+        onConfirm={handleDeleteProject}
+        onClose={() => setDeleteTarget(null)}
+        loading={deleting}
+      />
     </div>
   );
 }
