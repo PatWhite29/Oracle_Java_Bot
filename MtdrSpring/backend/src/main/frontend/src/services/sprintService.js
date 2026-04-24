@@ -19,4 +19,7 @@ export const sprintService = {
 
   close: (projectId, sprintId) =>
     apiFetch(`/projects/${projectId}/sprints/${sprintId}/close`, { method: 'POST' }),
+
+  reopen: (projectId, sprintId) =>
+    apiFetch(`/projects/${projectId}/sprints/${sprintId}/reopen`, { method: 'POST' }),
 };

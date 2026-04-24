@@ -32,6 +32,7 @@ export default function SprintsPage() {
   const [taskSaving, setTaskSaving] = useState(false);
 
   const [confirmCloseSprint, setConfirmCloseSprint] = useState(null);
+  const [confirmReopenSprint, setConfirmReopenSprint] = useState(null);
   const [confirmDeleteTask, setConfirmDeleteTask] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
 
@@ -95,6 +96,20 @@ export default function SprintsPage() {
     finally { setActionLoading(false); }
   };
 
+  const handleReopen = (sprint) => {
+    setConfirmReopenSprint(sprint);
+  };
+
+  const doReopenSprint = async () => {
+    setActionLoading(true);
+    try {
+      await sprintService.reopen(project.id, confirmReopenSprint.id);
+      setConfirmReopenSprint(null);
+      load();
+    } catch (err) { toast.error(err.message); }
+    finally { setActionLoading(false); }
+  };
+
   const handleStatusChange = async (task, status) => {
     try {
       const updated = await taskService.changeStatus(project.id, task.id, status);
@@ -142,7 +157,7 @@ export default function SprintsPage() {
 
   const closedSprints = sprints.filter((s) => s.status === 'CLOSED').sort(byDate);
 
-  const listProps = { isManager, onActivate: handleActivate, onClose: handleClose, onSelect: loadSprintTasks };
+  const listProps = { isManager, onActivate: handleActivate, onClose: handleClose, onReopen: handleReopen, onSelect: loadSprintTasks };
 
   return (
     <div>
@@ -243,8 +258,19 @@ export default function SprintsPage() {
         onClose={() => setConfirmCloseSprint(null)}
         onConfirm={doCloseSprint}
         title="Close sprint"
-        message={`Close "${confirmCloseSprint?.sprintName}"? All tasks will be frozen and this cannot be undone.`}
+        message={`Close "${confirmCloseSprint?.sprintName}"? All tasks will be frozen. You can reopen it later if needed.`}
         confirmLabel="Close sprint"
+        variant="warning"
+        loading={actionLoading}
+      />
+
+      <ConfirmDialog
+        open={!!confirmReopenSprint}
+        onClose={() => setConfirmReopenSprint(null)}
+        onConfirm={doReopenSprint}
+        title="Reopen sprint"
+        message={`"${confirmReopenSprint?.sprintName}" will return to PLANNING. Its tasks will become editable again.`}
+        confirmLabel="Reopen"
         variant="warning"
         loading={actionLoading}
       />

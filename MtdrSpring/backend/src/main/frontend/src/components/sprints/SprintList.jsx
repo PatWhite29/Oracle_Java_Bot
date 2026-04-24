@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import SprintCard from './SprintCard';
 
-export default function SprintList({ sprints, isManager, onActivate, onClose, onSelect }) {
+export default function SprintList({ sprints, isManager, onActivate, onClose, onReopen, onSelect }) {
   const ref = useRef(null);
   const [dragging, setDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -43,7 +43,7 @@ export default function SprintList({ sprints, isManager, onActivate, onClose, on
       >
         {sprints.map((s) => (
           <div key={s.id} className="w-72 shrink-0">
-            <SprintCard sprint={s} isManager={isManager} onActivate={onActivate} onClose={onClose} onSelect={onSelect} />
+            <SprintCard sprint={s} isManager={isManager} onActivate={onActivate} onClose={onClose} onReopen={onReopen} onSelect={onSelect} />
           </div>
         ))}
       </div>
