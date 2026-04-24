@@ -109,9 +109,26 @@ public class SprintService {
         if (sprint.getStatus() == SprintStatus.CLOSED) {
             throw new ConflictException("Sprint is already closed");
         }
+        Sprint old = cloneForAudit(sprint);
         sprint.setStatus(SprintStatus.CLOSED);
         sprintRepository.save(sprint);
-        auditLogService.log(actor, EntityType.SPRINT, sprint.getId(), AuditAction.UPDATE, null, sprint);
+        auditLogService.log(actor, EntityType.SPRINT, sprint.getId(), AuditAction.UPDATE, old, sprint);
+        return sprintMapper.toResponse(sprint);
+    }
+
+    @Transactional
+    public SprintResponse reopenSprint(Long userId, Long projectId, Long sprintId) {
+        User actor = userService.findActiveUserById(userId);
+        Project project = projectService.findProject(projectId);
+        projectService.requireManager(userId, project);
+        Sprint sprint = findSprint(sprintId, project);
+        if (sprint.getStatus() != SprintStatus.CLOSED) {
+            throw new ConflictException("Only a CLOSED sprint can be reopened");
+        }
+        Sprint old = cloneForAudit(sprint);
+        sprint.setStatus(SprintStatus.PLANNING);
+        sprintRepository.save(sprint);
+        auditLogService.log(actor, EntityType.SPRINT, sprint.getId(), AuditAction.UPDATE, old, sprint);
         return sprintMapper.toResponse(sprint);
     }
 

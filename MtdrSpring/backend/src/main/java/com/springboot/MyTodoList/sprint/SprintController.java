@@ -71,6 +71,14 @@ public class SprintController {
         return ResponseEntity.ok(sprintService.closeSprint(uid(auth), projectId, sprintId));
     }
 
+    @PostMapping("/{sprintId}/reopen")
+    @Operation(summary = "Reopen a closed sprint (back to PLANNING)")
+    public ResponseEntity<SprintResponse> reopen(@PathVariable Long projectId,
+                                                  @PathVariable Long sprintId,
+                                                  Authentication auth) {
+        return ResponseEntity.ok(sprintService.reopenSprint(uid(auth), projectId, sprintId));
+    }
+
     private Long uid(Authentication auth) {
         return Long.parseLong(auth.getName());
     }
