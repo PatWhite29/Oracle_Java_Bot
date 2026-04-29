@@ -25,6 +25,7 @@ import org.mockito.quality.Strictness;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -105,9 +106,9 @@ class ProjectServiceTest {
         Sprint planning = TestFixtures.sprint(1L, project, SprintStatus.PLANNING);
         Sprint active = TestFixtures.sprint(2L, project, SprintStatus.ACTIVE);
 
-        given(sprintRepository.findByProjectAndStatus(project, SprintStatus.PLANNING)).willReturn(List.of(planning));
-        given(sprintRepository.findByProjectAndStatus(project, SprintStatus.ACTIVE)).willReturn(List.of(active));
-        given(taskRepository.findByProject(project)).willReturn(List.of());
+        given(sprintRepository.findByProjectAndStatus(project, SprintStatus.PLANNING)).willReturn(new ArrayList<>(List.of(planning)));
+        given(sprintRepository.findByProjectAndStatus(project, SprintStatus.ACTIVE)).willReturn(new ArrayList<>(List.of(active)));
+        given(taskRepository.findByProject(project)).willReturn(new ArrayList<>());
 
         projectService.closeProject(1L, 10L);
 
@@ -119,14 +120,14 @@ class ProjectServiceTest {
     @Test
     void closeProject_returnsCorrectPendingTaskCount() {
         given(userService.findActiveUserById(1L)).willReturn(manager);
-        given(sprintRepository.findByProjectAndStatus(any(), any())).willReturn(List.of());
+        given(sprintRepository.findByProjectAndStatus(any(), any())).willReturn(new ArrayList<>());
 
         Task doneTask = TestFixtures.task(1L, project, null);
         doneTask.setStatus(TaskStatus.DONE);
         Task pendingTask = TestFixtures.task(2L, project, null);
         pendingTask.setStatus(TaskStatus.IN_PROGRESS);
 
-        given(taskRepository.findByProject(project)).willReturn(List.of(doneTask, pendingTask));
+        given(taskRepository.findByProject(project)).willReturn(new ArrayList<>(List.of(doneTask, pendingTask)));
 
         CloseProjectResponse response = projectService.closeProject(1L, 10L);
 
