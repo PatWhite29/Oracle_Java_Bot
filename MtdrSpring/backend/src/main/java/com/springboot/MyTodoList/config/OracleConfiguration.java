@@ -27,24 +27,55 @@ public class OracleConfiguration {
     private DbSettings dbSettings;
     @Autowired
     private Environment env;
+
     @Bean
     public DataSource dataSource() throws SQLException{
         OracleDataSource ds = new OracleDataSource();
-        ds.setDriverType(env.getProperty("driver_class_name"));
-        logger.info("Using Driver " + env.getProperty("driver_class_name"));
-        ds.setURL(env.getProperty("db_url"));
-        logger.info("Using URL: " + env.getProperty("db_url"));
-        ds.setUser(env.getProperty("db_user"));
-        logger.info("Using Username " + env.getProperty("db_user"));
-        ds.setPassword(env.getProperty("dbpassword"));
-//        For local testing
-//        ds.setDriverType(dbSettings.getDriver_class_name());
-//        logger.info("Using Driver " + dbSettings.getDriver_class_name());
-//        ds.setURL(dbSettings.getUrl());
-//        logger.info("Using URL: " + dbSettings.getUrl());
-//        ds.setUser(dbSettings.getUsername());
-//        logger.info("Using Username: " + dbSettings.getUsername());
-//        ds.setPassword(dbSettings.getPassword());
+        String driverType = firstNonBlank(
+                env.getProperty("oracle.jdbc.driver-type"),
+                env.getProperty("ORACLE_JDBC_DRIVER_TYPE"),
+                "thin");
+        String url = firstNonBlank(
+                env.getProperty("db_url"),
+                env.getProperty("DB_URL"),
+                env.getProperty("spring.datasource.url"),
+                dbSettings.getUrl());
+        String user = firstNonBlank(
+                env.getProperty("db_user"),
+                env.getProperty("DB_USER"),
+                env.getProperty("spring.datasource.username"),
+                dbSettings.getUsername());
+        String password = firstNonBlank(
+                env.getProperty("dbpassword"),
+                env.getProperty("DB_PASSWORD"),
+                env.getProperty("spring.datasource.password"),
+                dbSettings.getPassword());
+
+        if (isBlank(url) || isBlank(user) || isBlank(password)) {
+            throw new IllegalStateException("Oracle DB configuration is incomplete. Set DB_URL, DB_USER and DB_PASSWORD.");
+        }
+
+        ds.setDriverType(driverType);
+        ds.setURL(url);
+        ds.setUser(user);
+        ds.setPassword(password);
+
+        logger.info("Using Oracle JDBC driver type {}", driverType);
+        logger.info("Using Oracle JDBC URL {}", url);
+        logger.info("Using Oracle DB user {}", user);
         return ds;
+    }
+
+    private String firstNonBlank(String... values) {
+        for (String value : values) {
+            if (!isBlank(value)) {
+                return value;
+            }
+        }
+        return null;
+    }
+
+    private boolean isBlank(String value) {
+        return value == null || value.trim().isEmpty();
     }
 }

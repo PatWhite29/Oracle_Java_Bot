@@ -27,7 +27,7 @@ public class ToDoItemBotController  implements SpringLongPollingBot, LongPolling
 	
 	private final BotProps botProps;
 
-	@Value("${telegram.bot.token}")
+	@Value("${telegram.bot.token:}")
 	private String telegramBotToken;
 
 
@@ -35,9 +35,10 @@ public class ToDoItemBotController  implements SpringLongPollingBot, LongPolling
     public String getBotToken() {
 		if(telegramBotToken != null && !telegramBotToken.trim().isEmpty()){
         	return telegramBotToken;
-		}else{
+		}else if (botProps.getToken() != null && !botProps.getToken().trim().isEmpty()) {
 			return botProps.getToken();
 		}
+		throw new IllegalStateException("Telegram bot token is missing. Set TELEGRAM_BOT_TOKEN or telegram.bot.token.");
     }
 
 
@@ -91,5 +92,4 @@ public class ToDoItemBotController  implements SpringLongPollingBot, LongPolling
     }
 
 }
-
 
