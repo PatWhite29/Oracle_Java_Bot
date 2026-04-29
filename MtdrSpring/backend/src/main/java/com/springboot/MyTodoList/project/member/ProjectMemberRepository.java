@@ -15,4 +15,5 @@ public interface ProjectMemberRepository extends JpaRepository<ProjectMember, Lo
     Page<ProjectMember> findAllByProject(Project project, Pageable pageable);
     List<ProjectMember> findAllByProject(Project project);
     void deleteByProjectAndEmployee(Project project, User employee);
+    void deleteByProject(Project project);
 }

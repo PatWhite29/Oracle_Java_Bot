@@ -76,6 +76,8 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
             """)
     List<Object[]> findEfficiencyBySprint(@Param("sprint") Sprint sprint, @Param("status") TaskStatus status);
 
+    void deleteByProject(Project project);
+
     @Query("SELECT COUNT(t) FROM Task t WHERE t.project = :project AND t.sprint IS NULL")
     long countBacklogByProject(@Param("project") Project project);
 

@@ -19,6 +19,7 @@ public class HelpHandler {
             "  /task {id} — View task details\n" +
             "  /task_status {id} {status} — Change task status\n" +
             "    Statuses: TODO · IN_PROGRESS · BLOCKED · DONE\n" +
+            "    When marking DONE: /task_status {id} DONE {hours}\n" +
             "  /comment {id} {text} — Add a comment to a task";
 
     public void handle(Update update, TelegramClient client) {

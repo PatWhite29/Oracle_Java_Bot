@@ -12,4 +12,5 @@ public interface SprintRepository extends JpaRepository<Sprint, Long> {
     Page<Sprint> findByProject(Project project, Pageable pageable);
     List<Sprint> findByProjectAndStatus(Project project, SprintStatus status);
     boolean existsByProjectAndStatus(Project project, SprintStatus status);
+    void deleteByProject(Project project);
 }

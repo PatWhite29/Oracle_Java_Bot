@@ -1,6 +1,15 @@
 package com.springboot.MyTodoList.telegram;
 
 import com.springboot.MyTodoList.telegram.handler.*;
+import com.springboot.MyTodoList.telegram.SyntheticUpdateFactory;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import com.springboot.MyTodoList.telegram.nlu.NluErrorMessages;
+import com.springboot.MyTodoList.telegram.nlu.NluResult;
+import com.springboot.MyTodoList.telegram.nlu.NluStatus;
+import com.springboot.MyTodoList.telegram.nlu.NaturalLanguageRouter;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -28,6 +37,8 @@ public class ChuvaBot implements SpringLongPollingBot, LongPollingSingleThreadUp
     private final TaskHandler taskHandler;
     private final TaskStatusHandler taskStatusHandler;
     private final CommentHandler commentHandler;
+    private final NaturalLanguageRouter nluRouter;
+    private final ObjectMapper objectMapper;
 
     public ChuvaBot(
             @Value("${telegram.bot.token}") String botToken,
@@ -39,7 +50,9 @@ public class ChuvaBot implements SpringLongPollingBot, LongPollingSingleThreadUp
             MyTasksHandler myTasksHandler,
             TaskHandler taskHandler,
             TaskStatusHandler taskStatusHandler,
-            CommentHandler commentHandler) {
+            CommentHandler commentHandler,
+            NaturalLanguageRouter nluRouter,
+            ObjectMapper objectMapper) {
         this.botToken = botToken;
         this.telegramClient = telegramClient;
         this.startHandler = startHandler;
@@ -50,6 +63,8 @@ public class ChuvaBot implements SpringLongPollingBot, LongPollingSingleThreadUp
         this.taskHandler = taskHandler;
         this.taskStatusHandler = taskStatusHandler;
         this.commentHandler = commentHandler;
+        this.nluRouter = nluRouter;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -67,10 +82,19 @@ public class ChuvaBot implements SpringLongPollingBot, LongPollingSingleThreadUp
         if (!update.hasMessage() || !update.getMessage().hasText()) return;
 
         String text = update.getMessage().getText().trim();
-        String command = text.split("\\s+")[0].toLowerCase();
+        Long chatId = update.getMessage().getChatId();
 
-        log.debug("Received command '{}' from chatId {}", command, update.getMessage().getChatId());
+        if (text.startsWith("/")) {
+            String command = text.split("\\s+")[0].toLowerCase();
+            log.debug("Received command '{}' from chatId {}", command, chatId);
+            routeCommand(command, update);
+        } else {
+            log.debug("Received NL message from chatId {}, classifying...", chatId);
+            handleNaturalLanguage(text, update, chatId);
+        }
+    }
 
+    private void routeCommand(String command, Update update) {
         switch (command) {
             case "/start"       -> startHandler.handle(update, telegramClient);
             case "/login"       -> loginHandler.handle(update, telegramClient);
@@ -82,6 +106,64 @@ public class ChuvaBot implements SpringLongPollingBot, LongPollingSingleThreadUp
             case "/comment"     -> commentHandler.handle(update, telegramClient);
             default             -> sendUnknownCommand(update.getMessage().getChatId());
         }
+    }
+
+    private void handleNaturalLanguage(String text, Update update, Long chatId) {
+        NluResult result = nluRouter.classify(text);
+
+        if (result.getStatus() == NluStatus.OK) {
+            List<String> invalidParams = validateNluParams(result);
+            if (!invalidParams.isEmpty()) {
+                String message = NluErrorMessages.getErrorMessage(result.getCommand(), invalidParams);
+                TelegramHelper.send(telegramClient, chatId, message);
+                return;
+            }
+            String syntheticText = buildSyntheticCommand(result);
+            log.debug("NLU mapped to command '{}' for chatId {}", result.getCommand(), chatId);
+            Update syntheticUpdate = SyntheticUpdateFactory.withText(update, syntheticText, objectMapper);
+            routeCommand("/" + result.getCommand(), syntheticUpdate);
+        } else if (result.getStatus() == NluStatus.MISSING_PARAMS) {
+            String message = NluErrorMessages.getErrorMessage(result.getCommand(), result.getMissing());
+            TelegramHelper.send(telegramClient, chatId, message);
+        } else {
+            TelegramHelper.send(telegramClient, chatId,
+                    "No entendí tu mensaje. Escribe /help para ver los comandos disponibles.");
+        }
+    }
+
+    private String buildSyntheticCommand(NluResult result) {
+        StringBuilder sb = new StringBuilder("/").append(result.getCommand());
+        if (result.getParams() != null) {
+            switch (result.getCommand()) {
+                case "task"        -> appendParam(sb, result, "id");
+                case "task_status" -> {
+                    appendParam(sb, result, "id");
+                    appendParam(sb, result, "status");
+                    appendParam(sb, result, "hours");
+                }
+                case "comment"     -> {
+                    appendParam(sb, result, "id");
+                    appendParam(sb, result, "text");
+                }
+            }
+        }
+        return sb.toString();
+    }
+
+    private List<String> validateNluParams(NluResult result) {
+        List<String> invalid = new ArrayList<>();
+        Map<String, String> params = result.getParams();
+        if (params == null) return invalid;
+        if (List.of("task", "task_status", "comment").contains(result.getCommand())) {
+            String id = params.get("id");
+            if (id != null && !id.matches("\\d+")) invalid.add("id");
+        }
+        return invalid;
+    }
+
+    private void appendParam(StringBuilder sb, NluResult result, String key) {
+        String val = result.getParams().get(key);
+        if (val != null && !val.isBlank()) sb.append(" ").append(val);
     }
 
     private void sendUnknownCommand(Long chatId) {

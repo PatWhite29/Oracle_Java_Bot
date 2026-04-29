@@ -8,4 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface TaskActivityRepository extends JpaRepository<TaskActivity, Long> {
     Page<TaskActivity> findByTaskOrderByCreatedAtDesc(Task task, Pageable pageable);
     void deleteByTask(Task task);
+    void deleteByTask_Project(com.springboot.MyTodoList.project.Project project);
 }

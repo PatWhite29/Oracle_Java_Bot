@@ -8,7 +8,7 @@ const fmt = (iso) => {
   return `${d}-${m}-${y}`;
 };
 
-export default function SprintCard({ sprint, isManager, onActivate, onClose, onSelect }) {
+export default function SprintCard({ sprint, isManager, onActivate, onClose, onReopen, onSelect }) {
   return (
     <div
       onClick={() => onSelect(sprint)}
@@ -27,11 +27,19 @@ export default function SprintCard({ sprint, isManager, onActivate, onClose, onS
       {isManager && sprint.status !== 'CLOSED' && (
         <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
           {sprint.status === 'PLANNING' && (
-            <Button variant="secondary" onClick={() => onActivate(sprint)}>Activate</Button>
+            <>
+              <Button variant="secondary" onClick={() => onActivate(sprint)}>Activate</Button>
+              <Button variant="danger" onClick={() => onClose(sprint)}>Close</Button>
+            </>
           )}
           {sprint.status === 'ACTIVE' && (
             <Button variant="danger" onClick={() => onClose(sprint)}>Close sprint</Button>
           )}
+        </div>
+      )}
+      {isManager && sprint.status === 'CLOSED' && (
+        <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
+          <Button variant="secondary" onClick={() => onReopen(sprint)}>Reopen</Button>
         </div>
       )}
     </div>

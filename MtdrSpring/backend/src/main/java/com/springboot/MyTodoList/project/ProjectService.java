@@ -15,6 +15,7 @@ import com.springboot.MyTodoList.sprint.Sprint;
 import com.springboot.MyTodoList.sprint.SprintRepository;
 import com.springboot.MyTodoList.task.Task;
 import com.springboot.MyTodoList.task.TaskRepository;
+import com.springboot.MyTodoList.task.activity.TaskActivityRepository;
 import com.springboot.MyTodoList.user.User;
 import com.springboot.MyTodoList.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -32,6 +33,7 @@ public class ProjectService {
     private final ProjectMemberRepository memberRepository;
     private final SprintRepository sprintRepository;
     private final TaskRepository taskRepository;
+    private final TaskActivityRepository activityRepository;
     private final UserService userService;
     private final AuditLogService auditLogService;
     private final ProjectMapper projectMapper;
@@ -85,6 +87,10 @@ public class ProjectService {
         Project project = findProject(projectId);
         requireManager(userId, project);
         auditLogService.log(actor, EntityType.PROJECT, project.getId(), AuditAction.DELETE, project, null);
+        activityRepository.deleteByTask_Project(project);
+        taskRepository.deleteByProject(project);
+        sprintRepository.deleteByProject(project);
+        memberRepository.deleteByProject(project);
         projectRepository.delete(project);
     }
 
