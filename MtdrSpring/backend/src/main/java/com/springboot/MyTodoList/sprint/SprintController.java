@@ -79,6 +79,15 @@ public class SprintController {
         return ResponseEntity.ok(sprintService.reopenSprint(uid(auth), projectId, sprintId));
     }
 
+    @DeleteMapping("/{sprintId}")
+    @Operation(summary = "Delete a sprint — moves its tasks to backlog; ACTIVE sprints cannot be deleted")
+    public ResponseEntity<Void> delete(@PathVariable Long projectId,
+                                        @PathVariable Long sprintId,
+                                        Authentication auth) {
+        sprintService.deleteSprint(uid(auth), projectId, sprintId);
+        return ResponseEntity.noContent().build();
+    }
+
     private Long uid(Authentication auth) {
         return Long.parseLong(auth.getName());
     }

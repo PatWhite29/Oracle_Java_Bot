@@ -10,6 +10,7 @@ import com.springboot.MyTodoList.common.exception.ForbiddenException;
 import com.springboot.MyTodoList.common.exception.ResourceNotFoundException;
 import com.springboot.MyTodoList.project.Project;
 import com.springboot.MyTodoList.project.ProjectService;
+import com.springboot.MyTodoList.task.TaskRepository;
 import com.springboot.MyTodoList.user.User;
 import com.springboot.MyTodoList.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class SprintService {
 
     private final SprintRepository sprintRepository;
+    private final TaskRepository taskRepository;
     private final ProjectService projectService;
     private final UserService userService;
     private final AuditLogService auditLogService;
@@ -130,6 +132,20 @@ public class SprintService {
         sprintRepository.save(sprint);
         auditLogService.log(actor, EntityType.SPRINT, sprint.getId(), AuditAction.UPDATE, old, sprint);
         return sprintMapper.toResponse(sprint);
+    }
+
+    @Transactional
+    public void deleteSprint(Long userId, Long projectId, Long sprintId) {
+        User actor = userService.findActiveUserById(userId);
+        Project project = projectService.findProject(projectId);
+        projectService.requireManager(userId, project);
+        Sprint sprint = findSprint(sprintId, project);
+        if (sprint.getStatus() == SprintStatus.ACTIVE) {
+            throw new ForbiddenException("Cannot delete an active sprint");
+        }
+        taskRepository.detachTasksFromSprint(sprint);
+        auditLogService.log(actor, EntityType.SPRINT, sprint.getId(), AuditAction.DELETE, sprint, null);
+        sprintRepository.delete(sprint);
     }
 
     public Sprint findSprint(Long sprintId, Project project) {
