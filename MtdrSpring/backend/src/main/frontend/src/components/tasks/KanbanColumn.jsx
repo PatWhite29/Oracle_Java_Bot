@@ -15,7 +15,7 @@ const HOVER_BG = {
   DONE: 'bg-green-50',
 };
 
-export default function KanbanColumn({ status, tasks, onTaskClick, onDragStart, onDragEnd, onDrop, draggingTaskId }) {
+export default function KanbanColumn({ status, tasks, onTaskClick, onDragStart, onDragEnd, onDrop, draggingTaskId, mobileMode = false }) {
   const [isOver, setIsOver] = useState(false);
 
   const handleDragOver = (e) => {
@@ -36,10 +36,10 @@ export default function KanbanColumn({ status, tasks, onTaskClick, onDragStart, 
 
   return (
     <div
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
-      className={`flex flex-col min-w-[220px] w-full rounded-xl border-t-4 ${COLORS[status]} p-3 gap-2 transition-colors ${isOver ? HOVER_BG[status] : 'bg-gray-50'}`}
+      onDragOver={!mobileMode ? handleDragOver : undefined}
+      onDragLeave={!mobileMode ? handleDragLeave : undefined}
+      onDrop={!mobileMode ? handleDrop : undefined}
+      className={`flex flex-col ${mobileMode ? 'w-full' : 'min-w-[220px] w-full'} rounded-xl border-t-4 ${COLORS[status]} p-3 gap-2 transition-colors ${isOver ? HOVER_BG[status] : 'bg-gray-50'}`}
     >
       <div className="flex items-center justify-between mb-1">
         <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">{status.replace('_', ' ')}</span>

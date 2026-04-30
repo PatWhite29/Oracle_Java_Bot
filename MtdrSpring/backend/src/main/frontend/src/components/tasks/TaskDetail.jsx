@@ -42,8 +42,8 @@ export default function TaskDetail({ task, onClose, onStatusChange, onEdit, onDe
 
   return (
     <div className="space-y-5">
-      <div className="flex items-start justify-between gap-4">
-        <div>
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+        <div className="min-w-0">
           <h3 className="text-base font-semibold text-gray-900">{task.taskName}</h3>
           {task.description && <p className="mt-1 text-sm text-gray-500">{task.description}</p>}
         </div>
@@ -67,8 +67,8 @@ export default function TaskDetail({ task, onClose, onStatusChange, onEdit, onDe
       </div>
 
       {canChangeStatus && (
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-500">Change status:</span>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-sm text-gray-500 w-full sm:w-auto">Change status:</span>
           {['TODO', 'IN_PROGRESS', 'BLOCKED', 'DONE'].map((s) => (
             <button
               key={s}

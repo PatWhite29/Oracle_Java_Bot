@@ -17,14 +17,14 @@ export default function MemberList({ members, managerId, currentUserId, isManage
         const isSelf = m.id === currentUserId;
         return (
           <div key={m.id} className="flex items-center justify-between bg-white border border-gray-100 rounded-lg px-4 py-3">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 min-w-0">
               {isThisManager && <CrownIcon />}
-              <div>
-                <p className="text-sm font-medium text-gray-800">{m.fullName}</p>
-                <p className="text-xs text-gray-400">{m.email}</p>
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-gray-800 truncate">{m.fullName}</p>
+                <p className="text-xs text-gray-400 truncate">{m.email}</p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 shrink-0">
               {isThisManager && (
                 <span className="text-xs font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded">Manager</span>
               )}

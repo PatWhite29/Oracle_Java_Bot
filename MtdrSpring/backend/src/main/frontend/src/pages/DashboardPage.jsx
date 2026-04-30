@@ -54,12 +54,12 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
         <h1 className="text-xl font-bold text-gray-900">Dashboard — {project.projectName}</h1>
         <select
           value={selectedSprintId ?? ''}
           onChange={(e) => setSelectedSprintId(e.target.value ? Number(e.target.value) : null)}
-          className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none max-w-[220px]"
+          className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none w-full sm:max-w-[220px]"
         >
           <option value="">No sprint selected</option>
           {sprints.map((s) => (
@@ -68,10 +68,10 @@ export default function DashboardPage() {
         </select>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-4">
 
         {/* Row 1 — full width */}
-        <Widget title="Sprint Summary" className="md:col-span-6">
+        <Widget title="Sprint Summary" className="sm:col-span-2 md:col-span-6">
           <SprintSummary sprintId={sid} />
         </Widget>
 
@@ -87,28 +87,28 @@ export default function DashboardPage() {
         </Widget>
 
         {/* Row 3 — two halves */}
-        <Widget title="Velocity (SP per sprint)" className="md:col-span-3">
+        <Widget title="Velocity (SP per sprint)" className="sm:col-span-2 md:col-span-3">
           <VelocityChart />
         </Widget>
-        <Widget title="Efficiency (SP vs Hours)" className="md:col-span-3">
+        <Widget title="Efficiency (SP vs Hours)" className="sm:col-span-2 md:col-span-3">
           <EfficiencyChart sprintId={sid} />
         </Widget>
 
         {/* Row 4 — two halves */}
-        <Widget title="Workload" className="md:col-span-3">
+        <Widget title="Workload" className="sm:col-span-2 md:col-span-3">
           <WorkloadTable sprintId={sid} />
         </Widget>
-        <Widget title="Hours per Member" className="md:col-span-3">
+        <Widget title="Hours per Member" className="sm:col-span-2 md:col-span-3">
           <HoursPerMember sprintId={sid} />
         </Widget>
 
         {/* Row 5 — full width */}
-        <Widget title="Backlog Summary" className="md:col-span-6">
+        <Widget title="Backlog Summary" className="sm:col-span-2 md:col-span-6">
           <BacklogSummary />
         </Widget>
 
         {isManager && (
-          <Widget title="Manager actions" className="md:col-span-6">
+          <Widget title="Manager actions" className="sm:col-span-2 md:col-span-6">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {[
                 { label: 'Manage members', path: 'members' },
