@@ -8,6 +8,7 @@ import com.springboot.MyTodoList.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -77,6 +78,10 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     List<Object[]> findEfficiencyBySprint(@Param("sprint") Sprint sprint, @Param("status") TaskStatus status);
 
     void deleteByProject(Project project);
+
+    @Modifying(clearAutomatically = true)
+    @Query("UPDATE Task t SET t.sprint = null WHERE t.sprint = :sprint")
+    void detachTasksFromSprint(@Param("sprint") Sprint sprint);
 
     @Query("SELECT COUNT(t) FROM Task t WHERE t.project = :project AND t.sprint IS NULL")
     long countBacklogByProject(@Param("project") Project project);

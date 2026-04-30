@@ -22,4 +22,7 @@ export const sprintService = {
 
   reopen: (projectId, sprintId) =>
     apiFetch(`/projects/${projectId}/sprints/${sprintId}/reopen`, { method: 'POST' }),
+
+  delete: (projectId, sprintId) =>
+    apiFetch(`/projects/${projectId}/sprints/${sprintId}`, { method: 'DELETE' }),
 };

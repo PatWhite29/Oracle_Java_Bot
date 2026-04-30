@@ -3,6 +3,7 @@ import { useProject } from '../context/ProjectContext';
 import { useToast } from '../context/ToastContext';
 import { sprintService } from '../services/sprintService';
 import { taskService } from '../services/taskService';
+import { exportTasksToJson } from '../services/importExportService';
 import SprintList from '../components/sprints/SprintList';
 import SprintForm from '../components/sprints/SprintForm';
 import TaskTable from '../components/tasks/TaskTable';
@@ -35,6 +36,10 @@ export default function SprintsPage() {
   const [confirmReopenSprint, setConfirmReopenSprint] = useState(null);
   const [confirmDeleteTask, setConfirmDeleteTask] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
+
+  const [editSprint, setEditSprint] = useState(null);
+  const [sprintSaving, setSprintSaving] = useState(false);
+  const [confirmDeleteSprint, setConfirmDeleteSprint] = useState(null);
 
   const isManager = userRole === 'MANAGER';
 
@@ -105,6 +110,29 @@ export default function SprintsPage() {
     try {
       await sprintService.reopen(project.id, confirmReopenSprint.id);
       setConfirmReopenSprint(null);
+      load();
+    } catch (err) { toast.error(err.message); }
+    finally { setActionLoading(false); }
+  };
+
+  const handleSprintUpdate = async (form) => {
+    setSprintSaving(true);
+    try {
+      const updated = await sprintService.update(project.id, editSprint.id, form);
+      setEditSprint(null);
+      setSelectedSprint(updated);
+      load();
+    } catch (err) { toast.error(err.message); }
+    finally { setSprintSaving(false); }
+  };
+
+  const doDeleteSprint = async () => {
+    setActionLoading(true);
+    try {
+      await sprintService.delete(project.id, confirmDeleteSprint.id);
+      setConfirmDeleteSprint(null);
+      setSelectedSprint(null);
+      setSprintTasks([]);
       load();
     } catch (err) { toast.error(err.message); }
     finally { setActionLoading(false); }
@@ -195,15 +223,42 @@ export default function SprintsPage() {
       >
         {selectedSprint && (
           <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <Badge value={selectedSprint.status} />
-              <span className="text-xs text-gray-400">
-                {selectedSprint.startDate} → {selectedSprint.endDate}
-              </span>
-              {selectedSprint.goal && (
-                <span className="text-xs text-gray-500 italic">{selectedSprint.goal}</span>
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3 min-w-0">
+                <Badge value={selectedSprint.status} />
+                <span className="text-xs text-gray-400 shrink-0">
+                  {selectedSprint.startDate} → {selectedSprint.endDate}
+                </span>
+                {selectedSprint.goal && (
+                  <span className="text-xs text-gray-500 italic truncate">{selectedSprint.goal}</span>
+                )}
+              </div>
+              {isManager && (
+                <div className="flex items-center gap-2 shrink-0">
+                  {selectedSprint.status !== 'CLOSED' && (
+                    <Button variant="secondary" onClick={() => setEditSprint(selectedSprint)}>
+                      Editar
+                    </Button>
+                  )}
+                  {selectedSprint.status !== 'ACTIVE' && (
+                    <Button variant="danger" onClick={() => setConfirmDeleteSprint(selectedSprint)}>
+                      Eliminar
+                    </Button>
+                  )}
+                </div>
               )}
             </div>
+
+            {!tasksLoading && sprintTasks.length > 0 && (
+              <div className="flex justify-end">
+                <Button
+                  variant="secondary"
+                  onClick={() => exportTasksToJson(sprintTasks, selectedSprint.sprintName)}
+                >
+                  Exportar tareas
+                </Button>
+              </div>
+            )}
 
             {tasksLoading ? (
               <LoadingSpinner />
@@ -282,6 +337,29 @@ export default function SprintsPage() {
         title="Delete task"
         message={`"${confirmDeleteTask?.taskName}" will be permanently deleted. This cannot be undone.`}
         confirmLabel="Delete"
+        variant="danger"
+        loading={actionLoading}
+      />
+
+      {/* Edit sprint modal */}
+      <Modal open={!!editSprint} onClose={() => setEditSprint(null)} title="Edit sprint">
+        {editSprint && (
+          <SprintForm
+            initial={editSprint}
+            onSubmit={handleSprintUpdate}
+            onCancel={() => setEditSprint(null)}
+            loading={sprintSaving}
+          />
+        )}
+      </Modal>
+
+      <ConfirmDialog
+        open={!!confirmDeleteSprint}
+        onClose={() => setConfirmDeleteSprint(null)}
+        onConfirm={doDeleteSprint}
+        title="Eliminar sprint"
+        message={`¿Eliminar "${confirmDeleteSprint?.sprintName}"? Las tareas del sprint se moverán al backlog. Esta acción no se puede deshacer.`}
+        confirmLabel="Eliminar"
         variant="danger"
         loading={actionLoading}
       />

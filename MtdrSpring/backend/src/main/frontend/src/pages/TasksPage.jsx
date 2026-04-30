@@ -7,6 +7,7 @@ import KanbanBoard from '../components/tasks/KanbanBoard';
 import TaskTable from '../components/tasks/TaskTable';
 import TaskDetail from '../components/tasks/TaskDetail';
 import TaskForm from '../components/tasks/TaskForm';
+import ImportTasksModal from '../components/tasks/ImportTasksModal';
 import Modal from '../components/common/Modal';
 import ConfirmDialog from '../components/common/ConfirmDialog';
 import Button from '../components/common/Button';
@@ -30,6 +31,7 @@ export default function TasksPage() {
   const [actualHoursInput, setActualHoursInput] = useState('');
   const [confirmDelete, setConfirmDelete] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const [showImport, setShowImport] = useState(false);
 
   const isManager = userRole === 'MANAGER';
 
@@ -151,7 +153,10 @@ export default function TasksPage() {
             className={`text-sm px-3 py-1.5 rounded-lg transition-colors ${view === 'list' ? 'bg-gray-900 text-white' : 'text-gray-500 hover:bg-gray-100'}`}
           >List</button>
           {isManager ? (
-            <Button onClick={() => setShowForm(true)}>New task</Button>
+            <>
+              <Button variant="secondary" onClick={() => setShowImport(true)}>Importar tareas</Button>
+              <Button onClick={() => setShowForm(true)}>New task</Button>
+            </>
           ) : (
             <span className="text-xs text-gray-400 italic">Only managers can create tasks</span>
           )}
@@ -255,6 +260,13 @@ export default function TasksPage() {
         confirmLabel="Delete"
         variant="danger"
         loading={deleting}
+      />
+
+      <ImportTasksModal
+        open={showImport}
+        onClose={() => setShowImport(false)}
+        projectId={project.id}
+        onImported={() => { load(); toast.success('Tareas importadas al backlog.'); }}
       />
     </div>
   );
