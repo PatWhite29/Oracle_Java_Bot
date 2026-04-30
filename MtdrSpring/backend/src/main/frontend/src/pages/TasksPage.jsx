@@ -37,7 +37,7 @@ export default function TasksPage() {
 
   const load = useCallback(() => {
     setLoading(true);
-    taskService.list(project.id, filters)
+    taskService.list(project.id, { ...filters, size: 500 })
       .then((data) => setTasks(data.content || []))
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
