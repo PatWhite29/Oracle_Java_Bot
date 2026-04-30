@@ -5,7 +5,9 @@ import { taskService } from '../services/taskService';
 import { sprintService } from '../services/sprintService';
 import TaskTable from '../components/tasks/TaskTable';
 import Modal from '../components/common/Modal';
+import ConfirmDialog from '../components/common/ConfirmDialog';
 import Badge from '../components/common/Badge';
+import Button from '../components/common/Button';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 
 export default function BacklogPage() {
@@ -17,13 +19,15 @@ export default function BacklogPage() {
   const [selectedTask, setSelectedTask] = useState(null);
   const [moving, setMoving] = useState(false);
   const [error, setError] = useState('');
+  const [confirmDelete, setConfirmDelete] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   const isManager = userRole === 'MANAGER';
 
   const load = () => {
     setLoading(true);
     Promise.all([
-      taskService.list(project.id, {}),
+      taskService.list(project.id, { size: 500 }),
       sprintService.list(project.id),
     ])
       .then(([taskData, sprintData]) => {
@@ -35,6 +39,20 @@ export default function BacklogPage() {
   };
 
   useEffect(load, [project.id]);
+
+  const doDelete = async () => {
+    setDeleting(true);
+    try {
+      await taskService.delete(project.id, confirmDelete.id);
+      setConfirmDelete(null);
+      setSelectedTask(null);
+      load();
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   const handleMoveToSprint = async (sprintId) => {
     setMoving(true);
@@ -99,9 +117,27 @@ export default function BacklogPage() {
                 </div>
               </div>
             )}
+
+            {isManager && (
+              <div className="pt-2 border-t border-gray-100">
+                <Button variant="danger" onClick={() => setConfirmDelete(selectedTask)}>
+                  Eliminar tarea
+                </Button>
+              </div>
+            )}
           </div>
         )}
       </Modal>
+      <ConfirmDialog
+        open={!!confirmDelete}
+        onClose={() => setConfirmDelete(null)}
+        onConfirm={doDelete}
+        title="Eliminar tarea"
+        message={`"${confirmDelete?.taskName}" será eliminada permanentemente. Esta acción no se puede deshacer.`}
+        confirmLabel="Eliminar"
+        variant="danger"
+        loading={deleting}
+      />
     </div>
   );
 }
