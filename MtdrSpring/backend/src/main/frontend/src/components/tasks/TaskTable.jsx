@@ -13,10 +13,10 @@ export default function TaskTable({ tasks, onTaskClick }) {
           <tr className="text-left text-xs text-gray-400 uppercase tracking-wider border-b border-gray-100">
             <th className="pb-3 pr-4">Name</th>
             <th className="pb-3 pr-4">Status</th>
-            <th className="pb-3 pr-4">Priority</th>
-            <th className="pb-3 pr-4">SP</th>
-            <th className="pb-3 pr-4">Assigned</th>
-            <th className="pb-3">Sprint</th>
+            <th className="pb-3 pr-4 hidden sm:table-cell">Priority</th>
+            <th className="pb-3 pr-4 hidden md:table-cell">SP</th>
+            <th className="pb-3 pr-4 hidden sm:table-cell">Assigned</th>
+            <th className="pb-3 hidden md:table-cell">Sprint</th>
           </tr>
         </thead>
         <tbody>
@@ -28,10 +28,10 @@ export default function TaskTable({ tasks, onTaskClick }) {
             >
               <td className="py-3 pr-4 font-medium text-gray-800">{t.taskName}</td>
               <td className="py-3 pr-4"><Badge value={t.status} /></td>
-              <td className="py-3 pr-4">{t.priority ? <Badge value={t.priority} /> : <span className="text-gray-300">—</span>}</td>
-              <td className="py-3 pr-4 text-gray-500">{t.storyPoints}</td>
-              <td className="py-3 pr-4 text-gray-500">{t.assignedTo?.fullName || <span className="text-gray-300">—</span>}</td>
-              <td className="py-3 text-gray-500">{t.sprint?.sprintName || <span className="text-gray-300">Backlog</span>}</td>
+              <td className="py-3 pr-4 hidden sm:table-cell">{t.priority ? <Badge value={t.priority} /> : <span className="text-gray-300">—</span>}</td>
+              <td className="py-3 pr-4 text-gray-500 hidden md:table-cell">{t.storyPoints}</td>
+              <td className="py-3 pr-4 text-gray-500 hidden sm:table-cell">{t.assignedTo?.fullName || <span className="text-gray-300">—</span>}</td>
+              <td className="py-3 text-gray-500 hidden md:table-cell">{t.sprint?.sprintName || <span className="text-gray-300">Backlog</span>}</td>
             </tr>
           ))}
         </tbody>

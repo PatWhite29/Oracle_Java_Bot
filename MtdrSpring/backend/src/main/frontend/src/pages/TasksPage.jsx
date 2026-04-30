@@ -141,9 +141,9 @@ export default function TasksPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
         <h1 className="text-xl font-bold text-gray-900">Tasks — {project.projectName}</h1>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={() => setView('kanban')}
             className={`text-sm px-3 py-1.5 rounded-lg transition-colors ${view === 'kanban' ? 'bg-gray-900 text-white' : 'text-gray-500 hover:bg-gray-100'}`}
@@ -170,7 +170,7 @@ export default function TasksPage() {
           {['TODO', 'IN_PROGRESS', 'BLOCKED', 'DONE'].map((s) => <option key={s}>{s}</option>)}
         </select>
         <select value={filters.sprint} onChange={(e) => setFilters((f) => ({ ...f, sprint: e.target.value }))}
-          className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none max-w-[180px]">
+          className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none min-w-0 flex-1 sm:flex-none sm:max-w-[180px]">
           <option value="">All sprints</option>
           {visibleSprints.map((s) => (
             <option key={s.id} value={s.id}>

@@ -34,7 +34,7 @@ export default function SprintList({ sprints, isManager, onActivate, onClose, on
     <div className="w-full overflow-hidden">
       <div
         ref={ref}
-        className="flex gap-4 overflow-x-auto pb-2 select-none"
+        className="flex flex-col sm:flex-row gap-4 sm:overflow-x-auto pb-2 select-none"
         style={{ cursor: 'grab', scrollbarWidth: 'thin' }}
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}
@@ -42,7 +42,7 @@ export default function SprintList({ sprints, isManager, onActivate, onClose, on
         onMouseLeave={stopDrag}
       >
         {sprints.map((s) => (
-          <div key={s.id} className="w-72 shrink-0">
+          <div key={s.id} className="w-full sm:w-72 sm:shrink-0">
             <SprintCard sprint={s} isManager={isManager} onActivate={onActivate} onClose={onClose} onReopen={onReopen} onSelect={onSelect} />
           </div>
         ))}

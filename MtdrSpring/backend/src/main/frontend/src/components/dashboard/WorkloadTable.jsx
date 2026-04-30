@@ -53,7 +53,7 @@ export default function WorkloadTable({ sprintId }) {
             <tr className="text-gray-400 border-b border-gray-100">
               <th className="text-left py-2 pr-3 font-medium">Member</th>
               {STATUSES.map((s) => (
-                <th key={s} className="text-center py-2 px-2 font-medium whitespace-nowrap">
+                <th key={s} className="text-center py-2 px-2 font-medium whitespace-nowrap hidden sm:table-cell">
                   {s.replace('_', ' ')}
                 </th>
               ))}
@@ -65,7 +65,7 @@ export default function WorkloadTable({ sprintId }) {
               <tr key={member.userId} className={i % 2 === 0 ? 'bg-gray-50' : ''}>
                 <td className="py-2 pr-3 font-medium text-gray-700 whitespace-nowrap">{member.fullName}</td>
                 {STATUSES.map((s) => (
-                  <td key={s} className="py-2 px-2 text-center text-gray-600">
+                  <td key={s} className="py-2 px-2 text-center text-gray-600 hidden sm:table-cell">
                     {getValue(member, s)}
                   </td>
                 ))}
