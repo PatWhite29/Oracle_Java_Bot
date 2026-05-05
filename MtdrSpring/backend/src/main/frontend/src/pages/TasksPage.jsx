@@ -8,6 +8,7 @@ import TaskTable from '../components/tasks/TaskTable';
 import TaskDetail from '../components/tasks/TaskDetail';
 import TaskForm from '../components/tasks/TaskForm';
 import ImportTasksModal from '../components/tasks/ImportTasksModal';
+import FilterSelect from '../components/common/FilterSelect';
 import Modal from '../components/common/Modal';
 import ConfirmDialog from '../components/common/ConfirmDialog';
 import LoadingSpinner from '../components/common/LoadingSpinner';
@@ -18,7 +19,18 @@ const PlusIcon = () => (
   </svg>
 );
 
-const selectCls = 'border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-700 bg-white focus:outline-none focus:border-navy-mid focus:ring-2 focus:ring-navy-mid/10 transition-all cursor-pointer';
+const STATUS_OPTIONS = [
+  { value: 'TODO',        label: 'To Do' },
+  { value: 'IN_PROGRESS', label: 'In Progress' },
+  { value: 'BLOCKED',     label: 'Blocked' },
+  { value: 'DONE',        label: 'Done' },
+];
+
+const PRIORITY_OPTIONS = [
+  { value: 'LOW',    label: 'Low' },
+  { value: 'MEDIUM', label: 'Medium' },
+  { value: 'HIGH',   label: 'High' },
+];
 
 export default function TasksPage() {
   const { project, members, userRole } = useProject();
@@ -176,20 +188,29 @@ export default function TasksPage() {
 
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-2 mb-5">
-        <select value={filters.status} onChange={(e) => setFilters((f) => ({ ...f, status: e.target.value }))} className={selectCls}>
-          <option value="">All statuses</option>
-          {['TODO', 'IN_PROGRESS', 'BLOCKED', 'DONE'].map((s) => <option key={s}>{s}</option>)}
-        </select>
-        <select value={filters.sprint} onChange={(e) => setFilters((f) => ({ ...f, sprint: e.target.value }))} className={`${selectCls} min-w-0 flex-1 sm:flex-none sm:max-w-[180px]`}>
-          <option value="">All sprints</option>
-          {visibleSprints.map((s) => (
-            <option key={s.id} value={s.id}>{s.sprintName}{s.status === 'CLOSED' ? ' (closed)' : ''}</option>
-          ))}
-        </select>
-        <select value={filters.priority} onChange={(e) => setFilters((f) => ({ ...f, priority: e.target.value }))} className={selectCls}>
-          <option value="">All priorities</option>
-          {['LOW', 'MEDIUM', 'HIGH'].map((p) => <option key={p}>{p}</option>)}
-        </select>
+        <FilterSelect
+          value={filters.status}
+          onChange={(v) => setFilters((f) => ({ ...f, status: v }))}
+          options={STATUS_OPTIONS}
+          placeholder="All statuses"
+          showDot
+        />
+        <FilterSelect
+          value={filters.sprint}
+          onChange={(v) => setFilters((f) => ({ ...f, sprint: v }))}
+          options={visibleSprints.map((s) => ({
+            value: String(s.id),
+            label: s.sprintName + (s.status === 'CLOSED' ? ' (closed)' : ''),
+          }))}
+          placeholder="All sprints"
+        />
+        <FilterSelect
+          value={filters.priority}
+          onChange={(v) => setFilters((f) => ({ ...f, priority: v }))}
+          options={PRIORITY_OPTIONS}
+          placeholder="All priorities"
+          showDot
+        />
         <label className="flex items-center gap-2 text-[12px] text-gray-600 cursor-pointer select-none ml-1">
           <input
             type="checkbox"
