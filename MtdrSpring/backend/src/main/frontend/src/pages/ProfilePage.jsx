@@ -16,7 +16,6 @@ export default function ProfilePage() {
   const [form, setForm] = useState({
     fullName: user?.fullName || '',
     email: user?.email || '',
-    newPassword: '',
   });
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState('');
@@ -35,7 +34,6 @@ export default function ProfilePage() {
     setError('');
     try {
       const body = { fullName: form.fullName, email: form.email };
-      if (form.newPassword) body.password = form.newPassword;
       await apiFetch('/users/me', { method: 'PUT', body: JSON.stringify(body) });
       const stored = JSON.parse(localStorage.getItem('user') || '{}');
       localStorage.setItem('user', JSON.stringify({ ...stored, fullName: form.fullName, email: form.email }));
@@ -113,18 +111,6 @@ export default function ProfilePage() {
                 required
                 value={form.email}
                 onChange={set('email')}
-                className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-900
-                  focus:outline-none focus:border-navy-mid focus:ring-2 focus:ring-navy-mid/10 transition-all"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1.5">New password</label>
-              <input
-                type="password"
-                value={form.newPassword}
-                onChange={set('newPassword')}
-                placeholder="Leave blank to keep current"
                 className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-900
                   focus:outline-none focus:border-navy-mid focus:ring-2 focus:ring-navy-mid/10 transition-all"
               />
