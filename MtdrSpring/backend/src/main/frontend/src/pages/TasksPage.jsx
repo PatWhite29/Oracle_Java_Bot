@@ -211,15 +211,21 @@ export default function TasksPage() {
           placeholder="All priorities"
           showDot
         />
-        <label className="flex items-center gap-2 text-[12px] text-gray-600 cursor-pointer select-none ml-1">
-          <input
-            type="checkbox"
-            checked={showClosed}
-            onChange={handleShowClosedToggle}
-            className="w-3.5 h-3.5 rounded border-gray-300 cursor-pointer accent-navy"
-          />
-          Show closed sprints
-        </label>
+        <button
+          onClick={(e) => handleShowClosedToggle({ target: { checked: !showClosed } })}
+          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border text-[12px] font-medium transition-all select-none"
+          style={{
+            background: showClosed ? '#003865' : 'white',
+            borderColor: showClosed ? '#003865' : '#E5E7EB',
+            color: showClosed ? 'white' : '#6B7280',
+            boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+          }}
+        >
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3} style={{ opacity: showClosed ? 1 : 0 }}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+          Closed sprints
+        </button>
       </div>
 
       {error && <p className="text-sm text-oracle bg-oracle-light rounded-lg px-3 py-2 mb-4">{error}</p>}
