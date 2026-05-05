@@ -23,21 +23,19 @@ export default function AvgHoursPerSP({ sprintId }) {
   if (error) return <p className="text-xs text-red-500">{error}</p>;
   if (!data || data.totalSpCompleted === 0)
     return (
-      <div className="flex flex-col items-center justify-center h-full py-4 space-y-1">
-        <span className="text-4xl font-bold text-gray-300">—</span>
-        <span className="text-xs text-gray-400">No completed tasks yet</span>
+      <div className="flex flex-col items-center justify-center h-full py-4 gap-1">
+        <span className="text-4xl font-display font-extrabold text-gray-200">—</span>
+        <span className="text-[11px] text-gray-400">No completed tasks yet</span>
       </div>
     );
 
-  const avg = data.totalSpCompleted > 0
-    ? (data.totalActualHours / data.totalSpCompleted).toFixed(2)
-    : '—';
+  const avg = (data.totalActualHours / data.totalSpCompleted).toFixed(2);
 
   return (
-    <div className="flex flex-col items-center justify-center h-full py-4 space-y-1">
-      <span className="text-5xl font-bold tabular-nums text-gray-800">{avg}</span>
-      <span className="text-xs text-gray-400 uppercase tracking-wide">hours per story point</span>
-      <span className="text-xs text-gray-400">{data.totalActualHours?.toFixed(1)}h · {data.totalSpCompleted} SP done</span>
+    <div className="flex flex-col items-center justify-center h-full py-4 gap-1">
+      <span className="text-5xl font-display font-extrabold tabular-nums leading-none text-navy">{avg}</span>
+      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">hours per story point</span>
+      <span className="text-[11px] text-gray-400">{data.totalActualHours?.toFixed(1)}h · {data.totalSpCompleted} SP done</span>
     </div>
   );
 }

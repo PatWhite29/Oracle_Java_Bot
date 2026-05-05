@@ -29,20 +29,20 @@ export default function BacklogSummary() {
 
   return (
     <div className="flex flex-wrap items-center gap-6">
-      <div className="text-center">
-        <p className="text-3xl font-bold text-gray-800">{data.totalTasks}</p>
-        <p className="text-xs text-gray-400 mt-1">Total tasks</p>
+      <div>
+        <p className="text-3xl font-display font-extrabold text-navy tabular-nums leading-none">{data.totalTasks}</p>
+        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1.5">Tasks</p>
       </div>
-      <div className="text-center">
-        <p className="text-3xl font-bold text-gray-800">{data.totalStoryPoints}</p>
-        <p className="text-xs text-gray-400 mt-1">Story points</p>
+      <div>
+        <p className="text-3xl font-display font-extrabold text-navy tabular-nums leading-none">{data.totalStoryPoints}</p>
+        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1.5">Story points</p>
       </div>
       {priorities.length > 0 && (
         <div className="flex flex-wrap gap-2">
           {priorities.map(({ label, count }) => (
-            <div key={label} className="flex items-center gap-1.5 bg-gray-50 rounded-lg px-3 py-2">
+            <div key={label} className="flex items-center gap-1.5 rounded-lg px-3 py-2" style={{ background: '#F5F7FA', border: '1px solid #E5E7EB' }}>
               <Badge value={label} />
-              <span className="text-sm font-semibold text-gray-700">{count}</span>
+              <span className="text-[12px] font-bold text-gray-700">{count}</span>
             </div>
           ))}
         </div>

@@ -27,30 +27,35 @@ export default function SprintSummary({ sprintId }) {
   if (!data) return <p className="text-sm text-gray-400">Select a sprint to view data.</p>;
 
   const counts = data.statusCounts || {};
-  const statuses = [
-    { key: 'TODO', label: 'TODO' },
-    { key: 'IN_PROGRESS', label: 'IN PROGRESS' },
-    { key: 'BLOCKED', label: 'BLOCKED' },
-    { key: 'DONE', label: 'DONE' },
+
+  const STATUS_CFG = [
+    { key: 'TODO',        label: 'To Do',       bg: '#FAFAFA', dot: '#6B7280', num: '#374151' },
+    { key: 'IN_PROGRESS', label: 'In Progress', bg: '#EFF6FF', dot: '#1D4ED8', num: '#1D4ED8' },
+    { key: 'BLOCKED',     label: 'Blocked',     bg: '#FFF5F5', dot: '#C74634', num: '#C74634' },
+    { key: 'DONE',        label: 'Done',        bg: '#F0FDF4', dot: '#15803D', num: '#15803D' },
   ];
 
   return (
     <div className="space-y-4">
-      <p className="text-xs text-gray-400 font-medium uppercase tracking-wide">{data.sprintName}</p>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        {statuses.map(({ key }) => (
-          <div key={key} className="bg-gray-50 rounded-lg p-3 text-center">
-            <Badge value={key} />
-            <p className="text-2xl font-bold text-gray-800 mt-2">{counts[key] ?? 0}</p>
+        {STATUS_CFG.map(({ key, label, bg, dot, num }) => (
+          <div key={key} className="rounded-xl p-3.5 flex flex-col gap-1.5" style={{ background: bg, border: '1px solid #E5E7EB' }}>
+            <div className="flex items-center gap-1.5">
+              <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: dot }} />
+              <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: dot }}>{label}</span>
+            </div>
+            <p className="text-3xl font-display font-extrabold tabular-nums leading-none" style={{ color: num }}>
+              {counts[key] ?? 0}
+            </p>
           </div>
         ))}
       </div>
-      <div className="flex flex-wrap gap-6 text-sm text-gray-600">
-        <span>Committed: <strong>{data.spCommitted} SP</strong></span>
-        <span>Completed: <strong>{data.spCompleted} SP</strong></span>
-        <span>Completion: <strong>{data.completionPercentage?.toFixed(0)}%</strong></span>
+      <div className="flex flex-wrap gap-4 text-[12px] text-gray-500 pt-1 border-t border-gray-100">
+        <span>Committed: <strong className="text-gray-800">{data.spCommitted} SP</strong></span>
+        <span>Completed: <strong className="text-gray-800">{data.spCompleted} SP</strong></span>
+        <span>Completion: <strong className="text-gray-800">{data.completionPercentage?.toFixed(0)}%</strong></span>
         {data.blockedCount > 0 && (
-          <span className="text-red-500 font-medium">{data.blockedCount} blocked</span>
+          <span className="font-semibold" style={{ color: '#C74634' }}>{data.blockedCount} blocked</span>
         )}
       </div>
     </div>

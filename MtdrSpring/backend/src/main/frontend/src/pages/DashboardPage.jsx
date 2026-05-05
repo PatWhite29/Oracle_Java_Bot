@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useProject } from '../context/ProjectContext';
 import { sprintService } from '../services/sprintService';
 import SprintSummary from '../components/dashboard/SprintSummary';
@@ -11,25 +10,29 @@ import EfficiencyChart from '../components/dashboard/EfficiencyChart';
 import WorkloadTable from '../components/dashboard/WorkloadTable';
 import HoursPerMember from '../components/dashboard/HoursPerMember';
 import BacklogSummary from '../components/dashboard/BacklogSummary';
+import TasksByDeveloperChart from '../components/dashboard/TasksByDeveloperChart';
+import HoursByDeveloperChart from '../components/dashboard/HoursByDeveloperChart';
+import ComparePanel from '../components/dashboard/ComparePanel';
 
-function Widget({ title, children, className = '' }) {
+export function Widget({ title, children, className = '' }) {
   return (
-    <div className={`bg-white border border-gray-100 rounded-xl p-5 shadow-sm space-y-4 ${className}`}>
-      <h2 className="text-sm font-semibold text-gray-700">{title}</h2>
+    <div
+      className={`bg-white rounded-xl p-5 flex flex-col gap-3 ${className}`}
+      style={{ border: '1px solid #E5E7EB', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}
+    >
+      <h2 className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">{title}</h2>
       {children}
     </div>
   );
 }
 
 function sprintLabel(s) {
-  const tag = s.status === 'ACTIVE' ? ' (active)' : s.status === 'CLOSED' ? ' (closed)' : ' (planning)';
+  const tag = s.status === 'ACTIVE' ? ' · Active' : s.status === 'CLOSED' ? ' · Closed' : ' · Planning';
   return s.sprintName + tag;
 }
 
 export default function DashboardPage() {
-  const { project, userRole } = useProject();
-  const navigate = useNavigate();
-  const isManager = userRole === 'MANAGER';
+  const { project } = useProject();
 
   const [sprints, setSprints] = useState([]);
   const [selectedSprintId, setSelectedSprintId] = useState(null);
@@ -54,12 +57,18 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
-        <h1 className="text-xl font-bold text-gray-900">Dashboard — {project.projectName}</h1>
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-6">
+        <div>
+          <h1 className="font-display font-extrabold text-gray-900 text-[22px] leading-none" style={{ letterSpacing: '-0.02em' }}>
+            Dashboard
+          </h1>
+          <p className="text-[12px] text-gray-500 mt-1.5">{project.projectName}</p>
+        </div>
         <select
           value={selectedSprintId ?? ''}
           onChange={(e) => setSelectedSprintId(e.target.value ? Number(e.target.value) : null)}
-          className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none w-full sm:max-w-[220px]"
+          className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-700 bg-white focus:outline-none focus:border-navy-mid focus:ring-2 focus:ring-navy-mid/10 transition-all cursor-pointer w-full sm:w-auto sm:min-w-[200px]"
         >
           <option value="">No sprint selected</option>
           {sprints.map((s) => (
@@ -70,12 +79,12 @@ export default function DashboardPage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-4">
 
-        {/* Row 1 — full width */}
+        {/* Sprint Summary */}
         <Widget title="Sprint Summary" className="sm:col-span-2 md:col-span-6">
           <SprintSummary sprintId={sid} />
         </Widget>
 
-        {/* Row 2 — three equal columns */}
+        {/* KPI row */}
         <Widget title="Completion Rate" className="md:col-span-2">
           <CompletionRate sprintId={sid} />
         </Widget>
@@ -86,7 +95,7 @@ export default function DashboardPage() {
           <BlockedAlert sprintId={sid} />
         </Widget>
 
-        {/* Row 3 — two halves */}
+        {/* Charts row */}
         <Widget title="Velocity (SP per sprint)" className="sm:col-span-2 md:col-span-3">
           <VelocityChart />
         </Widget>
@@ -94,7 +103,7 @@ export default function DashboardPage() {
           <EfficiencyChart sprintId={sid} />
         </Widget>
 
-        {/* Row 4 — two halves */}
+        {/* Tables row */}
         <Widget title="Workload" className="sm:col-span-2 md:col-span-3">
           <WorkloadTable sprintId={sid} />
         </Widget>
@@ -102,34 +111,24 @@ export default function DashboardPage() {
           <HoursPerMember sprintId={sid} />
         </Widget>
 
-        {/* Row 5 — full width */}
+        {/* Backlog */}
         <Widget title="Backlog Summary" className="sm:col-span-2 md:col-span-6">
           <BacklogSummary />
         </Widget>
 
-        {isManager && (
-          <Widget title="Manager actions" className="sm:col-span-2 md:col-span-6">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              {[
-                { label: 'Manage members', path: 'members' },
-                { label: 'Manage sprints', path: 'sprints' },
-                { label: 'View backlog', path: 'backlog' },
-                { label: 'Manage tasks', path: 'tasks' },
-              ].map(({ label, path }) => (
-                <button
-                  key={path}
-                  onClick={() => navigate(`/projects/${project.id}/${path}`)}
-                  className="flex items-center gap-2 px-3 py-2.5 rounded-lg border border-gray-200 text-sm text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-colors text-left"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 text-amber-500 shrink-0" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M2 19h20v2H2v-2zM2 6l5 7 5-7 5 7 5-7v11H2V6z" />
-                  </svg>
-                  {label}
-                </button>
-              ))}
-            </div>
-          </Widget>
-        )}
+        {/* Developer charts — last 3 sprints, top 8 by volume */}
+        <Widget title="Tasks Completed by Developer" className="sm:col-span-2 md:col-span-6">
+          <TasksByDeveloperChart sprints={sprints} />
+        </Widget>
+        <Widget title="Hours Worked by Developer" className="sm:col-span-2 md:col-span-6">
+          <HoursByDeveloperChart sprints={sprints} />
+        </Widget>
+
+        {/* Compare panel */}
+        <Widget title="Compare" className="sm:col-span-2 md:col-span-6">
+          <ComparePanel sprints={sprints} />
+        </Widget>
+
       </div>
     </div>
   );
