@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kairo — Redesign</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body, #root { height: 100%; }
+body { font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+button { cursor: pointer; font-family: 'Inter', system-ui, sans-serif; border: none; background: none; }
+input, select, textarea { font-family: 'Inter', system-ui, sans-serif; }
+a { text-decoration: none; color: inherit; }
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 10px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel">
+const { useState, useCallback, useEffect, useRef } = React;
+
+/* ─── TWEAK DEFAULTS ─── */
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "sidebarStyle": "navy",
+  "density": "comfortable",
+  "loginVariant": "A",
+  "brandAccent": "oracle"
+}/*EDITMODE-END*/;
+
+/* ─── TOKENS ─── */
+const T = {
+  oracle: '#C74634', oracleDark: '#9E3829', oracleLight: '#F9DDD9',
+  navy: '#003865',   navyMid: '#005587',    navyLight: '#E8F0F7',
+  navyDeep: '#001C33',
+  n0:'#FFFFFF', n50:'#FAFAFA', n100:'#F5F5F5', n200:'#E5E7EB',
+  n300:'#D1D5DB', n400:'#9CA3AF', n500:'#6B7280',
+  n600:'#4B5563', n700:'#374151', n800:'#1F2937', n900:'#111827',
+  green:'#15803D', greenBg:'#DCFCE7',
+  blue:'#1D4ED8',  blueBg:'#DBEAFE',
+  amber:'#A16207', amberBg:'#FEF9C3',
+  red:'#B91C1C',   redBg:'#FEE2E2',
+  orange:'#C2410C',orangeBg:'#FFEDD5',
+};
+
+const STATUS_COLORS = {
+  TODO:       { bg:T.n100,    text:T.n700 },
+  IN_PROGRESS:{ bg:T.blueBg,  text:T.blue },
+  BLOCKED:    { bg:T.redBg,   text:T.red  },
+  DONE:       { bg:T.greenBg, text:T.green},
+  PLANNING:   { bg:T.amberBg, text:T.amber},
+  ACTIVE:     { bg:T.blueBg,  text:T.blue },
+  CLOSED:     { bg:T.n100,    text:T.n500 },
+  PAUSED:     { bg:T.orangeBg,text:T.orange},
+  HIGH:       { bg:T.redBg,   text:T.red  },
+  MEDIUM:     { bg:T.amberBg, text:T.amber},
+  LOW:        { bg:T.n100,    text:T.n600 },
+};
+
+/* ─── ICONS ─── */
+const Icons = {
+  grid: <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>,
+  user: <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>,
+  tasks: <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3l1.41 1.41L9 11.83l-2.41-2.42L8 8l1 1 3-3zm7 10H5v-2h14v2zm0-4H5v-2h14v2z"/></svg>,
+  sprint: <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M13.49 5.48c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm-3.6 13.9l1-4.4 2.1 2v6h2v-7.5l-2.1-2 .6-3c1.3 1.5 3.3 2.5 5.5 2.5v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1l-5.2 2.2v4.7h2v-3.4l1.8-.7-1.6 8.1-4.9-1-.4 2 7 1.4z"/></svg>,
+  backlog: <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>,
+  members: <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>,
+  dashboard: <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>,
+  logout: <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg>,
+  plus: <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>,
+  chevronRight: <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>,
+  star: <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>,
+  eye: <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>,
+  eyeOff: <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 7c2.76 0 5 2.24 5 5 0 .65-.13 1.26-.36 1.83l2.92 2.92c1.51-1.26 2.7-2.89 3.43-4.75-1.73-4.39-6-7.5-11-7.5-1.4 0-2.74.25-3.98.7l2.16 2.16C10.74 7.13 11.35 7 12 7zM2 4.27l2.28 2.28.46.46C3.08 8.3 1.78 10.02 1 12c1.73 4.39 6 7.5 11 7.5 1.55 0 3.03-.3 4.38-.84l.42.42L19.73 22 21 20.73 3.27 3 2 4.27zM7.53 9.8l1.55 1.55c-.05.21-.08.43-.08.65 0 1.66 1.34 3 3 3 .22 0 .44-.03.65-.08l1.55 1.55c-.67.33-1.41.53-2.2.53-2.76 0-5-2.24-5-5 0-.79.2-1.53.53-2.2zm4.31-.78l3.15 3.15.02-.16c0-1.66-1.34-3-3-3l-.17.01z"/></svg>,
+};
+
+/* ─── KAIRO LOGO MARK ─── */
+function KairoMark({ size = 36 }) {
+  const s = size / 80;
+  return (
+    <svg width={size} height={size} viewBox="0 0 80 80" fill="none" style={{flexShrink:0}}>
+      <rect width="80" height="80" rx="18" fill={T.navy}/>
+      <rect x="1" y="1" width="78" height="78" rx="17" stroke="rgba(255,255,255,0.12)" strokeWidth="1.5" fill="none"/>
+      <line x1="23" y1="18" x2="23" y2="62" stroke="white" strokeWidth="3" strokeLinecap="round"/>
+      <line x1="23" y1="40" x2="55" y2="18" stroke="white" strokeWidth="3" strokeLinecap="round"/>
+      <line x1="23" y1="40" x2="55" y2="62" stroke="white" strokeWidth="3" strokeLinecap="round"/>
+      <circle cx="23" cy="18" r="5" fill={T.navy} stroke="white" strokeWidth="2.5"/>
+      <circle cx="23" cy="62" r="5" fill={T.navy} stroke="white" strokeWidth="2.5"/>
+      <circle cx="55" cy="18" r="5" fill={T.oracle}/>
+      <circle cx="55" cy="62" r="5" fill={T.oracle}/>
+      <circle cx="23" cy="40" r="7" fill={T.navy}/>
+      <circle cx="23" cy="40" r="3.5" fill="white"/>
+    </svg>
+  );
+}
+
+/* ─── BADGE ─── */
+function Badge({ value }) {
+  const c = STATUS_COLORS[value] || { bg:T.n100, text:T.n500 };
+  return (
+    <span style={{
+      display:'inline-block', padding:'2px 8px', borderRadius:4,
+      fontSize:11, fontWeight:700, letterSpacing:'0.01em',
+      background:c.bg, color:c.text, whiteSpace:'nowrap',
+    }}>{value?.replace('_',' ')}</span>
+  );
+}
+
+/* ─── BUTTON ─── */
+function Btn({ children, variant='primary', size='md', onClick, disabled, style, accent='oracle' }) {
+  const [hov, setHov] = useState(false);
+  const accentColor = accent === 'oracle' ? T.oracle : T.navy;
+  const accentHover = accent === 'oracle' ? T.oracleDark : '#002A4C';
+  const base = {
+    display:'inline-flex', alignItems:'center', gap:6,
+    fontWeight:600, letterSpacing:'0.01em',
+    transition:'all 0.15s ease',
+    cursor: disabled ? 'not-allowed' : 'pointer',
+    opacity: disabled ? 0.45 : 1, border:'none',
+  };
+  const sizes = {
+    sm:  { padding:'5px 12px', fontSize:12, borderRadius:7 },
+    md:  { padding:'9px 18px', fontSize:13, borderRadius:9 },
+    lg:  { padding:'13px 28px', fontSize:15, borderRadius:10 },
+  };
+  const variants = {
+    primary:   { background: hov ? accentHover : accentColor, color:'white' },
+    navy:      { background: hov ? '#002A4C' : T.navy, color:'white' },
+    secondary: { background: hov ? T.n200 : T.n100, color:T.n800, border:`1px solid ${T.n200}` },
+    danger:    { background: hov ? '#B91C1C' : '#DC2626', color:'white' },
+    ghost:     { background: hov ? T.n100 : 'transparent', color:T.n600 },
+    outline:   { background:'transparent', color: accentColor, border:`1.5px solid ${accentColor}` },
+  };
+  return (
+    <button
+      onClick={disabled ? null : onClick}
+      onMouseEnter={()=>setHov(true)}
+      onMouseLeave={()=>setHov(false)}
+      style={{...base,...sizes[size],...variants[variant],...style}}
+    >{children}</button>
+  );
+}
+
+/* ─── INPUT ─── */
+function Input({ label, placeholder, type='text', value, onChange, helper, error, required }) {
+  const [focused, setFocused] = useState(false);
+  const [showPw, setShowPw] = useState(false);
+  const isPassword = type === 'password';
+  return (
+    <div style={{display:'flex',flexDirection:'column',gap:5}}>
+      {label && (
+        <label style={{fontSize:12,fontWeight:600,color:T.n700,display:'flex',gap:3}}>
+          {label}{required && <span style={{color:T.oracle}}>*</span>}
+        </label>
+      )}
+      <div style={{position:'relative'}}>
+        <input
+          type={isPassword && showPw ? 'text' : type}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+          onFocus={()=>setFocused(true)}
+          onBlur={()=>setFocused(false)}
+          style={{
+            padding: isPassword ? '9px 36px 9px 13px' : '9px 13px',
+            border:`1.5px solid ${error ? T.oracle : focused ? T.navyMid : T.n200}`,
+            borderRadius:9, fontSize:14, color:T.n900,
+            outline:'none', background:'white', width:'100%',
+            boxShadow: focused ? `0 0 0 3px ${error ? 'rgba(199,70,52,0.10)' : 'rgba(0,85,135,0.10)'}` : 'none',
+            transition:'border-color 0.15s, box-shadow 0.15s',
+          }}
+        />
+        {isPassword && (
+          <button
+            type="button"
+            onClick={()=>setShowPw(v=>!v)}
+            style={{position:'absolute',right:11,top:'50%',transform:'translateY(-50%)',background:'none',border:'none',color:T.n400,cursor:'pointer',display:'flex',alignItems:'center',padding:0}}
+          >{showPw ? Icons.eyeOff : Icons.eye}</button>
+        )}
+      </div>
+      {helper && !error && <span style={{fontSize:11,color:T.n400}}>{helper}</span>}
+      {error && <span style={{fontSize:11,color:T.oracle}}>{error}</span>}
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────
+   LOGIN — VARIANT A: Dark full-bleed + floating card
+   ───────────────────────────────────────── */
+function LoginA({ onLogin }) {
+  const [email, setEmail] = useState('arturo@tec.mx');
+  const [pass, setPass]   = useState('password');
+  return (
+    <div style={{
+      minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center',
+      background: T.navyDeep,
+      backgroundImage:`radial-gradient(ellipse 70% 60% at 50% 0%, ${T.navyMid}55 0%, transparent 70%)`,
+      padding:'40px 24px', position:'relative', overflow:'hidden',
+    }}>
+      {/* Decorative grid */}
+      <div style={{
+        position:'absolute', inset:0, opacity:0.04,
+        backgroundImage:'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)',
+        backgroundSize:'48px 48px', pointerEvents:'none',
+      }}/>
+
+
+      {/* Wrapper: lockup + card stacked vertically */}
+      <div style={{display:'flex',flexDirection:'column',alignItems:'center',gap:0,width:'100%',maxWidth:420,position:'relative',zIndex:1}}>
+
+      {/* Brand lockup */}
+      <div style={{display:'flex',justifyContent:'center',marginBottom:20}}>
+        <img src="brand-lockup.png" alt="Oracle × Tecnológico de Monterrey" style={{height:36,width:'auto',filter:'brightness(0) invert(1)',opacity:0.75}}/>
+      </div>
+
+      {/* Card */}
+      <div style={{
+        width:'100%', position:'relative',
+        background:'white', borderRadius:20,
+        boxShadow:'0 32px 80px rgba(0,0,0,0.4)',
+        overflow:'hidden',
+      }}>
+        {/* Card top accent */}
+        <div style={{height:4,background:`linear-gradient(90deg, ${T.navy}, ${T.oracle})`}}/>
+        <div style={{padding:'36px 36px 32px'}}>
+          {/* Logo */}
+          <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:32}}>
+            <KairoMark size={44}/>
+            <div>
+              <div style={{fontFamily:'Manrope',fontSize:22,fontWeight:800,letterSpacing:'-0.03em',color:T.n900}}>Kairo</div>
+              <div style={{fontSize:10,fontWeight:700,letterSpacing:'0.10em',textTransform:'uppercase',color:T.n400,marginTop:1}}>TEConecta</div>
+            </div>
+          </div>
+          <h1 style={{fontFamily:'Manrope',fontSize:24,fontWeight:700,color:T.n900,marginBottom:6,letterSpacing:'-0.02em'}}>Welcome back</h1>
+          <p style={{fontSize:13,color:T.n500,marginBottom:28,lineHeight:1.5}}>Sign in to your project workspace</p>
+          <div style={{display:'flex',flexDirection:'column',gap:16}}>
+            <Input label="Email address" type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@tec.mx" required/>
+            <Input label="Password" type="password" value={pass} onChange={e=>setPass(e.target.value)} placeholder="••••••••" required/>
+            <div style={{display:'flex',justifyContent:'flex-end',marginTop:-8}}>
+              <span style={{fontSize:12,color:T.navyMid,fontWeight:500,cursor:'pointer'}}>Forgot password?</span>
+            </div>
+            <Btn variant="navy" size="lg" onClick={()=>onLogin('projects')} style={{width:'100%',justifyContent:'center',marginTop:4}}>
+              Sign in
+            </Btn>
+          </div>
+          <p style={{textAlign:'center',fontSize:13,color:T.n500,marginTop:20}}>
+            No account?{' '}
+            <span style={{color:T.navyMid,fontWeight:600,cursor:'pointer'}} onClick={()=>onLogin('register')}>Create account</span>
+          </p>
+        </div>
+      </div>
+      </div>{/* end wrapper */}
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────
+   LOGIN — VARIANT B: Split panel
+   ───────────────────────────────────────── */
+function LoginB({ onLogin }) {
+  const [email, setEmail] = useState('arturo@tec.mx');
+  const [pass, setPass]   = useState('password');
+  return (
+    <div style={{minHeight:'100vh',display:'flex'}}>
+      {/* Left panel — brand */}
+      <div style={{
+        flex:'0 0 420px', display:'flex', flexDirection:'column',
+        justifyContent:'space-between', padding:'48px 44px',
+        background: T.navy,
+        backgroundImage:`radial-gradient(ellipse 100% 80% at 0% 100%, ${T.navyMid}80 0%, transparent 60%)`,
+        position:'relative', overflow:'hidden',
+      }}>
+        <div style={{position:'absolute',inset:0,opacity:0.04,backgroundImage:'linear-gradient(rgba(255,255,255,0.5) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.5) 1px,transparent 1px)',backgroundSize:'40px 40px',pointerEvents:'none'}}/>
+        <div style={{position:'relative',zIndex:1}}>
+          <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:60}}>
+            <KairoMark size={38}/>
+            <div>
+              <div style={{fontFamily:'Manrope',fontSize:20,fontWeight:800,letterSpacing:'-0.03em',color:'white'}}>Kairo</div>
+              <div style={{fontSize:9,fontWeight:700,letterSpacing:'0.10em',textTransform:'uppercase',color:'rgba(255,255,255,0.4)',marginTop:2}}>TEConecta</div>
+            </div>
+          </div>
+          <h2 style={{fontFamily:'Manrope',fontSize:32,fontWeight:800,color:'white',lineHeight:1.15,letterSpacing:'-0.02em',marginBottom:16}}>Project management<br/>built for collaboration.</h2>
+          <p style={{fontSize:14,color:'rgba(255,255,255,0.55)',lineHeight:1.65,maxWidth:300}}>Sprints, tasks, and team coordination — purpose-built for Oracle × ITESM engineering teams.</p>
+        </div>
+        {/* Brand partners */}
+        <div style={{position:'relative',zIndex:1}}>
+          <div style={{fontSize:10,fontWeight:600,letterSpacing:'0.08em',textTransform:'uppercase',color:'rgba(255,255,255,0.30)',marginBottom:14}}>Supported by</div>
+          <div style={{display:'flex',alignItems:'center',gap:20}}>
+            <img src="oracle-wordmark.svg" alt="Oracle" style={{height:18,filter:'brightness(0) invert(1)',opacity:0.5}}/>
+            <div style={{width:1,height:14,background:'rgba(255,255,255,0.15)'}}/>
+            <img src="itesm-wordmark.svg" alt="Tec" style={{height:18,filter:'brightness(0) invert(1)',opacity:0.5}}/>
+          </div>
+        </div>
+      </div>
+      {/* Right panel — form */}
+      <div style={{flex:1,display:'flex',alignItems:'center',justifyContent:'center',background:T.n50,padding:40}}>
+        <div style={{width:'100%',maxWidth:380}}>
+          <h1 style={{fontFamily:'Manrope',fontSize:26,fontWeight:700,color:T.n900,marginBottom:6,letterSpacing:'-0.02em'}}>Sign in</h1>
+          <p style={{fontSize:13,color:T.n500,marginBottom:32}}>Enter your @tec.mx credentials</p>
+          <div style={{display:'flex',flexDirection:'column',gap:16}}>
+            <Input label="Email address" type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@tec.mx" required/>
+            <Input label="Password" type="password" value={pass} onChange={e=>setPass(e.target.value)} placeholder="••••••••" required/>
+            <div style={{display:'flex',justifyContent:'flex-end',marginTop:-6}}>
+              <span style={{fontSize:12,color:T.navyMid,fontWeight:500,cursor:'pointer'}}>Forgot password?</span>
+            </div>
+            <Btn variant="navy" size="lg" onClick={()=>onLogin('projects')} style={{width:'100%',justifyContent:'center'}}>Sign in</Btn>
+          </div>
+          <p style={{textAlign:'center',fontSize:13,color:T.n500,marginTop:24}}>
+            No account?{' '}
+            <span style={{color:T.navyMid,fontWeight:600,cursor:'pointer'}} onClick={()=>onLogin('register')}>Create account</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────
+   SIDEBAR
+   ───────────────────────────────────────── */
+function Sidebar({ screen, setScreen, tweaks }) {
+  const projectScreens = ['tasks','sprints','backlog','members','dashboard'];
+  const inProject = projectScreens.includes(screen);
+
+  const sidebarBg = tweaks.sidebarStyle === 'dark' ? T.n900
+                  : tweaks.sidebarStyle === 'light' ? 'white'
+                  : T.navy;
+  const isLight = tweaks.sidebarStyle === 'light';
+  const textBase = isLight ? T.n500 : 'rgba(255,255,255,0.60)';
+  const textActive = isLight ? T.n900 : 'white';
+  const activeBg = isLight ? T.navyLight : 'rgba(255,255,255,0.12)';
+  const dividerColor = isLight ? T.n200 : 'rgba(255,255,255,0.08)';
+  const headerBorder = isLight ? T.n200 : 'rgba(255,255,255,0.08)';
+  const accentDot = tweaks.brandAccent === 'oracle' ? T.oracle : T.navyMid;
+
+  function NavItem({ id, icon, label, sub }) {
+    const active = screen === id;
+    const [hov, setHov] = useState(false);
+    return (
+      <div
+        onClick={() => setScreen(id)}
+        onMouseEnter={()=>setHov(true)}
+        onMouseLeave={()=>setHov(false)}
+        style={{
+          display:'flex', alignItems:'center', gap:9, padding:'8px 11px',
+          borderRadius:8, fontSize:13,
+          fontWeight: active ? 600 : 400,
+          color: active ? textActive : (hov ? (isLight ? T.n700 : 'rgba(255,255,255,0.85)') : textBase),
+          background: active ? activeBg : (hov ? (isLight ? T.n100 : 'rgba(255,255,255,0.05)') : 'transparent'),
+          cursor:'pointer', transition:'all 0.13s',
+          position:'relative',
+        }}
+      >
+        {/* Active pill */}
+        {active && !isLight && (
+          <div style={{position:'absolute',left:0,top:'50%',transform:'translateY(-50%)',width:3,height:20,background:accentDot,borderRadius:'0 3px 3px 0'}}/>
+        )}
+        {active && isLight && (
+          <div style={{position:'absolute',left:0,top:'50%',transform:'translateY(-50%)',width:3,height:20,background:T.navy,borderRadius:'0 3px 3px 0'}}/>
+        )}
+        <span style={{opacity: active ? 1 : (hov ? 0.9 : 0.55), display:'flex', alignItems:'center'}}>{icon}</span>
+        <span>{label}</span>
+      </div>
+    );
+  }
+
+  return (
+    <aside style={{
+      width:224, background:sidebarBg, display:'flex', flexDirection:'column', flexShrink:0,
+      borderRight: isLight ? `1px solid ${T.n200}` : 'none',
+    }}>
+      {/* Header */}
+      <div style={{padding:'20px 16px 16px', borderBottom:`1px solid ${headerBorder}`, display:'flex', alignItems:'center', gap:11}}>
+        <KairoMark size={36}/>
+        <div>
+          <div style={{fontFamily:'Manrope',fontSize:16,fontWeight:800,letterSpacing:'-0.03em',lineHeight:1,color:isLight?T.n900:'white'}}>Kairo</div>
+          <div style={{fontSize:9,fontWeight:700,letterSpacing:'0.10em',textTransform:'uppercase',color:isLight?T.n400:'rgba(255,255,255,0.35)',marginTop:3}}>TEConecta</div>
+        </div>
+      </div>
+
+      {/* Nav */}
+      <nav style={{flex:1,padding:'12px 8px',display:'flex',flexDirection:'column',gap:1,overflowY:'auto'}}>
+        {/* Section label */}
+        <div style={{padding:'4px 11px 8px',fontSize:10,fontWeight:700,letterSpacing:'0.08em',textTransform:'uppercase',color:isLight?T.n400:'rgba(255,255,255,0.28)'}}>General</div>
+        <NavItem id="projects" icon={Icons.grid}    label="My Projects"/>
+        <NavItem id="profile"  icon={Icons.user}    label="Profile"/>
+
+        {inProject && (
+          <>
+            <div style={{height:1,background:dividerColor,margin:'10px 8px'}}/>
+            <div style={{padding:'4px 11px 8px',display:'flex',alignItems:'center',gap:6}}>
+              <span style={{fontSize:10,fontWeight:700,letterSpacing:'0.08em',textTransform:'uppercase',color:isLight?T.n400:'rgba(255,255,255,0.28)'}}>Kairo v1</span>
+              <div style={{display:'inline-flex',alignItems:'center',gap:3,background:isLight?T.amberBg:'rgba(255,255,255,0.10)',borderRadius:4,padding:'1px 5px'}}>
+                <span style={{color:T.amber,display:'flex',alignItems:'center'}}>{Icons.star}</span>
+                <span style={{fontSize:9,fontWeight:700,color:isLight?T.amber:'rgba(255,255,255,0.5)'}}>MANAGER</span>
+              </div>
+            </div>
+            <NavItem id="tasks"    icon={Icons.tasks}    label="Tasks"/>
+            <NavItem id="sprints"  icon={Icons.sprint}   label="Sprints"/>
+            <NavItem id="backlog"  icon={Icons.backlog}  label="Backlog"/>
+            <NavItem id="members"  icon={Icons.members}  label="Members"/>
+            <NavItem id="dashboard" icon={Icons.dashboard} label="Dashboard"/>
+          </>
+        )}
+      </nav>
+
+      {/* Footer */}
+      <div style={{padding:'14px 16px',borderTop:`1px solid ${headerBorder}`}}>
+        <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:10}}>
+          <div style={{width:32,height:32,borderRadius:'50%',background:accentDot,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+            <span style={{fontFamily:'Manrope',fontSize:13,fontWeight:800,color:'white'}}>AG</span>
+          </div>
+          <div style={{flex:1,minWidth:0}}>
+            <div style={{fontSize:13,fontWeight:600,color:isLight?T.n900:'white',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>Arturo Gómez</div>
+            <div style={{fontSize:11,color:isLight?T.n400:'rgba(255,255,255,0.40)',marginTop:1,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>arturo@tec.mx</div>
+          </div>
+        </div>
+        <button
+          onClick={() => setScreen('login')}
+          style={{display:'flex',alignItems:'center',gap:6,fontSize:12,color:isLight?T.n500:'rgba(255,255,255,0.35)',background:'none',border:'none',cursor:'pointer',padding:0,transition:'color 0.13s'}}
+          onMouseEnter={e=>e.currentTarget.style.color=isLight?T.n900:'white'}
+          onMouseLeave={e=>e.currentTarget.style.color=isLight?T.n500:'rgba(255,255,255,0.35)'}
+        >
+          <span style={{opacity:0.7}}>{Icons.logout}</span> Sign out
+        </button>
+      </div>
+    </aside>
+  );
+}
+
+/* ─────────────────────────────────────────
+   MY PROJECTS
+   ───────────────────────────────────────── */
+const PROJECTS = [
+  { id:1, name:'Kairo v1',      status:'ACTIVE',   role:'MANAGER', desc:'Task management system for Oracle ITESM collaboration sprint.', date:'Jan 15, 2025', tasks:27, done:14 },
+  { id:2, name:'OCI Dashboard', status:'PLANNING',  role:'MEMBER',  desc:'Oracle Cloud infrastructure monitoring dashboard.',              date:'Mar 2, 2025',  tasks:0,  done:0  },
+  { id:3, name:'Java Bot Docs', status:'PAUSED',    role:'MEMBER',  desc:'Documentation portal for the Telegram bot API.',                date:'Nov 10, 2024', tasks:8,  done:6  },
+];
+
+function ProjectCard({ project, onClick, tweaks }) {
+  const [hov, setHov] = useState(false);
+  const pct = project.tasks > 0 ? Math.round((project.done/project.tasks)*100) : 0;
+  const accentColor = tweaks.brandAccent === 'oracle' ? T.oracle : T.navyMid;
+  return (
+    <div
+      onClick={onClick}
+      onMouseEnter={()=>setHov(true)}
+      onMouseLeave={()=>setHov(false)}
+      style={{
+        background:'white', border:`1px solid ${hov?T.n300:T.n200}`,
+        borderRadius:14, padding:24, cursor:'pointer',
+        boxShadow: hov ? '0 8px 24px rgba(0,0,0,0.10)' : '0 1px 4px rgba(0,0,0,0.06)',
+        transition:'all 0.18s ease',
+        display:'flex', flexDirection:'column', gap:14,
+        transform: hov ? 'translateY(-2px)' : 'none',
+      }}
+    >
+      <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:8}}>
+        <span style={{fontFamily:'Manrope',fontSize:15,fontWeight:700,color:T.n900,lineHeight:1.2}}>{project.name}</span>
+        <Badge value={project.status}/>
+      </div>
+      <p style={{fontSize:13,color:T.n500,lineHeight:1.55,flex:1}}>{project.desc}</p>
+      {project.tasks > 0 && (
+        <div>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:5}}>
+            <span style={{fontSize:11,color:T.n400}}>{project.done}/{project.tasks} tasks</span>
+            <span style={{fontSize:11,fontWeight:600,color:accentColor}}>{pct}%</span>
+          </div>
+          <div style={{height:4,background:T.n100,borderRadius:2,overflow:'hidden'}}>
+            <div style={{height:'100%',width:`${pct}%`,background:accentColor,borderRadius:2,transition:'width 0.4s'}}/>
+          </div>
+        </div>
+      )}
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+        <span style={{fontSize:11,fontWeight:600,color: project.role==='MANAGER'?T.amber:T.n400,display:'flex',alignItems:'center',gap:4}}>
+          {project.role==='MANAGER' && <span style={{color:T.amber}}>{Icons.star}</span>}
+          {project.role}
+        </span>
+        <span style={{fontSize:11,color:T.n400}}>{project.date}</span>
+      </div>
+    </div>
+  );
+}
+
+function ProjectsPage({ setScreen, tweaks }) {
+  const pad = tweaks.density === 'compact' ? 24 : tweaks.density === 'spacious' ? 40 : 32;
+  return (
+    <div style={{maxWidth:900,padding:pad}}>
+      <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',marginBottom:28,gap:12}}>
+        <div>
+          <h1 style={{fontFamily:'Manrope',fontSize:26,fontWeight:800,color:T.n900,letterSpacing:'-0.02em',lineHeight:1}}>My Projects</h1>
+          <p style={{fontSize:13,color:T.n500,marginTop:5}}>3 active workspaces</p>
+        </div>
+        <Btn variant="primary" size="md" accent={tweaks.brandAccent} style={{flexShrink:0}}>
+          {Icons.plus} New project
+        </Btn>
+      </div>
+      <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(260px,1fr))',gap:16}}>
+        {PROJECTS.map(p=>(
+          <ProjectCard key={p.id} project={p} tweaks={tweaks} onClick={()=>setScreen('tasks')}/>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────
+   TASKS / KANBAN
+   ───────────────────────────────────────── */
+const TASKS = [
+  { id:1,  name:'Set up Oracle DB schema',      status:'DONE',        priority:'HIGH',   sp:5,  assignee:'A. Gómez' },
+  { id:2,  name:'Implement JWT auth',            status:'DONE',        priority:'HIGH',   sp:8,  assignee:'P. White' },
+  { id:3,  name:'Kanban drag-and-drop',          status:'IN_PROGRESS', priority:'MEDIUM', sp:5,  assignee:'A. Gómez' },
+  { id:4,  name:'Dashboard KPI widgets',         status:'IN_PROGRESS', priority:'MEDIUM', sp:8,  assignee:'P. White' },
+  { id:5,  name:'Telegram bot /my_tasks',        status:'IN_PROGRESS', priority:'LOW',    sp:3,  assignee:'A. Gómez' },
+  { id:6,  name:'Sprint deadline notifications', status:'BLOCKED',     priority:'HIGH',   sp:5,  assignee:'P. White' },
+  { id:7,  name:'Import tasks from CSV',         status:'TODO',        priority:'MEDIUM', sp:3,  assignee:null },
+  { id:8,  name:'Member workload chart',         status:'TODO',        priority:'LOW',    sp:5,  assignee:null },
+  { id:9,  name:'Audit log endpoint',            status:'TODO',        priority:'LOW',    sp:2,  assignee:null },
+];
+
+const COLS = [
+  { id:'TODO',        label:'To Do',      color:T.n600 },
+  { id:'IN_PROGRESS', label:'In Progress',color:T.blue },
+  { id:'BLOCKED',     label:'Blocked',    color:T.oracle },
+  { id:'DONE',        label:'Done',       color:T.green },
+];
+
+function TaskCard({ task, density }) {
+  const [hov, setHov] = useState(false);
+  const p = density === 'compact' ? '10px 12px' : '14px 14px';
+  return (
+    <div
+      onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
+      style={{
+        background:'white', border:`1px solid ${hov?T.n300:T.n200}`,
+        borderRadius:10, padding:p,
+        boxShadow: hov ? '0 4px 14px rgba(0,0,0,0.09)' : '0 1px 3px rgba(0,0,0,0.06)',
+        transition:'all 0.15s', cursor:'pointer',
+        display:'flex', flexDirection:'column', gap:density==='compact'?6:10,
+      }}
+    >
+      <p style={{fontSize:13,fontWeight:600,color:T.n900,lineHeight:1.4,textWrap:'pretty'}}>{task.name}</p>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',gap:6}}>
+        <Badge value={task.priority}/>
+        <span style={{fontSize:11,color:T.n400,fontFamily:'JetBrains Mono',letterSpacing:'-0.02em'}}>{task.sp} SP</span>
+      </div>
+      {task.assignee && (
+        <div style={{display:'flex',alignItems:'center',gap:6}}>
+          <div style={{width:18,height:18,borderRadius:'50%',background:T.n200,display:'flex',alignItems:'center',justifyContent:'center',fontSize:9,fontWeight:700,color:T.n600,flexShrink:0}}>
+            {task.assignee[0]}
+          </div>
+          <span style={{fontSize:11,color:T.n500}}>{task.assignee}</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function KanbanCol({ col, tasks, density }) {
+  const colBg = col.id==='TODO'?T.n50 : col.id==='IN_PROGRESS'?'#EFF6FF' : col.id==='BLOCKED'?'#FFF5F5' : '#F0FDF4';
+  const gap = density === 'compact' ? 6 : 10;
+  const minH = density === 'compact' ? 80 : 120;
+  return (
+    <div style={{flex:1,minWidth:210,maxWidth:300,display:'flex',flexDirection:'column',gap:8}}>
+      <div style={{display:'flex',alignItems:'center',gap:7,padding:'0 2px',marginBottom:2}}>
+        <div style={{width:8,height:8,borderRadius:'50%',background:col.color,flexShrink:0}}/>
+        <span style={{fontSize:12,fontWeight:700,color:col.color,letterSpacing:'0.01em'}}>{col.label}</span>
+        <span style={{fontSize:11,fontWeight:600,background:T.n200,color:T.n500,borderRadius:8,padding:'1px 7px',marginLeft:'auto'}}>{tasks.length}</span>
+      </div>
+      <div style={{background:colBg,borderRadius:10,padding:density==='compact'?6:8,display:'flex',flexDirection:'column',gap,minHeight:minH,border:`1px solid ${T.n200}`}}>
+        {tasks.map(t=><TaskCard key={t.id} task={t} density={density}/>)}
+        <button style={{display:'flex',alignItems:'center',gap:5,padding:'6px 8px',borderRadius:7,border:'none',background:'transparent',color:T.n400,fontSize:12,fontWeight:500,cursor:'pointer',marginTop:2,transition:'all 0.13s'}}
+          onMouseEnter={e=>{e.currentTarget.style.background=T.n200;e.currentTarget.style.color=T.n700;}}
+          onMouseLeave={e=>{e.currentTarget.style.background='transparent';e.currentTarget.style.color=T.n400;}}>
+          {Icons.plus} Add task
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function TasksPage({ tweaks }) {
+  const [view, setView] = useState('kanban');
+  const byStatus = COLS.reduce((acc,c)=>{acc[c.id]=TASKS.filter(t=>t.status===c.id);return acc;},{});
+  const pad = tweaks.density === 'compact' ? 24 : 32;
+  return (
+    <div style={{padding:pad, height:'100%', display:'flex', flexDirection:'column', gap:0}}>
+      {/* Header */}
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:20,flexWrap:'wrap',gap:12,flexShrink:0}}>
+        <div>
+          <h1 style={{fontFamily:'Manrope',fontSize:22,fontWeight:800,color:T.n900,letterSpacing:'-0.02em'}}>Tasks</h1>
+          <p style={{fontSize:12,color:T.n500,marginTop:3}}>Kairo v1 · Sprint 2 — Core Features</p>
+        </div>
+        <div style={{display:'flex',alignItems:'center',gap:8}}>
+          <div style={{display:'flex',background:T.n100,borderRadius:8,padding:2,gap:1}}>
+            {['kanban','list'].map(v=>(
+              <button key={v} onClick={()=>setView(v)} style={{
+                padding:'5px 12px',borderRadius:7,fontSize:12,fontWeight:600,border:'none',
+                background: view===v ? 'white' : 'transparent',
+                color: view===v ? T.n900 : T.n500,
+                boxShadow: view===v ? '0 1px 3px rgba(0,0,0,0.09)' : 'none',
+                transition:'all 0.13s',cursor:'pointer'
+              }}>{v[0].toUpperCase()+v.slice(1)}</button>
+            ))}
+          </div>
+          <Btn variant="secondary" size="sm">Import</Btn>
+          <Btn variant="primary" size="sm" accent={tweaks.brandAccent}>{Icons.plus} New task</Btn>
+        </div>
+      </div>
+
+      {/* Filters */}
+      <div style={{display:'flex',gap:8,marginBottom:20,flexShrink:0,flexWrap:'wrap'}}>
+        {['All statuses','Sprint 2 (active)','All priorities','All members'].map(label=>(
+          <select key={label} style={{padding:'6px 10px',border:`1px solid ${T.n200}`,borderRadius:8,fontSize:12,color:T.n700,background:'white',cursor:'pointer',outline:'none'}}>
+            <option>{label}</option>
+          </select>
+        ))}
+      </div>
+
+      {/* Kanban */}
+      {view==='kanban' && (
+        <div style={{display:'flex',gap:12,overflowX:'auto',paddingBottom:16,flex:1}}>
+          {COLS.map(col=><KanbanCol key={col.id} col={col} tasks={byStatus[col.id]} density={tweaks.density}/>)}
+        </div>
+      )}
+
+      {/* List */}
+      {view==='list' && (
+        <div style={{background:'white',borderRadius:12,border:`1px solid ${T.n200}`,overflow:'hidden',boxShadow:'0 1px 4px rgba(0,0,0,0.06)'}}>
+          <table style={{width:'100%',borderCollapse:'collapse'}}>
+            <thead>
+              <tr style={{background:T.n50}}>
+                {['Task','Status','Priority','SP','Assignee'].map(h=>(
+                  <th key={h} style={{padding:'10px 16px',textAlign:'left',fontSize:11,fontWeight:700,color:T.n500,letterSpacing:'0.06em',textTransform:'uppercase',borderBottom:`1px solid ${T.n200}`}}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {TASKS.map((t,i)=>(
+                <tr key={t.id} style={{borderBottom: i<TASKS.length-1 ? `1px solid ${T.n100}` : 'none', transition:'background 0.1s'}}
+                  onMouseEnter={e=>e.currentTarget.style.background=T.n50}
+                  onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+                  <td style={{padding:'11px 16px',fontSize:13,fontWeight:500,color:T.n900}}>{t.name}</td>
+                  <td style={{padding:'11px 16px'}}><Badge value={t.status}/></td>
+                  <td style={{padding:'11px 16px'}}><Badge value={t.priority}/></td>
+                  <td style={{padding:'11px 16px',fontSize:12,fontFamily:'JetBrains Mono',color:T.n400}}>{t.sp}</td>
+                  <td style={{padding:'11px 16px',fontSize:12,color:T.n500}}>{t.assignee||'—'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────
+   SPRINTS
+   ───────────────────────────────────────── */
+const SPRINTS = [
+  { id:1, name:'Sprint 1 — Foundation',    status:'CLOSED',   goal:'Set up infrastructure and auth',              start:'Jan 15', end:'Jan 29', tasks:12, done:12 },
+  { id:2, name:'Sprint 2 — Core Features', status:'ACTIVE',   goal:'Kanban board, task management API, dashboard', start:'Feb 3',  end:'Feb 17', tasks:9,  done:5  },
+  { id:3, name:'Sprint 3 — Bot & Notifs',  status:'PLANNING', goal:'Telegram bot commands + notification system',  start:'Feb 18', end:'Mar 3',  tasks:6,  done:0  },
+];
+
+function SprintsPage({ tweaks }) {
+  const pad = tweaks.density === 'compact' ? 24 : 32;
+  const accentColor = tweaks.brandAccent === 'oracle' ? T.oracle : T.navyMid;
+  return (
+    <div style={{maxWidth:800, padding:pad}}>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:28}}>
+        <div>
+          <h1 style={{fontFamily:'Manrope',fontSize:22,fontWeight:800,color:T.n900,letterSpacing:'-0.02em'}}>Sprints</h1>
+          <p style={{fontSize:12,color:T.n500,marginTop:3}}>Kairo v1 · 3 sprints total</p>
+        </div>
+        <Btn variant="primary" size="md" accent={tweaks.brandAccent}>{Icons.plus} New sprint</Btn>
+      </div>
+
+      <div style={{display:'flex',flexDirection:'column',gap:14}}>
+        {SPRINTS.map(s=>{
+          const pct = s.tasks > 0 ? Math.round((s.done/s.tasks)*100) : 0;
+          const isActive = s.status === 'ACTIVE';
+          const barColor = s.status==='DONE'||s.status==='CLOSED' ? T.green : isActive ? accentColor : T.n300;
+          return (
+            <div key={s.id} style={{
+              background:'white',
+              border:`1.5px solid ${isActive ? accentColor : T.n200}`,
+              borderRadius:14, padding:24,
+              boxShadow: isActive ? `0 0 0 3px ${accentColor}14` : '0 1px 4px rgba(0,0,0,0.06)',
+              display:'flex', flexDirection:'column', gap:14,
+            }}>
+              <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:12}}>
+                <div style={{flex:1}}>
+                  <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:5}}>
+                    <span style={{fontFamily:'Manrope',fontSize:15,fontWeight:700,color:T.n900}}>{s.name}</span>
+                    <Badge value={s.status}/>
+                  </div>
+                  <p style={{fontSize:13,color:T.n500,lineHeight:1.5}}>{s.goal}</p>
+                </div>
+                <div style={{display:'flex',gap:8,flexShrink:0}}>
+                  {s.status==='PLANNING' && <Btn variant="secondary" size="sm">Activate</Btn>}
+                  {s.status==='ACTIVE'   && <Btn variant="primary" size="sm" accent={tweaks.brandAccent}>Close sprint</Btn>}
+                </div>
+              </div>
+              <div style={{display:'flex',alignItems:'center',gap:20,fontSize:12,color:T.n400}}>
+                <span style={{display:'flex',alignItems:'center',gap:4}}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style={{opacity:0.5}}><path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/></svg>
+                  {s.start} → {s.end}
+                </span>
+                <span style={{display:'flex',alignItems:'center',gap:4}}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" style={{opacity:0.5}}><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3l1.41 1.41L9 11.83l-2.41-2.42L8 8l1 1 3-3zm7 10H5v-2h14v2zm0-4H5v-2h14v2z"/></svg>
+                  {s.done}/{s.tasks} tasks done
+                </span>
+              </div>
+              {s.status !== 'PLANNING' && (
+                <div>
+                  <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:5}}>
+                    <span style={{fontSize:11,color:T.n400}}>Progress</span>
+                    <span style={{fontSize:11,fontWeight:700,color:barColor}}>{pct}%</span>
+                  </div>
+                  <div style={{height:6,background:T.n100,borderRadius:3,overflow:'hidden'}}>
+                    <div style={{height:'100%',width:`${pct}%`,background:barColor,borderRadius:3,transition:'width 0.4s'}}/>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────
+   BACKLOG
+   ───────────────────────────────────────── */
+const BACKLOG = [
+  { id:10, name:'Profile edit endpoint',   priority:'LOW',    sp:2 },
+  { id:11, name:'Password reset flow',     priority:'MEDIUM', sp:5 },
+  { id:12, name:'Email notifications',     priority:'LOW',    sp:8 },
+  { id:13, name:'Dark mode toggle',        priority:'LOW',    sp:3 },
+  { id:14, name:'Mobile sidebar gestures', priority:'MEDIUM', sp:3 },
+];
+
+function BacklogPage({ tweaks }) {
+  const pad = tweaks.density === 'compact' ? 24 : 32;
+  return (
+    <div style={{maxWidth:760, padding:pad}}>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:28}}>
+        <div>
+          <h1 style={{fontFamily:'Manrope',fontSize:22,fontWeight:800,color:T.n900,letterSpacing:'-0.02em'}}>Backlog</h1>
+          <p style={{fontSize:12,color:T.n500,marginTop:3}}>Kairo v1 · 5 unassigned items · 21 SP</p>
+        </div>
+        <Btn variant="primary" size="md" accent={tweaks.brandAccent}>{Icons.plus} New task</Btn>
+      </div>
+      <div style={{background:'white',borderRadius:14,border:`1px solid ${T.n200}`,overflow:'hidden',boxShadow:'0 1px 4px rgba(0,0,0,0.06)'}}>
+        <div style={{padding:'12px 20px',borderBottom:`1px solid ${T.n200}`,background:T.n50,display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+          <span style={{fontSize:11,fontWeight:700,color:T.n500,textTransform:'uppercase',letterSpacing:'0.06em'}}>Unassigned — not in any sprint</span>
+          <span style={{fontSize:11,fontWeight:700,color:T.n400}}>21 SP total</span>
+        </div>
+        {BACKLOG.map((t,i)=>(
+          <div key={t.id} style={{
+            display:'flex',alignItems:'center',gap:14,padding:'13px 20px',
+            borderBottom: i<BACKLOG.length-1 ? `1px solid ${T.n100}` : 'none',
+            transition:'background 0.1s',
+          }}
+            onMouseEnter={e=>e.currentTarget.style.background=T.n50}
+            onMouseLeave={e=>e.currentTarget.style.background='transparent'}
+          >
+            <div style={{width:6,height:6,borderRadius:'50%',background:T.n300,flexShrink:0}}/>
+            <span style={{flex:1,fontSize:13,fontWeight:500,color:T.n900}}>{t.name}</span>
+            <Badge value={t.priority}/>
+            <span style={{fontSize:12,fontFamily:'JetBrains Mono',color:T.n400,minWidth:32,textAlign:'right'}}>{t.sp} SP</span>
+            <Btn variant="ghost" size="sm" style={{fontSize:11,gap:4}}>
+              {Icons.chevronRight} Sprint
+            </Btn>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────
+   MEMBERS
+   ───────────────────────────────────────── */
+const MEMBERS = [
+  { id:1, name:'Arturo Gómez',   email:'arturo@tec.mx',    role:'MANAGER', initials:'AG' },
+  { id:2, name:'Patricia White', email:'pwhite@tec.mx',    role:'MEMBER',  initials:'PW' },
+  { id:3, name:'Miguel Cruz',    email:'mcruz@oracle.com', role:'MEMBER',  initials:'MC' },
+];
+
+function MembersPage({ tweaks }) {
+  const pad = tweaks.density === 'compact' ? 24 : 32;
+  const accentColor = tweaks.brandAccent === 'oracle' ? T.oracle : T.navyMid;
+  return (
+    <div style={{maxWidth:680, padding:pad}}>
+      <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:28}}>
+        <div>
+          <h1 style={{fontFamily:'Manrope',fontSize:22,fontWeight:800,color:T.n900,letterSpacing:'-0.02em'}}>Members</h1>
+          <p style={{fontSize:12,color:T.n500,marginTop:3}}>Kairo v1 · 3 collaborators</p>
+        </div>
+        <Btn variant="primary" size="md" accent={tweaks.brandAccent}>{Icons.plus} Add member</Btn>
+      </div>
+      <div style={{background:'white',borderRadius:14,border:`1px solid ${T.n200}`,overflow:'hidden',boxShadow:'0 1px 4px rgba(0,0,0,0.06)'}}>
+        {MEMBERS.map((m,i)=>(
+          <div key={m.id} style={{
+            display:'flex',alignItems:'center',gap:14,padding:'16px 22px',
+            borderBottom: i<MEMBERS.length-1 ? `1px solid ${T.n100}` : 'none',
+            transition:'background 0.1s',
+          }}
+            onMouseEnter={e=>e.currentTarget.style.background=T.n50}
+            onMouseLeave={e=>e.currentTarget.style.background='transparent'}
+          >
+            <div style={{width:40,height:40,borderRadius:'50%',background:m.role==='MANAGER'?accentColor:T.n200,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+              <span style={{fontFamily:'Manrope',fontSize:13,fontWeight:700,color:m.role==='MANAGER'?'white':T.n600}}>{m.initials}</span>
+            </div>
+            <div style={{flex:1}}>
+              <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:2}}>
+                <span style={{fontSize:14,fontWeight:600,color:T.n900}}>{m.name}</span>
+                {m.role==='MANAGER' && (
+                  <span style={{fontSize:10,fontWeight:700,background:T.amberBg,color:T.amber,padding:'1px 7px',borderRadius:4,display:'inline-flex',alignItems:'center',gap:3}}>
+                    {Icons.star} MANAGER
+                  </span>
+                )}
+              </div>
+              <div style={{fontSize:12,color:T.n400}}>{m.email}</div>
+            </div>
+            {m.role!=='MANAGER' && (
+              <button style={{fontSize:12,color:T.n400,padding:'5px 12px',borderRadius:7,border:`1px solid ${T.n200}`,background:'white',cursor:'pointer',fontWeight:500,transition:'all 0.13s'}}
+                onMouseEnter={e=>{e.currentTarget.style.borderColor=T.oracle;e.currentTarget.style.color=T.oracle;}}
+                onMouseLeave={e=>{e.currentTarget.style.borderColor=T.n200;e.currentTarget.style.color=T.n400;}}>
+                Remove
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────
+   PROFILE
+   ───────────────────────────────────────── */
+function ProfilePage({ tweaks }) {
+  const pad = tweaks.density === 'compact' ? 24 : 32;
+  const accentColor = tweaks.brandAccent === 'oracle' ? T.oracle : T.navyMid;
+  return (
+    <div style={{maxWidth:520, padding:pad}}>
+      <h1 style={{fontFamily:'Manrope',fontSize:22,fontWeight:800,color:T.n900,letterSpacing:'-0.02em',marginBottom:28}}>Profile</h1>
+      <div style={{background:'white',borderRadius:16,border:`1px solid ${T.n200}`,overflow:'hidden',boxShadow:'0 1px 4px rgba(0,0,0,0.06)'}}>
+        {/* Hero */}
+        <div style={{height:6,background:`linear-gradient(90deg,${T.navy},${accentColor})`}}/>
+        <div style={{padding:'28px 28px 24px',borderBottom:`1px solid ${T.n200}`,display:'flex',alignItems:'center',gap:18}}>
+          <div style={{width:60,height:60,borderRadius:'50%',background:accentColor,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+            <span style={{fontFamily:'Manrope',fontSize:22,fontWeight:800,color:'white'}}>AG</span>
+          </div>
+          <div>
+            <div style={{fontFamily:'Manrope',fontSize:18,fontWeight:700,color:T.n900}}>Arturo Gómez</div>
+            <div style={{fontSize:13,color:T.n500,marginTop:3}}>arturo@tec.mx</div>
+            <div style={{display:'flex',alignItems:'center',gap:6,marginTop:6}}>
+              <span style={{fontSize:11,fontWeight:600,background:T.amberBg,color:T.amber,padding:'2px 8px',borderRadius:4,display:'inline-flex',alignItems:'center',gap:3}}>{Icons.star} Manager</span>
+              <span style={{fontSize:11,fontWeight:600,background:T.navyLight,color:T.navyMid,padding:'2px 8px',borderRadius:4}}>Kairo v1</span>
+            </div>
+          </div>
+        </div>
+        <div style={{padding:'24px 28px',display:'flex',flexDirection:'column',gap:16}}>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
+            <Input label="First name" value="Arturo" onChange={()=>{}}/>
+            <Input label="Last name" value="Gómez" onChange={()=>{}}/>
+          </div>
+          <Input label="Email address" type="email" value="arturo@tec.mx" onChange={()=>{}}/>
+          <Input label="New password" type="password" placeholder="Leave blank to keep current" onChange={()=>{}}/>
+          <div style={{paddingTop:4}}>
+            <Btn variant="primary" size="md" accent={tweaks.brandAccent}>Save changes</Btn>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────
+   REGISTER
+   ───────────────────────────────────────── */
+function RegisterPage({ onRegister, onBack, variant }) {
+  const [name,    setName]    = useState('');
+  const [email,   setEmail]   = useState('');
+  const [pass,    setPass]    = useState('');
+  const [confirm, setConfirm] = useState('');
+
+  const isLight = variant !== 'A';
+
+  const inner = (
+    <div style={{width:'100%', maxWidth:420}}>
+      <h1 style={{fontFamily:'Manrope',fontSize:24,fontWeight:700,color:isLight?T.n900:'white',marginBottom:6,letterSpacing:'-0.02em'}}>Create account</h1>
+      <p style={{fontSize:13,color:isLight?T.n500:'rgba(255,255,255,0.55)',marginBottom:28,lineHeight:1.5}}>Join the Oracle × ITESM workspace</p>
+
+      <div style={{
+        background: isLight ? 'white' : 'rgba(255,255,255,0.04)',
+        borderRadius:16,
+        border: isLight ? `1px solid ${T.n200}` : '1px solid rgba(255,255,255,0.10)',
+        boxShadow: isLight ? '0 8px 24px rgba(0,0,0,0.08)' : '0 32px 80px rgba(0,0,0,0.4)',
+        overflow:'hidden',
+      }}>
+        {isLight && <div style={{height:4,background:`linear-gradient(90deg,${T.navy},${T.oracle})`}}/>}
+        <div style={{padding:'28px 28px 24px', display:'flex', flexDirection:'column', gap:16}}>
+          <Input label="Full name"       value={name}    onChange={e=>setName(e.target.value)}    placeholder="Arturo Gómez"       required/>
+          <Input label="Email address"   type="email"    value={email}   onChange={e=>setEmail(e.target.value)}   placeholder="you@tec.mx"         required/>
+          <Input label="Password"        type="password" value={pass}    onChange={e=>setPass(e.target.value)}    placeholder="Min. 8 characters"  required/>
+          <Input label="Confirm password" type="password" value={confirm} onChange={e=>setConfirm(e.target.value)} placeholder="Repeat password"   required/>
+          <Btn variant="navy" size="lg" onClick={onRegister} style={{width:'100%',justifyContent:'center',marginTop:4}}>
+            Create account
+          </Btn>
+        </div>
+      </div>
+
+      <p style={{textAlign:'center',fontSize:13,color:isLight?T.n500:'rgba(255,255,255,0.45)',marginTop:20}}>
+        Already have an account?{' '}
+        <span style={{color:isLight?T.navyMid:'rgba(255,255,255,0.75)',fontWeight:600,cursor:'pointer'}} onClick={onBack}>Sign in</span>
+      </p>
+    </div>
+  );
+
+  if (variant === 'B') {
+    return (
+      <div style={{minHeight:'100vh',display:'flex'}}>
+        <div style={{
+          flex:'0 0 420px', display:'flex', flexDirection:'column',
+          justifyContent:'space-between', padding:'48px 44px',
+          background:T.navy,
+          backgroundImage:`radial-gradient(ellipse 100% 80% at 0% 100%, ${T.navyMid}80 0%, transparent 60%)`,
+          position:'relative', overflow:'hidden',
+        }}>
+          <div style={{position:'absolute',inset:0,opacity:0.04,backgroundImage:'linear-gradient(rgba(255,255,255,0.5) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.5) 1px,transparent 1px)',backgroundSize:'40px 40px',pointerEvents:'none'}}/>
+          <div style={{position:'relative',zIndex:1}}>
+            <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:60}}>
+              <KairoMark size={38}/>
+              <div>
+                <div style={{fontFamily:'Manrope',fontSize:20,fontWeight:800,letterSpacing:'-0.03em',color:'white'}}>Kairo</div>
+                <div style={{fontSize:9,fontWeight:700,letterSpacing:'0.10em',textTransform:'uppercase',color:'rgba(255,255,255,0.4)',marginTop:2}}>TEConecta</div>
+              </div>
+            </div>
+            <h2 style={{fontFamily:'Manrope',fontSize:32,fontWeight:800,color:'white',lineHeight:1.15,letterSpacing:'-0.02em',marginBottom:16}}>Start collaborating<br/>from day one.</h2>
+            <p style={{fontSize:14,color:'rgba(255,255,255,0.55)',lineHeight:1.65,maxWidth:300}}>Create your account and join your team's active sprints, tasks and projects.</p>
+          </div>
+          <div style={{position:'relative',zIndex:1}}>
+            <div style={{fontSize:10,fontWeight:600,letterSpacing:'0.08em',textTransform:'uppercase',color:'rgba(255,255,255,0.30)',marginBottom:14}}>Supported by</div>
+            <div style={{display:'flex',alignItems:'center',gap:20}}>
+              <img src="oracle-wordmark.svg" alt="Oracle" style={{height:18,filter:'brightness(0) invert(1)',opacity:0.5}}/>
+              <div style={{width:1,height:14,background:'rgba(255,255,255,0.15)'}}/>
+              <img src="itesm-wordmark.svg" alt="Tec" style={{height:18,filter:'brightness(0) invert(1)',opacity:0.5}}/>
+            </div>
+          </div>
+        </div>
+        <div style={{flex:1,display:'flex',alignItems:'center',justifyContent:'center',background:T.n50,padding:40}}>
+          <div style={{width:'100%',maxWidth:380}}>
+            <h1 style={{fontFamily:'Manrope',fontSize:26,fontWeight:700,color:T.n900,marginBottom:6,letterSpacing:'-0.02em'}}>Create account</h1>
+            <p style={{fontSize:13,color:T.n500,marginBottom:28}}>Join the Oracle × ITESM workspace</p>
+            <div style={{display:'flex',flexDirection:'column',gap:16}}>
+              <Input label="Full name"        value={name}    onChange={e=>setName(e.target.value)}    placeholder="Arturo Gómez"      required/>
+              <Input label="Email address"    type="email"    value={email}   onChange={e=>setEmail(e.target.value)}   placeholder="you@tec.mx"        required/>
+              <Input label="Password"         type="password" value={pass}    onChange={e=>setPass(e.target.value)}    placeholder="Min. 8 characters" required/>
+              <Input label="Confirm password" type="password" value={confirm} onChange={e=>setConfirm(e.target.value)} placeholder="Repeat password"  required/>
+              <Btn variant="navy" size="lg" onClick={onRegister} style={{width:'100%',justifyContent:'center'}}>Create account</Btn>
+            </div>
+            <p style={{textAlign:'center',fontSize:13,color:T.n500,marginTop:24}}>
+              Already have an account?{' '}
+              <span style={{color:T.navyMid,fontWeight:600,cursor:'pointer'}} onClick={onBack}>Sign in</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Variant A — dark full-bleed
+  return (
+    <div style={{
+      minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center',
+      background:T.navyDeep,
+      backgroundImage:`radial-gradient(ellipse 70% 60% at 50% 0%, ${T.navyMid}55 0%, transparent 70%)`,
+      padding:24, position:'relative', overflow:'hidden',
+    }}>
+      <div style={{position:'absolute',inset:0,opacity:0.04,backgroundImage:'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)',backgroundSize:'48px 48px',pointerEvents:'none'}}/>
+      <div style={{width:'100%',maxWidth:440,position:'relative',zIndex:1}}>
+        <h1 style={{fontFamily:'Manrope',fontSize:26,fontWeight:700,color:'white',marginBottom:6,letterSpacing:'-0.02em'}}>Create account</h1>
+        <p style={{fontSize:13,color:'rgba(255,255,255,0.50)',marginBottom:28}}>Join the Oracle × ITESM workspace</p>
+        <div style={{background:'white',borderRadius:20,boxShadow:'0 32px 80px rgba(0,0,0,0.4)',overflow:'hidden'}}>
+          <div style={{height:4,background:`linear-gradient(90deg,${T.navy},${T.oracle})`}}/>
+          <div style={{padding:'28px 32px 28px',display:'flex',flexDirection:'column',gap:14}}>
+            <Input label="Full name"        value={name}    onChange={e=>setName(e.target.value)}    placeholder="Arturo Gómez"      required/>
+            <Input label="Email address"    type="email"    value={email}   onChange={e=>setEmail(e.target.value)}   placeholder="you@tec.mx"        required/>
+            <Input label="Password"         type="password" value={pass}    onChange={e=>setPass(e.target.value)}    placeholder="Min. 8 characters" required/>
+            <Input label="Confirm password" type="password" value={confirm} onChange={e=>setConfirm(e.target.value)} placeholder="Repeat password"  required/>
+            <Btn variant="navy" size="lg" onClick={onRegister} style={{width:'100%',justifyContent:'center',marginTop:4}}>Create account</Btn>
+          </div>
+        </div>
+        <p style={{textAlign:'center',fontSize:13,color:'rgba(255,255,255,0.40)',marginTop:20}}>
+          Already have an account?{' '}
+          <span style={{color:'rgba(255,255,255,0.75)',fontWeight:600,cursor:'pointer'}} onClick={onBack}>Sign in</span>
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────
+   APP SHELL + ROOT
+   ───────────────────────────────────────── */
+function AppShell({ children, screen, setScreen, tweaks }) {
+  return (
+    <div style={{display:'flex',height:'100vh',overflow:'hidden',background:T.n100}}>
+      <Sidebar screen={screen} setScreen={setScreen} tweaks={tweaks}/>
+      <main style={{flex:1,overflow:'auto'}}>
+        {children}
+      </main>
+    </div>
+  );
+}
+
+function App() {
+  const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const [screen, setScreen] = useState('login');
+  const isAuth = screen !== 'login' && screen !== 'register';
+
+  const SCREENS = {
+    projects:  <ProjectsPage setScreen={setScreen} tweaks={tweaks}/>,
+    tasks:     <TasksPage tweaks={tweaks}/>,
+    sprints:   <SprintsPage tweaks={tweaks}/>,
+    backlog:   <BacklogPage tweaks={tweaks}/>,
+    members:   <MembersPage tweaks={tweaks}/>,
+    dashboard: <div style={{padding:32}}><h1 style={{fontFamily:'Manrope',fontSize:22,fontWeight:800,color:T.n500}}>Dashboard — coming soon</h1></div>,
+    profile:   <ProfilePage tweaks={tweaks}/>,
+  };
+
+  const LoginComp = tweaks.loginVariant === 'A' ? LoginA : LoginB;
+  if (screen === 'register') return (
+    <RegisterPage
+      variant={tweaks.loginVariant}
+      onRegister={()=>setScreen('projects')}
+      onBack={()=>setScreen('login')}
+    />
+  );
+  if (!isAuth) return <LoginComp onLogin={(dest)=>setScreen(dest==='register'?'register':'projects')}/>;
+
+  return (
+    <>
+      <AppShell screen={screen} setScreen={setScreen} tweaks={tweaks}>
+        {SCREENS[screen] || SCREENS['projects']}
+      </AppShell>
+      <TweaksPanel tweaks={tweaks} setTweak={setTweak}>
+        <TweakSection title="Login">
+          <TweakRadio id="loginVariant" label="Variant"
+            options={[{value:'A',label:'Dark card'},{value:'B',label:'Split panel'}]}
+            value={tweaks.loginVariant} onChange={v=>setTweak('loginVariant',v)}/>
+        </TweakSection>
+        <TweakSection title="Sidebar">
+          <TweakRadio id="sidebarStyle" label="Color"
+            options={[{value:'navy',label:'Navy'},{value:'dark',label:'Dark'},{value:'light',label:'Light'}]}
+            value={tweaks.sidebarStyle} onChange={v=>setTweak('sidebarStyle',v)}/>
+        </TweakSection>
+        <TweakSection title="Brand accent">
+          <TweakRadio id="brandAccent" label="Primary"
+            options={[{value:'oracle',label:'Oracle red'},{value:'itesm',label:'ITESM blue'}]}
+            value={tweaks.brandAccent} onChange={v=>setTweak('brandAccent',v)}/>
+        </TweakSection>
+        <TweakSection title="Layout">
+          <TweakRadio id="density" label="Density"
+            options={[{value:'compact',label:'Compact'},{value:'comfortable',label:'Comfortable'}]}
+            value={tweaks.density} onChange={v=>setTweak('density',v)}/>
+        </TweakSection>
+      </TweaksPanel>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
