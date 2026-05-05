@@ -21,10 +21,11 @@ export default function SprintCard({ sprint, isManager, onActivate, onClose, onR
       onClick={() => onSelect(sprint)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="bg-white rounded-xl p-4 cursor-pointer flex flex-col gap-3 transition-all duration-150"
+      className="rounded-xl p-4 cursor-pointer flex flex-col gap-3 transition-all duration-150"
       style={{
-        border: `1px solid ${hovered ? '#D1D5DB' : '#E5E7EB'}`,
-        boxShadow: hovered ? '0 6px 18px rgba(0,0,0,0.09)' : '0 1px 3px rgba(0,0,0,0.06)',
+        background: 'var(--bg-card)',
+        border: `1px solid ${hovered ? 'var(--border-strong)' : 'var(--border)'}`,
+        boxShadow: hovered ? '0 6px 18px var(--shadow-drop)' : '0 1px 3px var(--shadow-card)',
         transform: hovered ? 'translateY(-2px)' : 'none',
       }}
     >
@@ -35,18 +36,18 @@ export default function SprintCard({ sprint, isManager, onActivate, onClose, onR
             style={{ background: STATUS_DOT[sprint.status] ?? '#6B7280' }}
           />
           <div className="min-w-0">
-            <h3 className="font-display font-bold text-gray-900 text-[13px] leading-snug truncate">
+            <h3 className="font-display font-bold text-[13px] leading-snug truncate" style={{ color: 'var(--text-primary)' }}>
               {sprint.sprintName}
             </h3>
             {sprint.goal && (
-              <p className="text-[11px] text-gray-400 mt-0.5 line-clamp-1">{sprint.goal}</p>
+              <p className="text-[11px] mt-0.5 line-clamp-1" style={{ color: 'var(--text-muted)' }}>{sprint.goal}</p>
             )}
           </div>
         </div>
         <Badge value={sprint.status} />
       </div>
 
-      <p className="text-[11px] text-gray-400 font-mono">
+      <p className="text-[11px] font-mono" style={{ color: 'var(--text-muted)' }}>
         {fmt(sprint.startDate)} → {fmt(sprint.endDate)}
       </p>
 
@@ -62,7 +63,8 @@ export default function SprintCard({ sprint, isManager, onActivate, onClose, onR
               </button>
               <button
                 onClick={() => onClose(sprint)}
-                className="px-3 py-1 rounded-lg text-[12px] font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 border border-gray-200 transition-colors"
+                className="px-3 py-1 rounded-lg text-[12px] font-semibold transition-colors"
+                style={{ color: 'var(--text-primary)', background: 'var(--bg-card-alt)', border: '1px solid var(--border)' }}
               >
                 Close
               </button>
@@ -83,7 +85,8 @@ export default function SprintCard({ sprint, isManager, onActivate, onClose, onR
         <div className="flex gap-2 pt-1" onClick={(e) => e.stopPropagation()}>
           <button
             onClick={() => onReopen(sprint)}
-            className="px-3 py-1 rounded-lg text-[12px] font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 border border-gray-200 transition-colors"
+            className="px-3 py-1 rounded-lg text-[12px] font-semibold transition-colors"
+            style={{ color: 'var(--text-primary)', background: 'var(--bg-card-alt)', border: '1px solid var(--border)' }}
           >
             Reopen
           </button>

@@ -196,10 +196,10 @@ export default function SprintsPage() {
     <div>
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-6">
         <div>
-          <h1 className="font-display font-extrabold text-gray-900 text-[22px] leading-none" style={{ letterSpacing: '-0.02em' }}>
+          <h1 className="font-display font-extrabold text-[22px] leading-none" style={{ letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
             Sprints
           </h1>
-          <p className="text-[12px] text-gray-500 mt-1.5">{project.projectName}</p>
+          <p className="text-[12px] mt-1.5" style={{ color: 'var(--text-secondary)' }}>{project.projectName}</p>
         </div>
         {isManager ? (
           <button

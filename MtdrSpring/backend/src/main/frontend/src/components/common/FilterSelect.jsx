@@ -96,10 +96,10 @@ export default function FilterSelect({
       ref={dropdownRef}
       style={{
         ...dropdownStyle,
-        background: 'white',
+        background: 'var(--dd-bg)',
         borderRadius: 12,
-        border: '1px solid #E5E7EB',
-        boxShadow: '0 8px 24px rgba(0,0,0,0.10)',
+        border: '1px solid var(--dd-border)',
+        boxShadow: '0 8px 24px var(--shadow-drop)',
         paddingTop: 4,
         paddingBottom: 4,
       }}
@@ -111,14 +111,14 @@ export default function FilterSelect({
         style={{
           width: '100%', display: 'flex', alignItems: 'center',
           padding: '8px 12px', fontSize: 12, fontWeight: 600,
-          color: '#9CA3AF', background: 'none', border: 'none', cursor: 'pointer',
+          color: 'var(--text-muted)', background: 'none', border: 'none', cursor: 'pointer',
           textAlign: 'left',
         }}
       >
         {placeholder}
       </button>
 
-      <div style={{ height: 1, background: '#F3F4F6', margin: '2px 8px' }} />
+      <div style={{ height: 1, background: 'var(--dd-divider)', margin: '2px 8px' }} />
 
       {options.map((opt) => {
         const selected = value === opt.value;
@@ -130,12 +130,12 @@ export default function FilterSelect({
             style={{
               width: '100%', display: 'flex', alignItems: 'center', gap: 10,
               padding: '8px 12px', fontSize: 13, border: 'none', cursor: 'pointer',
-              background: selected ? '#EFF6FF' : 'transparent',
-              color: selected ? '#003865' : '#374151',
+              background: selected ? 'var(--dd-selected)' : 'transparent',
+              color: selected ? 'var(--dd-selected-fg)' : 'var(--text-primary)',
               fontWeight: selected ? 600 : 400,
               textAlign: 'left',
             }}
-            onMouseEnter={(e) => { if (!selected) e.currentTarget.style.background = '#F9FAFB'; }}
+            onMouseEnter={(e) => { if (!selected) e.currentTarget.style.background = 'var(--dd-hover)'; }}
             onMouseLeave={(e) => { if (!selected) e.currentTarget.style.background = 'transparent'; }}
           >
             {showDot && (
@@ -146,7 +146,7 @@ export default function FilterSelect({
             )}
             <span style={{ flex: 1 }}>{opt.label}</span>
             {selected && (
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#003865" strokeWidth={2.5}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--dd-selected-fg)" strokeWidth={2.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>
             )}
@@ -166,9 +166,9 @@ export default function FilterSelect({
         className="inline-flex items-center gap-2 border rounded-lg px-3 py-1.5 text-sm font-medium transition-all focus:outline-none"
         style={{
           width: fullWidth ? '100%' : undefined,
-          background: open ? '#F0F4F8' : 'white',
-          borderColor: open ? '#005587' : '#E5E7EB',
-          color: isEmpty ? '#9CA3AF' : '#111827',
+          background: open ? 'var(--bg-card-alt)' : 'var(--bg-input)',
+          borderColor: open ? '#005587' : 'var(--dd-border)',
+          color: isEmpty ? 'var(--text-muted)' : 'var(--text-primary)',
           boxShadow: open ? '0 0 0 3px rgba(0,85,135,0.08)' : '0 1px 2px rgba(0,0,0,0.04)',
         }}
       >

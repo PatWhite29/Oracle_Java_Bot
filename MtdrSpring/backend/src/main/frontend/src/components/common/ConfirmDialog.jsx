@@ -24,7 +24,7 @@ export default function ConfirmDialog({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
+      <div className="relative rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden" style={{ background: 'var(--bg-card)' }}>
 
         {/* Accent bar */}
         <div
@@ -56,9 +56,9 @@ export default function ConfirmDialog({
             </div>
 
             <div className="flex-1 min-w-0">
-              <h3 className="font-display font-bold text-gray-900 text-[15px]">{title}</h3>
+              <h3 className="font-display font-bold text-[15px]" style={{ color: 'var(--text-primary)' }}>{title}</h3>
               {message && (
-                <p className="mt-1 text-sm text-gray-500 leading-relaxed">{message}</p>
+                <p className="mt-1 text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{message}</p>
               )}
             </div>
           </div>
@@ -67,7 +67,8 @@ export default function ConfirmDialog({
             <button
               onClick={onClose}
               disabled={loading}
-              className="px-4 py-2 rounded-lg text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 border border-gray-200 transition-colors disabled:opacity-50"
+              className="px-4 py-2 rounded-lg text-sm font-semibold transition-colors disabled:opacity-50"
+              style={{ color: 'var(--text-primary)', background: 'var(--bg-card-alt)', border: '1px solid var(--border)' }}
             >
               Cancel
             </button>

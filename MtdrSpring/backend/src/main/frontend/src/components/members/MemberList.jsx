@@ -13,8 +13,8 @@ export default function MemberList({ members, managerId, currentUserId, isManage
         return (
           <div
             key={m.id}
-            className="flex items-center justify-between bg-white rounded-xl px-4 py-3 transition-colors"
-            style={{ border: '1px solid #E5E7EB', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}
+            className="flex items-center justify-between rounded-xl px-4 py-3 transition-colors"
+            style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', boxShadow: '0 1px 3px var(--shadow-card)' }}
           >
             <div className="flex items-center gap-3 min-w-0">
               {/* Avatar */}
@@ -29,11 +29,11 @@ export default function MemberList({ members, managerId, currentUserId, isManage
                 {initials(m.fullName)}
               </div>
               <div className="min-w-0">
-                <p className="text-[13px] font-semibold text-gray-900 truncate">
+                <p className="text-[13px] font-semibold truncate" style={{ color: 'var(--text-primary)' }}>
                   {m.fullName}
-                  {isSelf && <span className="ml-1.5 text-[10px] font-bold text-gray-400 uppercase tracking-wide">You</span>}
+                  {isSelf && <span className="ml-1.5 text-[10px] font-bold uppercase tracking-wide" style={{ color: 'var(--text-muted)' }}>You</span>}
                 </p>
-                <p className="text-[11px] text-gray-400 truncate">{m.email}</p>
+                <p className="text-[11px] truncate" style={{ color: 'var(--text-muted)' }}>{m.email}</p>
               </div>
             </div>
 

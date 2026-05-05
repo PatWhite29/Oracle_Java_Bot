@@ -1,3 +1,105 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  /* Page & surfaces */
+  --bg-page:        #F9FAFB;
+  --bg-card:        #FFFFFF;
+  --bg-card-alt:    #F9FAFB;
+  --bg-input:       #FFFFFF;
+
+  /* Borders */
+  --border:         #E5E7EB;
+  --border-strong:  #D1D5DB;
+
+  /* Text */
+  --text-primary:   #111827;
+  --text-secondary: #6B7280;
+  --text-muted:     #9CA3AF;
+
+  /* Widget shadow */
+  --shadow-card:    rgba(0,0,0,0.06);
+  --shadow-drop:    rgba(0,0,0,0.10);
+
+  /* Dropdown */
+  --dd-bg:          #FFFFFF;
+  --dd-border:      #E5E7EB;
+  --dd-divider:     #F3F4F6;
+  --dd-hover:       #F9FAFB;
+  --dd-selected:    #EFF6FF;
+  --dd-selected-fg: #003865;
+
+  /* Status chip backgrounds */
+  --status-todo-bg:     #FAFAFA;
+  --status-todo-dot:    #6B7280;
+  --status-todo-text:   #374151;
+  --status-ip-bg:       #EFF6FF;
+  --status-ip-dot:      #1D4ED8;
+  --status-ip-text:     #1D4ED8;
+  --status-blocked-bg:  #FFF5F5;
+  --status-blocked-dot: #C74634;
+  --status-blocked-text:#C74634;
+  --status-done-bg:     #F0FDF4;
+  --status-done-dot:    #15803D;
+  --status-done-text:   #15803D;
+
+  /* Blocked alert */
+  --alert-blocked-bg:   #FFF5F5;
+  --alert-done-bg:      #F0FDF4;
+  --alert-done-text:    #15803D;
+
+  /* Table alternating row */
+  --table-alt:      #FAFAFA;
+}
+
+.dark {
+  /* Page & surfaces */
+  --bg-page:        #0F172A;
+  --bg-card:        #1E293B;
+  --bg-card-alt:    #263448;
+  --bg-input:       #1E293B;
+
+  /* Borders */
+  --border:         #334155;
+  --border-strong:  #475569;
+
+  /* Text */
+  --text-primary:   #F1F5F9;
+  --text-secondary: #94A3B8;
+  --text-muted:     #64748B;
+
+  /* Widget shadow */
+  --shadow-card:    rgba(0,0,0,0.30);
+  --shadow-drop:    rgba(0,0,0,0.45);
+
+  /* Dropdown */
+  --dd-bg:          #1E293B;
+  --dd-border:      #334155;
+  --dd-divider:     #2D3F57;
+  --dd-hover:       #263448;
+  --dd-selected:    #1a3352;
+  --dd-selected-fg: #93B4D0;
+
+  /* Status chip backgrounds */
+  --status-todo-bg:     #1E293B;
+  --status-todo-dot:    #94A3B8;
+  --status-todo-text:   #CBD5E1;
+  --status-ip-bg:       #172554;
+  --status-ip-dot:      #60A5FA;
+  --status-ip-text:     #60A5FA;
+  --status-blocked-bg:  #2D1515;
+  --status-blocked-dot: #F87171;
+  --status-blocked-text:#F87171;
+  --status-done-bg:     #052E16;
+  --status-done-dot:    #4ADE80;
+  --status-done-text:   #4ADE80;
+
+  /* Blocked alert */
+  --alert-blocked-bg:   #2D1515;
+  --alert-done-bg:      #052E16;
+  --alert-done-text:    #4ADE80;
+
+  /* Table alternating row */
+  --table-alt:      #263448;
+}

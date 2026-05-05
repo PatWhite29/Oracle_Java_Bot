@@ -138,25 +138,25 @@ export default function TasksPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-6">
         <div>
-          <h1 className="font-display font-extrabold text-gray-900 text-[22px] leading-none" style={{ letterSpacing: '-0.02em' }}>
+          <h1 className="font-display font-extrabold text-[22px] leading-none" style={{ letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
             Tasks
           </h1>
-          <p className="text-[12px] text-gray-500 mt-1.5">
+          <p className="text-[12px] mt-1.5" style={{ color: 'var(--text-secondary)' }}>
             {project.projectName}{selectedSprint ? ` · ${selectedSprint.sprintName}` : activeSprint ? ` · ${activeSprint.sprintName}` : ''}
           </p>
         </div>
 
         <div className="flex items-center gap-2 flex-wrap">
           {/* View toggle */}
-          <div className="flex bg-gray-100 rounded-lg p-0.5 gap-0.5">
+          <div className="flex rounded-lg p-0.5 gap-0.5" style={{ background: 'var(--bg-card-alt)' }}>
             {['kanban', 'list'].map((v) => (
               <button
                 key={v}
                 onClick={() => setView(v)}
                 className="px-3 py-1.5 rounded-md text-[12px] font-semibold transition-all"
                 style={{
-                  background: view === v ? 'white' : 'transparent',
-                  color: view === v ? '#111827' : '#6B7280',
+                  background: view === v ? 'var(--bg-card)' : 'transparent',
+                  color: view === v ? 'var(--text-primary)' : 'var(--text-secondary)',
                   boxShadow: view === v ? '0 1px 3px rgba(0,0,0,0.09)' : 'none',
                 }}
               >
@@ -215,9 +215,9 @@ export default function TasksPage() {
           onClick={(e) => handleShowClosedToggle({ target: { checked: !showClosed } })}
           className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border text-[12px] font-medium transition-all select-none"
           style={{
-            background: showClosed ? '#003865' : 'white',
-            borderColor: showClosed ? '#003865' : '#E5E7EB',
-            color: showClosed ? 'white' : '#6B7280',
+            background: showClosed ? '#003865' : 'var(--bg-input)',
+            borderColor: showClosed ? '#003865' : 'var(--border)',
+            color: showClosed ? 'white' : 'var(--text-secondary)',
             boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
           }}
         >
@@ -261,11 +261,11 @@ export default function TasksPage() {
 
       <Modal open={!!donePrompt} onClose={() => setDonePrompt(null)} title="Mark as DONE">
         <div className="space-y-4">
-          <p className="text-sm text-gray-600">
-            Enter the actual hours spent on <span className="font-semibold text-gray-900">{donePrompt?.task?.taskName}</span>.
+          <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+            Enter the actual hours spent on <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>{donePrompt?.task?.taskName}</span>.
           </p>
           <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-1.5">
+            <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--text-primary)' }}>
               Actual hours <span className="text-oracle">*</span>
             </label>
             <input
@@ -273,13 +273,14 @@ export default function TasksPage() {
               value={actualHoursInput}
               onChange={(e) => setActualHoursInput(e.target.value)}
               placeholder="e.g. 3.5"
-              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-navy-mid focus:ring-2 focus:ring-navy-mid/10 transition-all"
+              className="w-full rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:border-navy-mid focus:ring-2 focus:ring-navy-mid/10 transition-all"
+              style={{ border: '1px solid var(--border)', background: 'var(--bg-input)', color: 'var(--text-primary)' }}
               autoFocus
               onKeyDown={(e) => { if (e.key === 'Enter') handleDoneConfirm(); }}
             />
           </div>
           <div className="flex justify-end gap-2">
-            <button onClick={() => setDonePrompt(null)} className="px-4 py-2 rounded-lg text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 border border-gray-200 transition-colors">
+            <button onClick={() => setDonePrompt(null)} className="px-4 py-2 rounded-lg text-sm font-semibold transition-colors" style={{ color: 'var(--text-primary)', background: 'var(--bg-card-alt)', border: '1px solid var(--border)' }}>
               Cancel
             </button>
             <button onClick={handleDoneConfirm} className="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-navy hover:bg-navy-deep transition-colors">

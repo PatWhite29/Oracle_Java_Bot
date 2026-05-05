@@ -32,7 +32,7 @@ export default function RegisterPage() {
       <h1 className="font-display text-xl font-bold text-gray-900 mb-1" style={{ letterSpacing: '-0.02em' }}>
         Create account
       </h1>
-      <p className="text-sm text-gray-500 mb-5 leading-relaxed">Join the Oracle × ITESM workspace</p>
+      <p className="text-sm text-gray-500 mb-4 leading-relaxed">Join the Oracle × ITESM workspace</p>
 
       {error && (
         <p className="text-sm text-oracle bg-oracle-light rounded-lg px-3 py-2 mb-5">{error}</p>
@@ -104,7 +104,7 @@ export default function RegisterPage() {
         <button
           type="submit"
           disabled={loading || !isValid}
-          className="w-full flex items-center justify-center py-3 px-6 rounded-lg text-sm font-semibold text-white
+          className="w-full flex items-center justify-center py-2.5 px-6 rounded-lg text-sm font-semibold text-white
             bg-navy hover:bg-navy-deep transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-1"
           style={{ letterSpacing: '0.01em' }}
         >
@@ -112,7 +112,7 @@ export default function RegisterPage() {
         </button>
       </form>
 
-      <p className="text-center text-sm text-gray-500 mt-4">
+      <p className="text-center text-sm text-gray-500 mt-3">
         Already have an account?{' '}
         <Link to="/login" className="text-navy-mid font-semibold hover:underline">Sign in</Link>
       </p>

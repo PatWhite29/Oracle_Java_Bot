@@ -44,8 +44,8 @@ export default function TaskDetail({ task, onClose, onStatusChange, onEdit, onDe
     <div className="space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
         <div className="min-w-0">
-          <h3 className="text-base font-semibold text-gray-900">{task.taskName}</h3>
-          {task.description && <p className="mt-1 text-sm text-gray-500">{task.description}</p>}
+          <h3 className="text-base font-semibold" style={{ color: 'var(--text-primary)' }}>{task.taskName}</h3>
+          {task.description && <p className="mt-1 text-sm" style={{ color: 'var(--text-secondary)' }}>{task.description}</p>}
         </div>
         {isManager && (
           <div className="flex gap-2 shrink-0">
@@ -58,23 +58,29 @@ export default function TaskDetail({ task, onClose, onStatusChange, onEdit, onDe
       <div className="flex flex-wrap gap-2 text-sm">
         <Badge value={task.status} />
         {task.priority && <Badge value={task.priority} />}
-        <span className="text-gray-500">{task.storyPoints} SP</span>
+        <span style={{ color: 'var(--text-secondary)' }}>{task.storyPoints} SP</span>
         {task.actualHours != null && (
-          <span className="text-gray-500">{task.actualHours}h actual</span>
+          <span style={{ color: 'var(--text-secondary)' }}>{task.actualHours}h actual</span>
         )}
-        {task.assignedTo && <span className="text-gray-500">→ {task.assignedTo.fullName}</span>}
-        {task.sprint && <span className="text-gray-500">{task.sprint.sprintName}</span>}
+        {task.assignedTo && <span style={{ color: 'var(--text-secondary)' }}>→ {task.assignedTo.fullName}</span>}
+        {task.sprint && <span style={{ color: 'var(--text-secondary)' }}>{task.sprint.sprintName}</span>}
       </div>
 
       {canChangeStatus && (
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-sm text-gray-500 w-full sm:w-auto">Change status:</span>
+          <span className="text-sm w-full sm:w-auto" style={{ color: 'var(--text-secondary)' }}>Change status:</span>
           {['TODO', 'IN_PROGRESS', 'BLOCKED', 'DONE'].map((s) => (
             <button
               key={s}
               disabled={task.status === s}
               onClick={() => onStatusChange(task, s)}
-              className={`text-xs px-2 py-1 rounded border transition-colors ${task.status === s ? 'bg-gray-100 text-gray-400 cursor-default' : 'border-gray-200 hover:bg-gray-50'}`}
+              className="text-xs px-2 py-1 rounded transition-colors"
+              style={{
+                border: '1px solid var(--border)',
+                background: task.status === s ? 'var(--bg-card-alt)' : 'transparent',
+                color: task.status === s ? 'var(--text-muted)' : 'var(--text-primary)',
+                cursor: task.status === s ? 'default' : 'pointer',
+              }}
             >
               {s.replace('_', ' ')}
             </button>
@@ -83,14 +89,14 @@ export default function TaskDetail({ task, onClose, onStatusChange, onEdit, onDe
       )}
 
       <div>
-        <h4 className="text-sm font-medium text-gray-700 mb-3">Activity</h4>
+        <h4 className="text-sm font-medium mb-3" style={{ color: 'var(--text-primary)' }}>Activity</h4>
         <div className="space-y-2 max-h-48 overflow-y-auto">
-          {activities.length === 0 && <p className="text-xs text-gray-400">No activity yet.</p>}
+          {activities.length === 0 && <p className="text-xs" style={{ color: 'var(--text-muted)' }}>No activity yet.</p>}
           {activities.map((a) => (
-            <div key={a.id} className="text-xs text-gray-600 bg-gray-50 rounded-lg px-3 py-2">
+            <div key={a.id} className="text-xs rounded-lg px-3 py-2" style={{ color: 'var(--text-secondary)', background: 'var(--bg-card-alt)' }}>
               <span className="font-medium">{a.employee?.fullName}</span>
               {' '}
-              <span className="text-gray-400">[{a.activityType.replace('_', ' ')}]</span>
+              <span style={{ color: 'var(--text-muted)' }}>[{a.activityType.replace('_', ' ')}]</span>
               {a.content && <span> — {a.content}</span>}
             </div>
           ))}
@@ -103,7 +109,8 @@ export default function TaskDetail({ task, onClose, onStatusChange, onEdit, onDe
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             placeholder="Add a comment..."
-            className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
+            className="flex-1 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-navy-mid/20 transition-all"
+            style={{ border: '1px solid var(--border)', background: 'var(--bg-input)', color: 'var(--text-primary)' }}
           />
           <Button type="submit" disabled={submitting || !comment.trim()}>Post</Button>
         </div>

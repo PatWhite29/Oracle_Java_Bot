@@ -30,16 +30,17 @@ export default function ProjectCard({ project, currentUserId, onDelete, onEdit }
       onClick={() => navigate(`/projects/${project.id}/tasks`)}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="bg-white rounded-2xl cursor-pointer flex flex-col gap-3.5 p-6 transition-all duration-200"
+      className="rounded-2xl cursor-pointer flex flex-col gap-3.5 p-6 transition-all duration-200"
       style={{
-        border: `1px solid ${hovered ? '#D1D5DB' : '#E5E7EB'}`,
-        boxShadow: hovered ? '0 8px 24px rgba(0,0,0,0.10)' : '0 1px 4px rgba(0,0,0,0.06)',
+        background: 'var(--bg-card)',
+        border: `1px solid ${hovered ? 'var(--border-strong)' : 'var(--border)'}`,
+        boxShadow: hovered ? '0 8px 24px var(--shadow-drop)' : '0 1px 4px var(--shadow-card)',
         transform: hovered ? 'translateY(-2px)' : 'none',
       }}
     >
       {/* Header */}
       <div className="flex items-start justify-between gap-2">
-        <h3 className="font-display font-bold text-gray-900 text-[15px] leading-snug" style={{ letterSpacing: '-0.01em' }}>
+        <h3 className="font-display font-bold text-[15px] leading-snug" style={{ letterSpacing: '-0.01em', color: 'var(--text-primary)' }}>
           {project.projectName}
         </h3>
         <div className="flex items-center gap-1.5 shrink-0">
@@ -67,7 +68,7 @@ export default function ProjectCard({ project, currentUserId, onDelete, onEdit }
 
       {/* Description */}
       {project.description && (
-        <p className="text-[13px] text-gray-500 leading-relaxed line-clamp-2 flex-1">
+        <p className="text-[13px] leading-relaxed line-clamp-2 flex-1" style={{ color: 'var(--text-secondary)' }}>
           {project.description}
         </p>
       )}
@@ -78,7 +79,7 @@ export default function ProjectCard({ project, currentUserId, onDelete, onEdit }
           {isManager && <StarIcon />}
           {isManager ? 'Manager' : 'Member'}
         </span>
-        <span className="text-[11px] text-gray-400">
+        <span className="text-[11px]" style={{ color: 'var(--text-muted)' }}>
           {new Date(project.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
         </span>
       </div>

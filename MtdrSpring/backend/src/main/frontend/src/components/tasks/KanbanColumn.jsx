@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import TaskCard from './TaskCard';
 
 const COL_CONFIG = {
-  TODO:        { label: 'To Do',       dot: '#6B7280', bg: '#FAFAFA',  dropBg: '#F3F4F6' },
-  IN_PROGRESS: { label: 'In Progress', dot: '#1D4ED8', bg: '#EFF6FF',  dropBg: '#DBEAFE' },
-  BLOCKED:     { label: 'Blocked',     dot: '#C74634', bg: '#FFF5F5',  dropBg: '#FEE2E2' },
-  DONE:        { label: 'Done',        dot: '#15803D', bg: '#F0FDF4',  dropBg: '#DCFCE7' },
+  TODO:        { label: 'To Do',       dot: 'var(--status-todo-dot)',     bg: 'var(--status-todo-bg)',     dropBg: 'var(--bg-card-alt)' },
+  IN_PROGRESS: { label: 'In Progress', dot: 'var(--status-ip-dot)',       bg: 'var(--status-ip-bg)',       dropBg: 'var(--bg-card-alt)' },
+  BLOCKED:     { label: 'Blocked',     dot: 'var(--status-blocked-dot)',  bg: 'var(--status-blocked-bg)',  dropBg: 'var(--bg-card-alt)' },
+  DONE:        { label: 'Done',        dot: 'var(--status-done-dot)',     bg: 'var(--status-done-bg)',     dropBg: 'var(--bg-card-alt)' },
 };
 
 export default function KanbanColumn({ status, tasks, onTaskClick, onDragStart, onDragEnd, onDrop, draggingTaskId, mobileMode = false }) {
@@ -27,7 +27,7 @@ export default function KanbanColumn({ status, tasks, onTaskClick, onDragStart, 
       onDragLeave={!mobileMode ? handleDragLeave : undefined}
       onDrop={!mobileMode ? handleDrop : undefined}
       className={`flex flex-col ${mobileMode ? 'w-full' : 'min-w-[220px] w-full'} rounded-xl p-2 gap-2 transition-colors`}
-      style={{ background: isOver ? cfg.dropBg : cfg.bg, border: '1px solid #E5E7EB' }}
+      style={{ background: isOver ? cfg.dropBg : cfg.bg, border: '1px solid var(--border)' }}
     >
       {/* Column header */}
       <div className="flex items-center gap-2 px-1 mb-1">
@@ -35,7 +35,7 @@ export default function KanbanColumn({ status, tasks, onTaskClick, onDragStart, 
         <span className="text-[12px] font-bold flex-1" style={{ color: cfg.dot, letterSpacing: '0.01em' }}>
           {cfg.label}
         </span>
-        <span className="text-[11px] font-semibold bg-gray-200 text-gray-500 rounded-full px-2 py-0.5">
+        <span className="text-[11px] font-semibold rounded-full px-2 py-0.5" style={{ background: 'var(--bg-card-alt)', color: 'var(--text-secondary)' }}>
           {tasks.length}
         </span>
       </div>

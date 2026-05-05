@@ -3,7 +3,7 @@ import { useProject } from '../../context/ProjectContext';
 import { dashboardService } from '../../services/dashboardService';
 
 function Skeleton() {
-  return <div className="animate-pulse h-40 bg-gray-50 rounded-lg" />;
+  return <div className="animate-pulse h-40 rounded-lg" style={{ background: 'var(--bg-card-alt)' }} />;
 }
 
 function initials(name) {
@@ -27,8 +27,8 @@ export default function HoursPerMember({ sprintId }) {
 
   if (loading) return <Skeleton />;
   if (error) return <p className="text-xs text-oracle">{error}</p>;
-  if (!data) return <p className="text-sm text-gray-400">Select a sprint to view data.</p>;
-  if (!data.members?.length) return <p className="text-sm text-gray-400">No hours logged yet.</p>;
+  if (!data) return <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Select a sprint to view data.</p>;
+  if (!data.members?.length) return <p className="text-sm" style={{ color: 'var(--text-muted)' }}>No hours logged yet.</p>;
 
   const sorted = [...data.members].sort((a, b) => b.actualHours - a.actualHours);
   const max = sorted[0]?.actualHours || 1;
@@ -47,11 +47,11 @@ export default function HoursPerMember({ sprintId }) {
                 >
                   {initials(m.fullName)}
                 </div>
-                <span className="text-[12px] font-semibold text-gray-700">{m.fullName}</span>
+                <span className="text-[12px] font-semibold" style={{ color: 'var(--text-primary)' }}>{m.fullName}</span>
               </div>
-              <span className="text-[11px] font-mono text-gray-500 tabular-nums">{m.actualHours?.toFixed(1)}h</span>
+              <span className="text-[11px] font-mono tabular-nums" style={{ color: 'var(--text-secondary)' }}>{m.actualHours?.toFixed(1)}h</span>
             </div>
-            <div className="w-full bg-gray-100 rounded-full h-1.5 overflow-hidden">
+            <div className="w-full rounded-full h-1.5 overflow-hidden" style={{ background: 'var(--bg-card-alt)' }}>
               <div
                 className="h-1.5 rounded-full transition-all duration-500"
                 style={{

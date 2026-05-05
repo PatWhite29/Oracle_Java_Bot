@@ -18,10 +18,10 @@ import ComparePanel from '../components/dashboard/ComparePanel';
 export function Widget({ title, children, className = '' }) {
   return (
     <div
-      className={`bg-white rounded-xl p-5 flex flex-col gap-3 ${className}`}
-      style={{ border: '1px solid #E5E7EB', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}
+      className={`rounded-xl p-5 flex flex-col gap-3 ${className}`}
+      style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', boxShadow: '0 1px 4px var(--shadow-card)' }}
     >
-      <h2 className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">{title}</h2>
+      <h2 className="text-[11px] font-bold uppercase tracking-widest" style={{ color: 'var(--text-muted)' }}>{title}</h2>
       {children}
     </div>
   );
@@ -61,10 +61,10 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-6">
         <div>
-          <h1 className="font-display font-extrabold text-gray-900 text-[22px] leading-none" style={{ letterSpacing: '-0.02em' }}>
+          <h1 className="font-display font-extrabold text-[22px] leading-none" style={{ letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
             Dashboard
           </h1>
-          <p className="text-[12px] text-gray-500 mt-1.5">{project.projectName}</p>
+          <p className="text-[12px] mt-1.5" style={{ color: 'var(--text-secondary)' }}>{project.projectName}</p>
         </div>
         <FilterSelect
           value={selectedSprintId ? String(selectedSprintId) : ''}

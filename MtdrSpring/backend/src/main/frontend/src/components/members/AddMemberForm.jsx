@@ -18,7 +18,8 @@ export default function AddMemberForm({ onAdd, loading }) {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="user@example.com"
-        className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:border-navy-mid focus:ring-2 focus:ring-navy-mid/10 transition-all"
+        className="flex-1 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-navy-mid focus:ring-2 focus:ring-navy-mid/10 transition-all"
+        style={{ border: '1px solid var(--border)', background: 'var(--bg-input)', color: 'var(--text-primary)' }}
       />
       <button
         type="submit"

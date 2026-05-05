@@ -69,17 +69,17 @@ export default function BacklogPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="font-display font-extrabold text-gray-900 text-[22px] leading-none" style={{ letterSpacing: '-0.02em' }}>
+        <h1 className="font-display font-extrabold text-[22px] leading-none" style={{ letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
           Backlog
         </h1>
-        <p className="text-[12px] text-gray-500 mt-1.5">{project.projectName}</p>
+        <p className="text-[12px] mt-1.5" style={{ color: 'var(--text-secondary)' }}>{project.projectName}</p>
       </div>
 
       {error && <p className="text-sm text-oracle bg-oracle-light rounded-lg px-3 py-2 mb-4">{error}</p>}
 
       {loading ? <LoadingSpinner /> : (
         <>
-          <p className="text-[12px] text-gray-400 mb-4">
+          <p className="text-[12px] mb-4" style={{ color: 'var(--text-muted)' }}>
             {tasks.length} {tasks.length === 1 ? 'task' : 'tasks'} not assigned to a sprint
           </p>
           <TaskTable tasks={tasks} onTaskClick={setSelectedTask} />
@@ -90,14 +90,14 @@ export default function BacklogPage() {
         {selectedTask && (
           <div className="space-y-4">
             {/* Task summary */}
-            <div className="bg-gray-50 rounded-xl px-4 py-3 space-y-2 border border-gray-100">
-              <p className="text-[13px] font-semibold text-gray-900">{selectedTask.taskName}</p>
+            <div className="rounded-xl px-4 py-3 space-y-2" style={{ background: 'var(--bg-card-alt)', border: '1px solid var(--border)' }}>
+              <p className="text-[13px] font-semibold" style={{ color: 'var(--text-primary)' }}>{selectedTask.taskName}</p>
               <div className="flex flex-wrap items-center gap-2">
                 <Badge value={selectedTask.status} />
                 {selectedTask.priority && <Badge value={selectedTask.priority} />}
-                <span className="text-[11px] font-mono text-gray-400">{selectedTask.storyPoints} SP</span>
+                <span className="text-[11px] font-mono" style={{ color: 'var(--text-muted)' }}>{selectedTask.storyPoints} SP</span>
                 {selectedTask.assignedTo && (
-                  <span className="text-[11px] text-gray-400">· {selectedTask.assignedTo.fullName}</span>
+                  <span className="text-[11px]" style={{ color: 'var(--text-muted)' }}>· {selectedTask.assignedTo.fullName}</span>
                 )}
               </div>
             </div>

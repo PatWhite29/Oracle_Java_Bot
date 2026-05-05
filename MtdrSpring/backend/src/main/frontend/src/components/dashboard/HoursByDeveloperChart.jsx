@@ -11,17 +11,17 @@ const MEMBER_COLORS = [
 ];
 
 function Skeleton() {
-  return <div className="animate-pulse h-56 bg-gray-50 rounded-lg" />;
+  return <div className="animate-pulse h-56 rounded-lg" style={{ background: 'var(--bg-card-alt)' }} />;
 }
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-white rounded-xl px-3 py-2.5 shadow-lg border border-gray-100 space-y-1">
-      <p className="text-[11px] font-bold text-gray-400 mb-1">{label}</p>
+    <div className="rounded-xl px-3 py-2.5 shadow-lg space-y-1" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+      <p className="text-[11px] font-bold mb-1" style={{ color: 'var(--text-muted)' }}>{label}</p>
       {payload.map((p) => (
         <p key={p.name} className="text-[12px] font-semibold" style={{ color: p.fill }}>
-          {p.value}h <span className="font-normal text-gray-400">· {p.name}</span>
+          {p.value}h <span className="font-normal" style={{ color: 'var(--text-muted)' }}>· {p.name}</span>
         </p>
       ))}
     </div>
@@ -33,7 +33,7 @@ const CustomLegend = ({ payload }) => (
     {payload.map((p) => (
       <div key={p.value} className="flex items-center gap-1.5">
         <div className="w-2.5 h-2.5 rounded-sm shrink-0" style={{ background: p.color }} />
-        <span className="text-[11px] font-semibold text-gray-500">{p.value}</span>
+        <span className="text-[11px] font-semibold" style={{ color: 'var(--text-secondary)' }}>{p.value}</span>
       </div>
     ))}
   </div>
@@ -102,7 +102,7 @@ export default function HoursByDeveloperChart({ sprints }) {
   return (
     <ResponsiveContainer width="100%" height={240}>
       <BarChart data={chartData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" vertical={false} />
+        <CartesianGrid strokeDasharray="3 3" stroke="rgba(100,116,139,0.25)" vertical={false} />
         <XAxis
           dataKey="sprint"
           tick={{ fontSize: 11, fill: '#9CA3AF', fontFamily: 'Manrope' }}

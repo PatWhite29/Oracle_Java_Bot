@@ -74,17 +74,17 @@ export default function MembersPage() {
   return (
     <div className="max-w-2xl">
       <div className="mb-6">
-        <h1 className="font-display font-extrabold text-gray-900 text-[22px] leading-none" style={{ letterSpacing: '-0.02em' }}>
+        <h1 className="font-display font-extrabold text-[22px] leading-none" style={{ letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
           Members
         </h1>
-        <p className="text-[12px] text-gray-500 mt-1.5">
+        <p className="text-[12px] mt-1.5" style={{ color: 'var(--text-secondary)' }}>
           {project.projectName} · {members.length} {members.length === 1 ? 'member' : 'members'}
         </p>
       </div>
 
       {isManager && (
         <div className="mb-6">
-          <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">Add member</p>
+          <p className="text-[11px] font-bold uppercase tracking-widest mb-2" style={{ color: 'var(--text-muted)' }}>Add member</p>
           <AddMemberForm onAdd={handleAdd} loading={adding} />
         </div>
       )}
@@ -103,9 +103,9 @@ export default function MembersPage() {
 
       <Modal open={!!transferTarget} onClose={() => setTransferTarget(null)} title="Transfer ownership">
         <div className="space-y-4">
-          <p className="text-sm text-gray-600">
-            Transfer ownership of <span className="font-semibold text-gray-900">{project.projectName}</span> to{' '}
-            <span className="font-semibold text-gray-900">{transferTarget?.fullName}</span>?
+          <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+            Transfer ownership of <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>{project.projectName}</span> to{' '}
+            <span className="font-semibold" style={{ color: 'var(--text-primary)' }}>{transferTarget?.fullName}</span>?
           </p>
           <p className="text-[12px] text-gray-400">
             You will become a regular member. This action can be reversed by the new manager.

@@ -87,10 +87,10 @@ export default function MyProjectsPage() {
       {/* Header */}
       <div className="flex items-start justify-between mb-7 gap-3">
         <div>
-          <h1 className="font-display font-extrabold text-gray-900 text-[26px] leading-none" style={{ letterSpacing: '-0.02em' }}>
+          <h1 className="font-display font-extrabold text-[26px] leading-none" style={{ letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
             My Projects
           </h1>
-          <p className="text-[13px] text-gray-500 mt-1.5">
+          <p className="text-[13px] mt-1.5" style={{ color: 'var(--text-secondary)' }}>
             {loading ? '…' : `${projects.length} workspace${projects.length !== 1 ? 's' : ''}${activeCount ? ` · ${activeCount} active` : ''}`}
           </p>
         </div>
@@ -108,7 +108,7 @@ export default function MyProjectsPage() {
       {loading && <LoadingSpinner />}
       {error && <p className="text-sm text-oracle bg-oracle-light rounded-lg px-3 py-2">{error}</p>}
       {!loading && projects.length === 0 && (
-        <div className="text-center py-16 text-gray-400">
+        <div className="text-center py-16" style={{ color: 'var(--text-muted)' }}>
           <p className="text-sm">No projects yet.</p>
           <p className="text-xs mt-1">Create one to get started.</p>
         </div>

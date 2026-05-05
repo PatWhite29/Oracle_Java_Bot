@@ -19,7 +19,7 @@ const METRICS = [
 ];
 
 function Skeleton() {
-  return <div className="animate-pulse h-56 bg-gray-50 rounded-lg" />;
+  return <div className="animate-pulse h-56 rounded-lg" style={{ background: 'var(--bg-card-alt)' }} />;
 }
 
 function Chip({ label, selected, onClick, disabled, title }) {
@@ -30,9 +30,9 @@ function Chip({ label, selected, onClick, disabled, title }) {
       title={title}
       className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all border"
       style={{
-        background: selected ? '#003865' : '#F9FAFB',
-        color: selected ? 'white' : disabled ? '#D1D5DB' : '#374151',
-        borderColor: selected ? '#003865' : disabled ? '#E5E7EB' : '#E5E7EB',
+        background: selected ? '#003865' : 'var(--bg-card-alt)',
+        color: selected ? 'white' : disabled ? 'var(--text-muted)' : 'var(--text-primary)',
+        borderColor: selected ? '#003865' : 'var(--border)',
         cursor: disabled ? 'not-allowed' : 'pointer',
       }}
     >
@@ -45,11 +45,11 @@ const CustomTooltip = ({ active, payload, label, metric }) => {
   if (!active || !payload?.length) return null;
   const unit = metric === 'hours' ? 'h' : metric === 'sp' ? ' SP' : ' tasks';
   return (
-    <div className="bg-white rounded-xl px-3 py-2.5 shadow-lg border border-gray-100 space-y-1">
-      <p className="text-[11px] font-bold text-gray-400 mb-1">{label}</p>
+    <div className="rounded-xl px-3 py-2.5 shadow-lg space-y-1" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}>
+      <p className="text-[11px] font-bold mb-1" style={{ color: 'var(--text-muted)' }}>{label}</p>
       {payload.map((p) => (
         <p key={p.name} className="text-[12px] font-semibold" style={{ color: p.fill }}>
-          {p.value}{unit} <span className="font-normal text-gray-400">· {p.name}</span>
+          {p.value}{unit} <span className="font-normal" style={{ color: 'var(--text-muted)' }}>· {p.name}</span>
         </p>
       ))}
     </div>
@@ -61,7 +61,7 @@ const CustomLegend = ({ payload }) => (
     {payload.map((p) => (
       <div key={p.value} className="flex items-center gap-1.5">
         <div className="w-2.5 h-2.5 rounded-sm shrink-0" style={{ background: p.color }} />
-        <span className="text-[11px] font-semibold text-gray-500">{p.value}</span>
+        <span className="text-[11px] font-semibold" style={{ color: 'var(--text-secondary)' }}>{p.value}</span>
       </div>
     ))}
   </div>
@@ -182,16 +182,16 @@ export default function ComparePanel({ sprints }) {
       <div className="flex flex-col gap-3">
         {/* Metric */}
         <div className="flex items-center gap-3">
-          <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider w-16 shrink-0">Metric</span>
-          <div className="flex bg-gray-100 rounded-lg p-0.5 gap-0.5">
+          <span className="text-[11px] font-bold uppercase tracking-wider w-16 shrink-0" style={{ color: 'var(--text-muted)' }}>Metric</span>
+          <div className="flex rounded-lg p-0.5 gap-0.5" style={{ background: 'var(--bg-card-alt)' }}>
             {METRICS.map((m) => (
               <button
                 key={m.key}
                 onClick={() => setMetric(m.key)}
                 className="text-[12px] px-3 py-1 rounded-md font-semibold transition-all"
                 style={{
-                  background: metric === m.key ? 'white' : 'transparent',
-                  color: metric === m.key ? '#111827' : '#6B7280',
+                  background: metric === m.key ? 'var(--bg-card)' : 'transparent',
+                  color: metric === m.key ? 'var(--text-primary)' : 'var(--text-secondary)',
                   boxShadow: metric === m.key ? '0 1px 3px rgba(0,0,0,0.09)' : 'none',
                 }}
               >
@@ -203,7 +203,7 @@ export default function ComparePanel({ sprints }) {
 
         {/* Sprints */}
         <div className="flex items-start gap-3">
-          <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider w-16 shrink-0 mt-1">Sprints</span>
+          <span className="text-[11px] font-bold uppercase tracking-wider w-16 shrink-0 mt-1" style={{ color: 'var(--text-muted)' }}>Sprints</span>
           <div className="flex flex-wrap gap-1.5">
             {sortedSprints.map((s) => {
               const selected = selectedSprintIds.includes(s.id);
@@ -225,7 +225,7 @@ export default function ComparePanel({ sprints }) {
         {/* Members */}
         {allMembers.length > 0 && (
           <div className="flex items-start gap-3">
-            <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wider w-16 shrink-0 mt-1">Members</span>
+            <span className="text-[11px] font-bold uppercase tracking-wider w-16 shrink-0 mt-1" style={{ color: 'var(--text-muted)' }}>Members</span>
             <div className="flex flex-wrap gap-1.5">
               <Chip label="All" selected={isAllMembers} onClick={toggleAll} />
               {allMembers.map((m) => (
@@ -256,7 +256,7 @@ export default function ComparePanel({ sprints }) {
       ) : (
         <ResponsiveContainer width="100%" height={260}>
           <BarChart data={chartData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" vertical={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(100,116,139,0.25)" vertical={false} />
             <XAxis
               dataKey="sprint"
               tick={{ fontSize: 11, fill: '#9CA3AF', fontFamily: 'Manrope' }}

@@ -37,9 +37,9 @@ export default function AuthLayout() {
           {/* Top accent bar */}
           <div className="h-1" style={{ background: 'linear-gradient(90deg, #003865, #C74634)' }} />
 
-          <div className="px-8 py-6">
+          <div className="px-8 py-5">
             {/* Logo */}
-            <div className="flex items-center gap-3 mb-6">
+            <div className="flex items-center gap-3 mb-5">
               <KairoMark size={40} variant="oracle" />
               <div>
                 <div className="font-display text-xl font-extrabold tracking-tight text-gray-900" style={{ letterSpacing: '-0.03em' }}>
