@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import Sidebar from './Sidebar';
+import KairoMark from '../common/KairoMark';
 
 export default function AppLayout() {
   const { token } = useAuth();
@@ -29,7 +30,8 @@ export default function AppLayout() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-          <span className="font-semibold text-gray-900 text-sm">Chuva Bot</span>
+          <KairoMark size={28} variant="light" />
+          <span className="font-display font-extrabold text-gray-900 text-sm" style={{ letterSpacing: '-0.02em' }}>Kairo</span>
         </header>
         <main className="flex-1 p-4 md:p-8 overflow-x-hidden min-w-0">
           <Outlet />
