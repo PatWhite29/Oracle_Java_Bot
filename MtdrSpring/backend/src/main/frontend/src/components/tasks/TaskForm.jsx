@@ -28,7 +28,7 @@ export default function TaskForm({ initial = {}, sprints = [], members = [], onS
     status:      initial.status      || 'TODO',
     priority:    initial.priority    || '',
     storyPoints: initial.storyPoints ?? 1,
-    sprintId:    initial.sprintId    || (initial.sprint?.id ? String(initial.sprint.id) : ''),
+    sprintId:    initial.sprintId ? String(initial.sprintId) : (initial.sprint?.id ? String(initial.sprint.id) : ''),
     assignedTo:  initial.assignedTo?.id ? String(initial.assignedTo.id) : '',
   });
 
