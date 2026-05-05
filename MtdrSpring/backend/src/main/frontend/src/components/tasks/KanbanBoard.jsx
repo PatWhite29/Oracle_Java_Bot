@@ -57,9 +57,9 @@ export default function KanbanBoard({ tasks, onTaskClick, onStatusChange }) {
             <button
               key={s}
               onClick={() => setActiveColumn(s)}
-              className={`px-4 py-2 text-sm font-medium whitespace-nowrap border-b-2 transition-colors flex-shrink-0 ${
+              className={`px-4 py-2 text-[13px] font-semibold whitespace-nowrap border-b-2 transition-colors flex-shrink-0 ${
                 activeColumn === s
-                  ? 'border-gray-900 text-gray-900'
+                  ? 'border-navy text-navy'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >

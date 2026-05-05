@@ -10,8 +10,15 @@ import TaskForm from '../components/tasks/TaskForm';
 import ImportTasksModal from '../components/tasks/ImportTasksModal';
 import Modal from '../components/common/Modal';
 import ConfirmDialog from '../components/common/ConfirmDialog';
-import Button from '../components/common/Button';
 import LoadingSpinner from '../components/common/LoadingSpinner';
+
+const PlusIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+  </svg>
+);
+
+const selectCls = 'border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-700 bg-white focus:outline-none focus:border-navy-mid focus:ring-2 focus:ring-navy-mid/10 transition-all cursor-pointer';
 
 export default function TasksPage() {
   const { project, members, userRole } = useProject();
@@ -49,9 +56,7 @@ export default function TasksPage() {
     sprintService.list(project.id).then((data) => {
       setSprints(data);
       const active = data.find((s) => s.status === 'ACTIVE');
-      const fallback = data
-        .filter((s) => s.status === 'PLANNING')
-        .sort((a, b) => a.startDate.localeCompare(b.startDate))[0];
+      const fallback = data.filter((s) => s.status === 'PLANNING').sort((a, b) => a.startDate.localeCompare(b.startDate))[0];
       const defaultSprint = active || fallback;
       if (defaultSprint) setFilters((f) => ({ ...f, sprint: String(defaultSprint.id) }));
     }).catch(() => {});
@@ -59,31 +64,20 @@ export default function TasksPage() {
 
   const handleCreate = async (form) => {
     setSaving(true);
-    try {
-      await taskService.create(project.id, form);
-      setShowForm(false);
-      load();
-    } catch (err) { toast.error(err.message); }
+    try { await taskService.create(project.id, form); setShowForm(false); load(); }
+    catch (err) { toast.error(err.message); }
     finally { setSaving(false); }
   };
 
   const handleUpdate = async (form) => {
     setSaving(true);
-    try {
-      await taskService.update(project.id, editTask.id, form);
-      setEditTask(null);
-      setSelectedTask(null);
-      load();
-    } catch (err) { toast.error(err.message); }
+    try { await taskService.update(project.id, editTask.id, form); setEditTask(null); setSelectedTask(null); load(); }
+    catch (err) { toast.error(err.message); }
     finally { setSaving(false); }
   };
 
   const handleStatusChange = async (task, status) => {
-    if (status === 'DONE') {
-      setDonePrompt({ task, status });
-      setActualHoursInput('');
-      return;
-    }
+    if (status === 'DONE') { setDonePrompt({ task, status }); setActualHoursInput(''); return; }
     try {
       const updated = await taskService.changeStatus(project.id, task.id, status);
       if (selectedTask?.id === updated.id) setSelectedTask(updated);
@@ -93,10 +87,7 @@ export default function TasksPage() {
 
   const handleDoneConfirm = async () => {
     const hours = parseFloat(actualHoursInput);
-    if (!actualHoursInput || isNaN(hours) || hours <= 0) {
-      toast.warning('Please enter a valid number of hours greater than 0.');
-      return;
-    }
+    if (!actualHoursInput || isNaN(hours) || hours <= 0) { toast.warning('Please enter a valid number of hours greater than 0.'); return; }
     const { task } = donePrompt;
     setDonePrompt(null);
     try {
@@ -106,22 +97,11 @@ export default function TasksPage() {
     } catch (err) { toast.error(err.message); }
   };
 
-  const handleDelete = (task) => {
-    setConfirmDelete(task);
-  };
-
   const doDelete = async () => {
     setDeleting(true);
-    try {
-      await taskService.delete(project.id, confirmDelete.id);
-      setConfirmDelete(null);
-      setSelectedTask(null);
-      load();
-    } catch (err) {
-      toast.error(err.message);
-    } finally {
-      setDeleting(false);
-    }
+    try { await taskService.delete(project.id, confirmDelete.id); setConfirmDelete(null); setSelectedTask(null); load(); }
+    catch (err) { toast.error(err.message); }
+    finally { setDeleting(false); }
   };
 
   const allMembers = project.manager
@@ -129,33 +109,64 @@ export default function TasksPage() {
     : members;
 
   const visibleSprints = showClosed ? sprints : sprints.filter((s) => s.status !== 'CLOSED');
+  const activeSprint = sprints.find((s) => s.status === 'ACTIVE');
+  const selectedSprint = sprints.find((s) => String(s.id) === filters.sprint);
 
   const handleShowClosedToggle = (e) => {
     const checked = e.target.checked;
     setShowClosed(checked);
     if (!checked) {
-      const selectedSprintClosed = sprints.find((s) => String(s.id) === filters.sprint)?.status === 'CLOSED';
-      if (selectedSprintClosed) setFilters((f) => ({ ...f, sprint: '' }));
+      const closed = sprints.find((s) => String(s.id) === filters.sprint)?.status === 'CLOSED';
+      if (closed) setFilters((f) => ({ ...f, sprint: '' }));
     }
   };
 
   return (
     <div>
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
-        <h1 className="text-xl font-bold text-gray-900">Tasks — {project.projectName}</h1>
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-6">
+        <div>
+          <h1 className="font-display font-extrabold text-gray-900 text-[22px] leading-none" style={{ letterSpacing: '-0.02em' }}>
+            Tasks
+          </h1>
+          <p className="text-[12px] text-gray-500 mt-1.5">
+            {project.projectName}{selectedSprint ? ` · ${selectedSprint.sprintName}` : activeSprint ? ` · ${activeSprint.sprintName}` : ''}
+          </p>
+        </div>
+
         <div className="flex items-center gap-2 flex-wrap">
-          <button
-            onClick={() => setView('kanban')}
-            className={`text-sm px-3 py-1.5 rounded-lg transition-colors ${view === 'kanban' ? 'bg-gray-900 text-white' : 'text-gray-500 hover:bg-gray-100'}`}
-          >Kanban</button>
-          <button
-            onClick={() => setView('list')}
-            className={`text-sm px-3 py-1.5 rounded-lg transition-colors ${view === 'list' ? 'bg-gray-900 text-white' : 'text-gray-500 hover:bg-gray-100'}`}
-          >List</button>
+          {/* View toggle */}
+          <div className="flex bg-gray-100 rounded-lg p-0.5 gap-0.5">
+            {['kanban', 'list'].map((v) => (
+              <button
+                key={v}
+                onClick={() => setView(v)}
+                className="px-3 py-1.5 rounded-md text-[12px] font-semibold transition-all"
+                style={{
+                  background: view === v ? 'white' : 'transparent',
+                  color: view === v ? '#111827' : '#6B7280',
+                  boxShadow: view === v ? '0 1px 3px rgba(0,0,0,0.09)' : 'none',
+                }}
+              >
+                {v[0].toUpperCase() + v.slice(1)}
+              </button>
+            ))}
+          </div>
+
           {isManager ? (
             <>
-              <Button variant="secondary" onClick={() => setShowImport(true)}>Importar tareas</Button>
-              <Button onClick={() => setShowForm(true)}>New task</Button>
+              <button
+                onClick={() => setShowImport(true)}
+                className="px-3 py-1.5 rounded-lg text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 border border-gray-200 transition-colors"
+              >
+                Import
+              </button>
+              <button
+                onClick={() => setShowForm(true)}
+                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-sm font-semibold text-white bg-navy hover:bg-navy-deep transition-colors"
+              >
+                <PlusIcon /> New task
+              </button>
             </>
           ) : (
             <span className="text-xs text-gray-400 italic">Only managers can create tasks</span>
@@ -163,44 +174,42 @@ export default function TasksPage() {
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-3 mb-5">
-        <select value={filters.status} onChange={(e) => setFilters((f) => ({ ...f, status: e.target.value }))}
-          className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none">
+      {/* Filters */}
+      <div className="flex flex-wrap items-center gap-2 mb-5">
+        <select value={filters.status} onChange={(e) => setFilters((f) => ({ ...f, status: e.target.value }))} className={selectCls}>
           <option value="">All statuses</option>
           {['TODO', 'IN_PROGRESS', 'BLOCKED', 'DONE'].map((s) => <option key={s}>{s}</option>)}
         </select>
-        <select value={filters.sprint} onChange={(e) => setFilters((f) => ({ ...f, sprint: e.target.value }))}
-          className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none min-w-0 flex-1 sm:flex-none sm:max-w-[180px]">
+        <select value={filters.sprint} onChange={(e) => setFilters((f) => ({ ...f, sprint: e.target.value }))} className={`${selectCls} min-w-0 flex-1 sm:flex-none sm:max-w-[180px]`}>
           <option value="">All sprints</option>
           {visibleSprints.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.sprintName}{s.status === 'CLOSED' ? ' (closed)' : ''}
-            </option>
+            <option key={s.id} value={s.id}>{s.sprintName}{s.status === 'CLOSED' ? ' (closed)' : ''}</option>
           ))}
         </select>
-        <select value={filters.priority} onChange={(e) => setFilters((f) => ({ ...f, priority: e.target.value }))}
-          className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:outline-none">
+        <select value={filters.priority} onChange={(e) => setFilters((f) => ({ ...f, priority: e.target.value }))} className={selectCls}>
           <option value="">All priorities</option>
           {['LOW', 'MEDIUM', 'HIGH'].map((p) => <option key={p}>{p}</option>)}
         </select>
-        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer select-none ml-1">
+        <label className="flex items-center gap-2 text-[12px] text-gray-600 cursor-pointer select-none ml-1">
           <input
             type="checkbox"
             checked={showClosed}
             onChange={handleShowClosedToggle}
-            className="w-4 h-4 rounded border-gray-300 accent-gray-800 cursor-pointer"
+            className="w-3.5 h-3.5 rounded border-gray-300 cursor-pointer accent-navy"
           />
           Show closed sprints
         </label>
       </div>
 
-      {error && <p className="text-sm text-red-600 mb-4">{error}</p>}
+      {error && <p className="text-sm text-oracle bg-oracle-light rounded-lg px-3 py-2 mb-4">{error}</p>}
+
       {loading ? <LoadingSpinner /> : (
         view === 'kanban'
           ? <KanbanBoard tasks={tasks} onTaskClick={setSelectedTask} onStatusChange={handleStatusChange} />
           : <TaskTable tasks={tasks} onTaskClick={setSelectedTask} />
       )}
 
+      {/* Modals */}
       <Modal open={!!selectedTask} onClose={() => setSelectedTask(null)} title="Task detail" size="lg">
         {selectedTask && (
           <TaskDetail
@@ -208,7 +217,7 @@ export default function TasksPage() {
             onClose={() => setSelectedTask(null)}
             onStatusChange={handleStatusChange}
             onEdit={(t) => { setEditTask(t); setSelectedTask(null); }}
-            onDelete={handleDelete}
+            onDelete={setConfirmDelete}
           />
         )}
       </Modal>
@@ -226,27 +235,29 @@ export default function TasksPage() {
       <Modal open={!!donePrompt} onClose={() => setDonePrompt(null)} title="Mark as DONE">
         <div className="space-y-4">
           <p className="text-sm text-gray-600">
-            Enter the actual hours spent on <span className="font-medium">{donePrompt?.task?.taskName}</span>.
+            Enter the actual hours spent on <span className="font-semibold text-gray-900">{donePrompt?.task?.taskName}</span>.
           </p>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Actual hours <span className="text-red-500">*</span>
+            <label className="block text-xs font-semibold text-gray-700 mb-1.5">
+              Actual hours <span className="text-oracle">*</span>
             </label>
             <input
-              type="number"
-              min="0.1"
-              step="0.5"
+              type="number" min="0.1" step="0.5"
               value={actualHoursInput}
               onChange={(e) => setActualHoursInput(e.target.value)}
               placeholder="e.g. 3.5"
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
+              className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-navy-mid focus:ring-2 focus:ring-navy-mid/10 transition-all"
               autoFocus
               onKeyDown={(e) => { if (e.key === 'Enter') handleDoneConfirm(); }}
             />
           </div>
           <div className="flex justify-end gap-2">
-            <Button variant="secondary" onClick={() => setDonePrompt(null)}>Cancel</Button>
-            <Button onClick={handleDoneConfirm}>Confirm DONE</Button>
+            <button onClick={() => setDonePrompt(null)} className="px-4 py-2 rounded-lg text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 border border-gray-200 transition-colors">
+              Cancel
+            </button>
+            <button onClick={handleDoneConfirm} className="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-navy hover:bg-navy-deep transition-colors">
+              Confirm DONE
+            </button>
           </div>
         </div>
       </Modal>
