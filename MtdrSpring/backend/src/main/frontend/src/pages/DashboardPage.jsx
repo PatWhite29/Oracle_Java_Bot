@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useProject } from '../context/ProjectContext';
 import { sprintService } from '../services/sprintService';
+import FilterSelect from '../components/common/FilterSelect';
 import SprintSummary from '../components/dashboard/SprintSummary';
 import CompletionRate from '../components/dashboard/CompletionRate';
 import AvgHoursPerSP from '../components/dashboard/AvgHoursPerSP';
@@ -27,7 +28,7 @@ export function Widget({ title, children, className = '' }) {
 }
 
 function sprintLabel(s) {
-  const tag = s.status === 'ACTIVE' ? ' · Active' : s.status === 'CLOSED' ? ' · Closed' : ' · Planning';
+  const tag = { ACTIVE: ' · Active', CLOSED: ' · Closed', PLANNING: ' · Planning' }[s.status] ?? '';
   return s.sprintName + tag;
 }
 
@@ -65,16 +66,12 @@ export default function DashboardPage() {
           </h1>
           <p className="text-[12px] text-gray-500 mt-1.5">{project.projectName}</p>
         </div>
-        <select
-          value={selectedSprintId ?? ''}
-          onChange={(e) => setSelectedSprintId(e.target.value ? Number(e.target.value) : null)}
-          className="border border-gray-200 rounded-lg px-3 py-1.5 text-sm text-gray-700 bg-white focus:outline-none focus:border-navy-mid focus:ring-2 focus:ring-navy-mid/10 transition-all cursor-pointer w-full sm:w-auto sm:min-w-[200px]"
-        >
-          <option value="">No sprint selected</option>
-          {sprints.map((s) => (
-            <option key={s.id} value={s.id}>{sprintLabel(s)}</option>
-          ))}
-        </select>
+        <FilterSelect
+          value={selectedSprintId ? String(selectedSprintId) : ''}
+          onChange={(v) => setSelectedSprintId(v ? Number(v) : null)}
+          options={sprints.map((s) => ({ value: String(s.id), label: sprintLabel(s) }))}
+          placeholder="No sprint selected"
+        />
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-4">
