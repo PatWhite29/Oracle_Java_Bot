@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Button from '../common/Button';
 
 export default function ProjectForm({ initial = {}, onSubmit, onCancel, loading }) {
   const [form, setForm] = useState({
@@ -8,29 +7,50 @@ export default function ProjectForm({ initial = {}, onSubmit, onCancel, loading 
   });
 
   const set = (field) => (e) => setForm((f) => ({ ...f, [field]: e.target.value }));
-
   const isValid = form.projectName.trim().length > 0;
 
   return (
     <form onSubmit={(e) => { e.preventDefault(); onSubmit(form); }} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Project name <span className="text-red-500">*</span></label>
+        <label className="block text-xs font-semibold text-gray-700 mb-1.5">
+          Project name <span className="text-oracle">*</span>
+        </label>
         <input
-          required value={form.projectName} onChange={set('projectName')}
-          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
+          required
+          value={form.projectName}
+          onChange={set('projectName')}
+          placeholder="e.g. Kairo v2"
+          className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-900
+            focus:outline-none focus:border-navy-mid focus:ring-2 focus:ring-navy-mid/10 transition-all"
         />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+        <label className="block text-xs font-semibold text-gray-700 mb-1.5">Description</label>
         <textarea
-          value={form.description} onChange={set('description')} rows={3}
-          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300 resize-none"
+          value={form.description}
+          onChange={set('description')}
+          rows={3}
+          placeholder="What is this project about?"
+          className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-900
+            focus:outline-none focus:border-navy-mid focus:ring-2 focus:ring-navy-mid/10 transition-all resize-none"
         />
       </div>
 
-      <div className="flex justify-end gap-2 pt-2">
-        <Button type="button" variant="secondary" onClick={onCancel}>Cancel</Button>
-        <Button type="submit" disabled={loading || !isValid}>{loading ? 'Saving...' : 'Save'}</Button>
+      <div className="flex justify-end gap-2 pt-1">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="px-4 py-2 rounded-lg text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 border border-gray-200 transition-colors"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          disabled={loading || !isValid}
+          className="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-navy hover:bg-navy-deep transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {loading ? 'Saving…' : 'Save'}
+        </button>
       </div>
     </form>
   );
