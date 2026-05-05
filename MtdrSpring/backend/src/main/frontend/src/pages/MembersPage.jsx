@@ -46,12 +46,8 @@ export default function MembersPage() {
     try {
       await memberService.add(project.id, email);
       load();
-    } catch (err) { setError(err.message); }
+    } catch (err) { toast.error(err.message); }
     finally { setAdding(false); }
-  };
-
-  const handleRemove = (member) => {
-    setConfirmRemove(member);
   };
 
   const doRemove = async () => {
@@ -60,7 +56,7 @@ export default function MembersPage() {
       await memberService.remove(project.id, confirmRemove.id);
       setConfirmRemove(null);
       load();
-    } catch (err) { setError(err.message); }
+    } catch (err) { toast.error(err.message); }
     finally { setRemoving(false); }
   };
 
@@ -71,57 +67,60 @@ export default function MembersPage() {
       await projectService.transfer(project.id, transferTarget.id);
       setTransferTarget(null);
       load();
-    } catch (err) { setError(err.message); }
+    } catch (err) { toast.error(err.message); }
     finally { setTransferring(false); }
   };
 
   return (
     <div className="max-w-2xl">
-      <h1 className="text-xl font-bold text-gray-900 mb-6">Members — {project.projectName}</h1>
+      <div className="mb-6">
+        <h1 className="font-display font-extrabold text-gray-900 text-[22px] leading-none" style={{ letterSpacing: '-0.02em' }}>
+          Members
+        </h1>
+        <p className="text-[12px] text-gray-500 mt-1.5">
+          {project.projectName} · {members.length} {members.length === 1 ? 'member' : 'members'}
+        </p>
+      </div>
 
       {isManager && (
         <div className="mb-6">
-          <p className="text-sm font-medium text-gray-700 mb-2">Add member by email</p>
+          <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-2">Add member</p>
           <AddMemberForm onAdd={handleAdd} loading={adding} />
         </div>
       )}
 
-      {error && <p className="text-sm text-red-600 mb-4">{error}</p>}
+      {error && <p className="text-sm text-oracle bg-oracle-light rounded-lg px-3 py-2 mb-4">{error}</p>}
       {loading ? <LoadingSpinner /> : (
         <MemberList
           members={members}
           managerId={project.manager?.id}
           currentUserId={user?.id}
           isManager={isManager}
-          onRemove={handleRemove}
+          onRemove={setConfirmRemove}
           onTransfer={setTransferTarget}
         />
       )}
 
-      <Modal
-        open={!!transferTarget}
-        onClose={() => setTransferTarget(null)}
-        title="Transfer ownership"
-      >
+      <Modal open={!!transferTarget} onClose={() => setTransferTarget(null)} title="Transfer ownership">
         <div className="space-y-4">
           <p className="text-sm text-gray-600">
-            Transfer ownership of <span className="font-semibold">{project.projectName}</span> to{' '}
-            <span className="font-semibold">{transferTarget?.fullName}</span>?
+            Transfer ownership of <span className="font-semibold text-gray-900">{project.projectName}</span> to{' '}
+            <span className="font-semibold text-gray-900">{transferTarget?.fullName}</span>?
           </p>
-          <p className="text-xs text-gray-400">
+          <p className="text-[12px] text-gray-400">
             You will become a regular member. This action can be reversed by the new manager.
           </p>
           <div className="flex justify-end gap-2 pt-2">
             <button
               onClick={() => setTransferTarget(null)}
-              className="text-sm px-4 py-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
+              className="px-4 py-2 rounded-lg text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 border border-gray-200 transition-colors"
             >
               Cancel
             </button>
             <button
               onClick={handleTransfer}
               disabled={transferring}
-              className="text-sm px-4 py-2 rounded-lg bg-amber-500 text-white hover:bg-amber-600 disabled:opacity-50 transition-colors"
+              className="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-navy hover:bg-navy-deep transition-colors disabled:opacity-50"
             >
               {transferring ? 'Transferring…' : 'Transfer ownership'}
             </button>
@@ -134,7 +133,7 @@ export default function MembersPage() {
         onClose={() => setConfirmRemove(null)}
         onConfirm={doRemove}
         title="Remove member"
-        message={`Remove ${confirmRemove?.fullName} from this project?`}
+        message={`Remove ${confirmRemove?.fullName} from this project? They will lose access immediately.`}
         confirmLabel="Remove"
         variant="danger"
         loading={removing}

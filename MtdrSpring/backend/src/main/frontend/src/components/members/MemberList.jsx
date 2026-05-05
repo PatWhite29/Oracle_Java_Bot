@@ -1,12 +1,7 @@
 import React from 'react';
-import Button from '../common/Button';
 
-function CrownIcon() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 text-amber-500" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M2 19h20v2H2v-2zM2 6l5 7 5-7 5 7 5-7v11H2V6z"/>
-    </svg>
-  );
+function initials(name) {
+  return name?.split(' ').map((n) => n[0]).slice(0, 2).join('') ?? '?';
 }
 
 export default function MemberList({ members, managerId, currentUserId, isManager, onRemove, onTransfer }) {
@@ -16,22 +11,52 @@ export default function MemberList({ members, managerId, currentUserId, isManage
         const isThisManager = m.id === managerId;
         const isSelf = m.id === currentUserId;
         return (
-          <div key={m.id} className="flex items-center justify-between bg-white border border-gray-100 rounded-lg px-4 py-3">
-            <div className="flex items-center gap-2 min-w-0">
-              {isThisManager && <CrownIcon />}
+          <div
+            key={m.id}
+            className="flex items-center justify-between bg-white rounded-xl px-4 py-3 transition-colors"
+            style={{ border: '1px solid #E5E7EB', boxShadow: '0 1px 3px rgba(0,0,0,0.04)' }}
+          >
+            <div className="flex items-center gap-3 min-w-0">
+              {/* Avatar */}
+              <div
+                className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-[11px] font-bold"
+                style={
+                  isThisManager
+                    ? { background: '#C74634', color: 'white' }
+                    : { background: '#E8F0F7', color: '#003865' }
+                }
+              >
+                {initials(m.fullName)}
+              </div>
               <div className="min-w-0">
-                <p className="text-sm font-medium text-gray-800 truncate">{m.fullName}</p>
-                <p className="text-xs text-gray-400 truncate">{m.email}</p>
+                <p className="text-[13px] font-semibold text-gray-900 truncate">
+                  {m.fullName}
+                  {isSelf && <span className="ml-1.5 text-[10px] font-bold text-gray-400 uppercase tracking-wide">You</span>}
+                </p>
+                <p className="text-[11px] text-gray-400 truncate">{m.email}</p>
               </div>
             </div>
+
             <div className="flex items-center gap-2 shrink-0">
               {isThisManager && (
-                <span className="text-xs font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded">Manager</span>
+                <span className="text-[11px] font-bold text-oracle bg-oracle-light px-2 py-0.5 rounded-full">
+                  Manager
+                </span>
               )}
               {isManager && !isThisManager && !isSelf && (
                 <>
-                  <Button variant="ghost" onClick={() => onTransfer(m)}>Transfer</Button>
-                  <Button variant="ghost" onClick={() => onRemove(m)}>Remove</Button>
+                  <button
+                    onClick={() => onTransfer(m)}
+                    className="text-[12px] font-semibold text-gray-500 hover:text-navy transition-colors px-2 py-1"
+                  >
+                    Transfer
+                  </button>
+                  <button
+                    onClick={() => onRemove(m)}
+                    className="text-[12px] font-semibold text-oracle hover:text-oracle-dark transition-colors px-2 py-1"
+                  >
+                    Remove
+                  </button>
                 </>
               )}
             </div>
