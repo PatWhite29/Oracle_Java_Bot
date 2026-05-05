@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import Button from '../common/Button';
+
+const inputCls = 'w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm text-gray-900 focus:outline-none focus:border-navy-mid focus:ring-2 focus:ring-navy-mid/10 transition-all';
+const labelCls = 'block text-xs font-semibold text-gray-700 mb-1.5';
 
 export default function SprintForm({ initial = {}, onSubmit, onCancel, loading }) {
   const [form, setForm] = useState({
@@ -20,34 +22,44 @@ export default function SprintForm({ initial = {}, onSubmit, onCancel, loading }
   return (
     <form onSubmit={(e) => { e.preventDefault(); onSubmit(form); }} className="space-y-4">
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Sprint name <span className="text-red-500">*</span></label>
-        <input required value={form.sprintName} onChange={set('sprintName')}
-          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
-        />
+        <label className={labelCls}>
+          Sprint name <span className="text-oracle">*</span>
+        </label>
+        <input required value={form.sprintName} onChange={set('sprintName')} className={inputCls} />
       </div>
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">Goal</label>
-        <textarea value={form.goal} onChange={set('goal')} rows={2}
-          className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300 resize-none"
-        />
+        <label className={labelCls}>Goal</label>
+        <textarea value={form.goal} onChange={set('goal')} rows={2} className={`${inputCls} resize-none`} />
       </div>
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Start date <span className="text-red-500">*</span></label>
-          <input type="date" required value={form.startDate} onChange={set('startDate')}
-            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
-          />
+          <label className={labelCls}>
+            Start date <span className="text-oracle">*</span>
+          </label>
+          <input type="date" required value={form.startDate} onChange={set('startDate')} className={inputCls} />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">End date <span className="text-red-500">*</span></label>
-          <input type="date" required value={form.endDate} onChange={set('endDate')}
-            className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
-          />
+          <label className={labelCls}>
+            End date <span className="text-oracle">*</span>
+          </label>
+          <input type="date" required value={form.endDate} onChange={set('endDate')} className={inputCls} />
         </div>
       </div>
       <div className="flex justify-end gap-2 pt-2">
-        <Button type="button" variant="secondary" onClick={onCancel}>Cancel</Button>
-        <Button type="submit" disabled={loading || !isValid}>{loading ? 'Saving...' : 'Save'}</Button>
+        <button
+          type="button"
+          onClick={onCancel}
+          className="px-4 py-2 rounded-lg text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 border border-gray-200 transition-colors"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          disabled={loading || !isValid}
+          className="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-navy hover:bg-navy-deep transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {loading ? 'Saving…' : 'Save'}
+        </button>
       </div>
     </form>
   );
