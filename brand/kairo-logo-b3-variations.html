@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kairo — Variaciones Logo B3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800;900&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: #0D1117;
+  color: white;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Layout ── */
+.canvas {
+  padding: 48px 40px 80px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.canvas-title {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.35);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 48px;
+}
+
+/* ── Section ── */
+.section {
+  margin-bottom: 64px;
+}
+.section-title {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.25);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+/* ── Row ── */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+/* ── Card ── */
+.card {
+  background: #161B22;
+  border-radius: 14px;
+  padding: 24px;
+  border: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.card-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.2);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.card-note {
+  font-size: 11px;
+  color: rgba(255,255,255,0.35);
+  line-height: 1.6;
+  max-width: 280px;
+}
+
+/* ── Scale row ── */
+.scale-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  padding: 16px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 10px;
+  flex-wrap: wrap;
+}
+
+/* ── Wordmark ── */
+.wordmark {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  border-radius: 10px;
+}
+.wordmark-name {
+  font-family: 'Manrope', sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+.wordmark-tag {
+  font-size: 9.5px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+/* ── Wordmark vertical ── */
+.wordmark-v {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 28px 32px;
+  border-radius: 12px;
+}
+.wordmark-v-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ── Chip ── */
+.chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 24px 28px;
+  border-radius: 14px;
+}
+.chip-label {
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+/* ── Summary row ── */
+.summary-panel {
+  border-radius: 14px;
+  padding: 28px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+.summary-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.summary-row-label {
+  width: 90px;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+.summary-row-items {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.divider {
+  height: 1px;
+  background: rgba(255,255,255,0.06);
+}
+.divider-dark {
+  height: 1px;
+  background: rgba(0,0,0,0.07);
+}
+</style>
+</head>
+<body>
+
+<div class="canvas">
+  <div class="canvas-title">Kairo — Variaciones Logo B3</div>
+
+  <!-- ══════════════════════════════════════════
+       01 · SOLO ÍCONO
+  ══════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">01 · Solo Ícono — Variaciones de Color</div>
+    <div class="row">
+
+      <!-- Light -->
+      <div class="card">
+        <div class="card-label">Light · Fondo cielo</div>
+        <div class="card-note">Versión original B3. Fondo azul cielo pálido, bordes navy, nodo central sólido.</div>
+        <div class="scale-row">
+          <svg width="96" height="96" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#003865"/><circle cx="55" cy="62" r="5" fill="#003865"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+          <svg width="72" height="72" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#003865"/><circle cx="55" cy="62" r="5" fill="#003865"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+          <svg width="56" height="56" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#003865"/><circle cx="55" cy="62" r="5" fill="#003865"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+          <svg width="40" height="40" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#003865"/><circle cx="55" cy="62" r="5" fill="#003865"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+          <svg width="24" height="24" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#003865"/><circle cx="55" cy="62" r="5" fill="#003865"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+        </div>
+      </div>
+
+      <!-- Dark -->
+      <div class="card">
+        <div class="card-label">Dark · Fondo navy</div>
+        <div class="card-note">Inversión dark. Fondo navy, trazo blanco, nodos blancos sobre oscuro.</div>
+        <div class="scale-row">
+          <svg width="96" height="96" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#003865"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="white"/><circle cx="55" cy="62" r="5" fill="white"/><circle cx="23" cy="40" r="7" fill="white"/><circle cx="23" cy="40" r="3.5" fill="#003865"/></svg>
+          <svg width="72" height="72" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#003865"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="white"/><circle cx="55" cy="62" r="5" fill="white"/><circle cx="23" cy="40" r="7" fill="white"/><circle cx="23" cy="40" r="3.5" fill="#003865"/></svg>
+          <svg width="56" height="56" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#003865"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="white"/><circle cx="55" cy="62" r="5" fill="white"/><circle cx="23" cy="40" r="7" fill="white"/><circle cx="23" cy="40" r="3.5" fill="#003865"/></svg>
+          <svg width="40" height="40" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#003865"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="white"/><circle cx="55" cy="62" r="5" fill="white"/><circle cx="23" cy="40" r="7" fill="white"/><circle cx="23" cy="40" r="3.5" fill="#003865"/></svg>
+          <svg width="24" height="24" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#003865"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="white"/><circle cx="55" cy="62" r="5" fill="white"/><circle cx="23" cy="40" r="7" fill="white"/><circle cx="23" cy="40" r="3.5" fill="#003865"/></svg>
+        </div>
+      </div>
+
+      <!-- Oracle Red -->
+      <div class="card">
+        <div class="card-label">Oracle Red · Acento rojo</div>
+        <div class="card-note">Nodos terminales en rojo Oracle. El punto de llegada = el momento kairos.</div>
+        <div class="scale-row">
+          <svg width="96" height="96" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#C74634"/><circle cx="55" cy="62" r="5" fill="#C74634"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+          <svg width="72" height="72" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#C74634"/><circle cx="55" cy="62" r="5" fill="#C74634"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+          <svg width="56" height="56" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#C74634"/><circle cx="55" cy="62" r="5" fill="#C74634"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+          <svg width="40" height="40" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#C74634"/><circle cx="55" cy="62" r="5" fill="#C74634"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+        </div>
+      </div>
+
+      <!-- Mono -->
+      <div class="card">
+        <div class="card-label">Mono · Negro puro</div>
+        <div class="card-note">Versión monocromática. Para impresión, bordado, grabado o usos de un solo tinte.</div>
+        <div class="scale-row" style="background: #F3F4F6;">
+          <svg width="96" height="96" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="white"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="#E5E7EB" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#111" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#111" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#111" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#111" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#111" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#111"/><circle cx="55" cy="62" r="5" fill="#111"/><circle cx="23" cy="40" r="7" fill="#111"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+          <svg width="72" height="72" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="white"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="#E5E7EB" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#111" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#111" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#111" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#111" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#111" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#111"/><circle cx="55" cy="62" r="5" fill="#111"/><circle cx="23" cy="40" r="7" fill="#111"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+          <svg width="56" height="56" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="white"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="#E5E7EB" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#111" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#111" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#111" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#111" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#111" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#111"/><circle cx="55" cy="62" r="5" fill="#111"/><circle cx="23" cy="40" r="7" fill="#111"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+          <svg width="40" height="40" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="white"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="#E5E7EB" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#111" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#111" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#111" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#111" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#111" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#111"/><circle cx="55" cy="62" r="5" fill="#111"/><circle cx="23" cy="40" r="7" fill="#111"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       02 · FORMAS DEL CONTENEDOR
+  ══════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">02 · Forma del Contenedor</div>
+    <div class="row">
+
+      <!-- Cuadrado r18 -->
+      <div class="card">
+        <div class="card-label">Cuadrado redondeado r18</div>
+        <div class="card-note">Forma original. Amigable, moderno, ideal para app icons.</div>
+        <div class="scale-row" style="background:#F4F8FB;">
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#003865"/><circle cx="55" cy="62" r="5" fill="#003865"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#003865"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="white"/><circle cx="55" cy="62" r="5" fill="white"/><circle cx="23" cy="40" r="7" fill="white"/><circle cx="23" cy="40" r="3.5" fill="#003865"/></svg>
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#C74634"/><circle cx="55" cy="62" r="5" fill="#C74634"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+        </div>
+      </div>
+
+      <!-- Círculo -->
+      <div class="card">
+        <div class="card-label">Círculo</div>
+        <div class="card-note">Más suave. Ideal para avatares, fotos de perfil, redes sociales.</div>
+        <div class="scale-row" style="background:#F4F8FB;">
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="40" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="39" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#003865"/><circle cx="55" cy="62" r="5" fill="#003865"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="40" fill="#003865"/><rect x="1" y="1" width="78" height="78" rx="39" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="white"/><circle cx="55" cy="62" r="5" fill="white"/><circle cx="23" cy="40" r="7" fill="white"/><circle cx="23" cy="40" r="3.5" fill="#003865"/></svg>
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="40" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="39" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#C74634"/><circle cx="55" cy="62" r="5" fill="#C74634"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+        </div>
+      </div>
+
+      <!-- Radio ajustado -->
+      <div class="card">
+        <div class="card-label">Radio ajustado r8</div>
+        <div class="card-note">Más recto, más formal. Sensibilidad B2B / enterprise.</div>
+        <div class="scale-row" style="background:#F4F8FB;">
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="8" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="7" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#003865"/><circle cx="55" cy="62" r="5" fill="#003865"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="8" fill="#003865"/><rect x="1" y="1" width="78" height="78" rx="7" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="white"/><circle cx="55" cy="62" r="5" fill="white"/><circle cx="23" cy="40" r="7" fill="white"/><circle cx="23" cy="40" r="3.5" fill="#003865"/></svg>
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="8" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="7" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#C74634"/><circle cx="55" cy="62" r="5" fill="#C74634"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+        </div>
+      </div>
+
+      <!-- Sin contenedor -->
+      <div class="card">
+        <div class="card-label">Sin contenedor — ícono libre</div>
+        <div class="card-note">Solo la K como grafo. Máxima limpieza para fondos personalizados.</div>
+        <div class="scale-row" style="background:#EEF5FB; gap:20px; padding: 20px;">
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none"><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#003865"/><circle cx="55" cy="62" r="5" fill="#003865"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+          <svg width="56" height="56" viewBox="0 0 80 80" fill="none"><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#003865"/><circle cx="55" cy="62" r="5" fill="#003865"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+          <svg width="40" height="40" viewBox="0 0 80 80" fill="none"><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#003865"/><circle cx="55" cy="62" r="5" fill="#003865"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       03 · WORDMARK HORIZONTAL
+  ══════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">03 · Wordmark Horizontal — Ícono + Nombre</div>
+    <div class="row">
+
+      <!-- Solo nombre light -->
+      <div class="card">
+        <div class="card-label">Solo nombre · Light</div>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <div class="wordmark" style="background:#EEF5FB;">
+            <svg width="44" height="44" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#003865"/><circle cx="55" cy="62" r="5" fill="#003865"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+            <span class="wordmark-name" style="color:#003865;">Kairo</span>
+          </div>
+          <div class="wordmark" style="background:#EEF5FB;">
+            <svg width="44" height="44" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#003865"/><circle cx="55" cy="62" r="5" fill="#003865"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+            <div>
+              <div class="wordmark-name" style="color:#003865;">Kairo</div>
+              <div class="wordmark-tag" style="color:#5A96C1;">TEConecta</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Solo nombre dark -->
+      <div class="card">
+        <div class="card-label">Solo nombre · Dark</div>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <div class="wordmark" style="background:#002A4C;">
+            <svg width="44" height="44" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#003865"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="white"/><circle cx="55" cy="62" r="5" fill="white"/><circle cx="23" cy="40" r="7" fill="white"/><circle cx="23" cy="40" r="3.5" fill="#003865"/></svg>
+            <span class="wordmark-name" style="color:white;">Kairo</span>
+          </div>
+          <div class="wordmark" style="background:#002A4C;">
+            <svg width="44" height="44" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#003865"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="white"/><circle cx="55" cy="62" r="5" fill="white"/><circle cx="23" cy="40" r="7" fill="white"/><circle cx="23" cy="40" r="3.5" fill="#003865"/></svg>
+            <div>
+              <div class="wordmark-name" style="color:white;">Kairo</div>
+              <div class="wordmark-tag" style="color:rgba(255,255,255,0.45);">TEConecta</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Oracle Red -->
+      <div class="card">
+        <div class="card-label">Oracle Red accent</div>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <div class="wordmark" style="background:#FFF5F4;">
+            <svg width="44" height="44" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#C74634"/><circle cx="55" cy="62" r="5" fill="#C74634"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+            <span class="wordmark-name" style="color:#003865;">Kairo</span>
+          </div>
+          <div class="wordmark" style="background:#FFF5F4;">
+            <svg width="44" height="44" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#C74634"/><circle cx="55" cy="62" r="5" fill="#C74634"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+            <div>
+              <div class="wordmark-name" style="color:#003865;">Kairo</div>
+              <div class="wordmark-tag" style="color:#C74634;">Oracle × ITESM</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- K en color diferente -->
+      <div class="card">
+        <div class="card-label">K destacada — bicolor</div>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <div class="wordmark" style="background:#EEF5FB;">
+            <svg width="44" height="44" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#C74634"/><circle cx="55" cy="62" r="5" fill="#C74634"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+            <span class="wordmark-name" style="font-family:'Manrope',sans-serif; font-weight:800; letter-spacing:-0.03em;">
+              <span style="color:#C74634;">K</span><span style="color:#003865;">airo</span>
+            </span>
+          </div>
+          <div class="wordmark" style="background:#EEF5FB;">
+            <svg width="44" height="44" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#C74634"/><circle cx="55" cy="62" r="5" fill="#C74634"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+            <div>
+              <div class="wordmark-name" style="font-size:22px;">
+                <span style="color:#C74634;">K</span><span style="color:#003865;">airo</span>
+              </div>
+              <div class="wordmark-tag" style="color:#9CA3AF;">Oracle × ITESM</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       04 · WORDMARK VERTICAL
+  ══════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">04 · Wordmark Vertical — Ícono + Nombre Apilado</div>
+    <div class="row" style="align-items:flex-start;">
+
+      <div class="card" style="align-items:center;">
+        <div class="card-label">Light · Sin tagline</div>
+        <div class="wordmark-v" style="background:#EEF5FB;">
+          <svg width="64" height="64" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#003865"/><circle cx="55" cy="62" r="5" fill="#003865"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+          <div class="wordmark-v-text">
+            <span class="wordmark-name" style="color:#003865;">Kairo</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="align-items:center;">
+        <div class="card-label">Light · Con tagline</div>
+        <div class="wordmark-v" style="background:#EEF5FB;">
+          <svg width="64" height="64" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#003865"/><circle cx="55" cy="62" r="5" fill="#003865"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+          <div class="wordmark-v-text">
+            <span class="wordmark-name" style="color:#003865;">Kairo</span>
+            <span class="wordmark-tag" style="color:#5A96C1;">TEConecta</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="align-items:center;">
+        <div class="card-label">Dark · Con tagline</div>
+        <div class="wordmark-v" style="background:#002A4C;">
+          <svg width="64" height="64" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#003865"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="white"/><circle cx="55" cy="62" r="5" fill="white"/><circle cx="23" cy="40" r="7" fill="white"/><circle cx="23" cy="40" r="3.5" fill="#003865"/></svg>
+          <div class="wordmark-v-text">
+            <span class="wordmark-name" style="color:white;">Kairo</span>
+            <span class="wordmark-tag" style="color:rgba(255,255,255,0.45);">TEConecta</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="align-items:center;">
+        <div class="card-label">Red · Con tagline</div>
+        <div class="wordmark-v" style="background:#FFF5F4;">
+          <svg width="64" height="64" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#C74634"/><circle cx="55" cy="62" r="5" fill="#C74634"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+          <div class="wordmark-v-text">
+            <span class="wordmark-name" style="color:#003865;">Kairo</span>
+            <span class="wordmark-tag" style="color:#C74634;">Oracle × ITESM</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="align-items:center;">
+        <div class="card-label">Círculo · Dark</div>
+        <div class="wordmark-v" style="background:#002A4C;">
+          <svg width="64" height="64" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="40" fill="#003865"/><rect x="1" y="1" width="78" height="78" rx="39" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="white"/><circle cx="55" cy="62" r="5" fill="white"/><circle cx="23" cy="40" r="7" fill="white"/><circle cx="23" cy="40" r="3.5" fill="#003865"/></svg>
+          <div class="wordmark-v-text">
+            <span class="wordmark-name" style="color:white;">Kairo</span>
+            <span class="wordmark-tag" style="color:rgba(255,255,255,0.4);">TEConecta</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       05 · SOBRE FONDOS DE COLOR
+  ══════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">05 · Ícono sobre Fondos de Color</div>
+    <div class="row">
+
+      <div class="chip" style="background:#003865;">
+        <svg width="72" height="72" viewBox="0 0 80 80" fill="none"><line x1="23" y1="18" x2="23" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="transparent" stroke="white" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="transparent" stroke="white" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="white"/><circle cx="55" cy="62" r="5" fill="white"/><circle cx="23" cy="40" r="7" fill="white"/><circle cx="23" cy="40" r="3.5" fill="#003865"/></svg>
+        <span class="chip-label" style="color:rgba(255,255,255,0.4);">#003865 Navy TEC</span>
+      </div>
+
+      <div class="chip" style="background:#001C33;">
+        <svg width="72" height="72" viewBox="0 0 80 80" fill="none"><line x1="23" y1="18" x2="23" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="transparent" stroke="white" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="transparent" stroke="white" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="white"/><circle cx="55" cy="62" r="5" fill="white"/><circle cx="23" cy="40" r="7" fill="white"/><circle cx="23" cy="40" r="3.5" fill="#001C33"/></svg>
+        <span class="chip-label" style="color:rgba(255,255,255,0.3);">#001C33 Deep Navy</span>
+      </div>
+
+      <div class="chip" style="background:#C74634;">
+        <svg width="72" height="72" viewBox="0 0 80 80" fill="none"><line x1="23" y1="18" x2="23" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="transparent" stroke="white" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="transparent" stroke="white" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="white"/><circle cx="55" cy="62" r="5" fill="white"/><circle cx="23" cy="40" r="7" fill="white"/><circle cx="23" cy="40" r="3.5" fill="#C74634"/></svg>
+        <span class="chip-label" style="color:rgba(255,255,255,0.55);">#C74634 Oracle Red</span>
+      </div>
+
+      <div class="chip" style="background:#EEF5FB; border:1px solid #B8D4E8;">
+        <svg width="72" height="72" viewBox="0 0 80 80" fill="none"><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="#EEF5FB" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="#EEF5FB" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#003865"/><circle cx="55" cy="62" r="5" fill="#003865"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="#EEF5FB"/></svg>
+        <span class="chip-label" style="color:#9CA3AF;">#EEF5FB Sky Blue</span>
+      </div>
+
+      <div class="chip" style="background:#0A0A0A;">
+        <svg width="72" height="72" viewBox="0 0 80 80" fill="none"><line x1="23" y1="18" x2="23" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="transparent" stroke="white" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="transparent" stroke="white" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="white"/><circle cx="55" cy="62" r="5" fill="white"/><circle cx="23" cy="40" r="7" fill="white"/><circle cx="23" cy="40" r="3.5" fill="#0A0A0A"/></svg>
+        <span class="chip-label" style="color:rgba(255,255,255,0.3);">#0A0A0A Negro</span>
+      </div>
+
+      <div class="chip" style="background:white; border:1px solid #E5E7EB;">
+        <svg width="72" height="72" viewBox="0 0 80 80" fill="none"><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#003865"/><circle cx="55" cy="62" r="5" fill="#003865"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+        <span class="chip-label" style="color:#D1D5DB;">#FFFFFF Blanco</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       06 · VARIACIONES TIPOGRÁFICAS
+  ══════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">06 · Variaciones Tipográficas del Nombre</div>
+    <div class="row">
+
+      <div class="card">
+        <div class="card-label">Manrope 800 — original</div>
+        <div style="display:flex; flex-direction:column; gap:12px; padding:16px; background:#EEF5FB; border-radius:10px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <svg width="44" height="44" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#003865"/><circle cx="55" cy="62" r="5" fill="#003865"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+            <span style="font-family:'Manrope',sans-serif; font-size:30px; font-weight:800; color:#003865; letter-spacing:-0.03em;">Kairo</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">Manrope 300 — ligero</div>
+        <div style="display:flex; flex-direction:column; gap:12px; padding:16px; background:#EEF5FB; border-radius:10px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <svg width="44" height="44" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#003865"/><circle cx="55" cy="62" r="5" fill="#003865"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+            <span style="font-family:'Manrope',sans-serif; font-size:30px; font-weight:300; color:#003865; letter-spacing:0.04em;">Kairo</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">Versalitas espaciadas — KAIRO</div>
+        <div style="display:flex; flex-direction:column; gap:12px; padding:16px; background:#EEF5FB; border-radius:10px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <svg width="44" height="44" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#003865"/><circle cx="55" cy="62" r="5" fill="#003865"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+            <span style="font-family:'Manrope',sans-serif; font-size:22px; font-weight:700; color:#003865; letter-spacing:0.18em; text-transform:uppercase;">Kairo</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">K bicolor + nombre ligero</div>
+        <div style="display:flex; flex-direction:column; gap:12px; padding:16px; background:#EEF5FB; border-radius:10px;">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <svg width="44" height="44" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#C74634"/><circle cx="55" cy="62" r="5" fill="#C74634"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+            <span style="font-family:'Manrope',sans-serif; font-size:30px; letter-spacing:-0.02em;">
+              <span style="font-weight:900; color:#C74634;">K</span><span style="font-weight:300; color:#003865;">airo</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       07 · HOJA DE ESTILOS
+  ══════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">07 · Hoja de Estilos — Resumen Completo</div>
+    <div style="display:flex; flex-direction:column; gap:16px;">
+
+      <!-- Fondo claro -->
+      <div class="summary-panel" style="background:white; border:1px solid #F3F4F6;">
+        <div style="font-size:10px; font-weight:600; color:#D1D5DB; letter-spacing:0.08em; text-transform:uppercase;">Sobre fondo claro</div>
+
+        <div class="summary-row">
+          <span class="summary-row-label" style="color:#D1D5DB;">Solo ícono</span>
+          <div class="summary-row-items">
+            <svg width="48" height="48" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#003865"/><circle cx="55" cy="62" r="5" fill="#003865"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+            <svg width="48" height="48" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#C74634"/><circle cx="55" cy="62" r="5" fill="#C74634"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+            <svg width="48" height="48" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="white"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="#E5E7EB" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#111" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#111" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#111" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#111" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#111" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#111"/><circle cx="55" cy="62" r="5" fill="#111"/><circle cx="23" cy="40" r="7" fill="#111"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+            <svg width="48" height="48" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="40" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="39" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#003865"/><circle cx="55" cy="62" r="5" fill="#003865"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+            <svg width="48" height="48" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="8" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="7" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#003865"/><circle cx="55" cy="62" r="5" fill="#003865"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+          </div>
+        </div>
+
+        <div class="divider-dark"></div>
+
+        <div class="summary-row" style="align-items:center;">
+          <span class="summary-row-label" style="color:#D1D5DB;">Horizontal</span>
+          <div class="summary-row-items">
+            <div class="wordmark" style="background:#EEF5FB;">
+              <svg width="36" height="36" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#003865"/><circle cx="55" cy="62" r="5" fill="#003865"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+              <span class="wordmark-name" style="color:#003865; font-size:20px;">Kairo</span>
+            </div>
+            <div class="wordmark" style="background:#EEF5FB;">
+              <svg width="36" height="36" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#C74634"/><circle cx="55" cy="62" r="5" fill="#C74634"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+              <div><div class="wordmark-name" style="color:#003865; font-size:20px;">Kairo</div><div class="wordmark-tag" style="color:#C74634;">Oracle × ITESM</div></div>
+            </div>
+            <div class="wordmark" style="background:#FFF5F4;">
+              <svg width="36" height="36" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#C74634"/><circle cx="55" cy="62" r="5" fill="#C74634"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+              <div><div class="wordmark-name" style="font-size:20px;"><span style="color:#C74634;">K</span><span style="color:#003865;">airo</span></div><div class="wordmark-tag" style="color:#9CA3AF;">TEConecta</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider-dark"></div>
+
+        <div class="summary-row" style="align-items:center;">
+          <span class="summary-row-label" style="color:#D1D5DB;">Vertical</span>
+          <div class="summary-row-items" style="align-items:flex-start;">
+            <div class="wordmark-v" style="background:#EEF5FB; padding:16px 20px;">
+              <svg width="44" height="44" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#003865"/><circle cx="55" cy="62" r="5" fill="#003865"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+              <div class="wordmark-v-text"><span class="wordmark-name" style="color:#003865; font-size:20px;">Kairo</span></div>
+            </div>
+            <div class="wordmark-v" style="background:#EEF5FB; padding:16px 20px;">
+              <svg width="44" height="44" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#EEF5FB"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="#B8D4E8" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="#003865" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="#003865" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="white" stroke="#003865" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="#C74634"/><circle cx="55" cy="62" r="5" fill="#C74634"/><circle cx="23" cy="40" r="7" fill="#003865"/><circle cx="23" cy="40" r="3.5" fill="white"/></svg>
+              <div class="wordmark-v-text"><span class="wordmark-name" style="color:#003865; font-size:20px;">Kairo</span><span class="wordmark-tag" style="color:#C74634;">Oracle × ITESM</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fondo oscuro -->
+      <div class="summary-panel" style="background:#001430;">
+
+        <div style="font-size:10px; font-weight:600; color:rgba(255,255,255,0.2); letter-spacing:0.08em; text-transform:uppercase;">Sobre fondo oscuro</div>
+
+        <div class="summary-row">
+          <span class="summary-row-label" style="color:rgba(255,255,255,0.2);">Solo ícono</span>
+          <div class="summary-row-items">
+            <svg width="48" height="48" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#003865"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="white"/><circle cx="55" cy="62" r="5" fill="white"/><circle cx="23" cy="40" r="7" fill="white"/><circle cx="23" cy="40" r="3.5" fill="#003865"/></svg>
+            <svg width="48" height="48" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="40" fill="#003865"/><rect x="1" y="1" width="78" height="78" rx="39" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="white"/><circle cx="55" cy="62" r="5" fill="white"/><circle cx="23" cy="40" r="7" fill="white"/><circle cx="23" cy="40" r="3.5" fill="#003865"/></svg>
+            <svg width="48" height="48" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="8" fill="#003865"/><rect x="1" y="1" width="78" height="78" rx="7" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="white"/><circle cx="55" cy="62" r="5" fill="white"/><circle cx="23" cy="40" r="7" fill="white"/><circle cx="23" cy="40" r="3.5" fill="#003865"/></svg>
+          </div>
+        </div>
+
+        <div style="height:1px; background:rgba(255,255,255,0.06);"></div>
+
+        <div class="summary-row" style="align-items:center;">
+          <span class="summary-row-label" style="color:rgba(255,255,255,0.2);">Horizontal</span>
+          <div class="summary-row-items">
+            <div class="wordmark" style="background:#002A4C;">
+              <svg width="36" height="36" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#003865"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="white"/><circle cx="55" cy="62" r="5" fill="white"/><circle cx="23" cy="40" r="7" fill="white"/><circle cx="23" cy="40" r="3.5" fill="#003865"/></svg>
+              <span class="wordmark-name" style="color:white; font-size:20px;">Kairo</span>
+            </div>
+            <div class="wordmark" style="background:#002A4C;">
+              <svg width="36" height="36" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#003865"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="white"/><circle cx="55" cy="62" r="5" fill="white"/><circle cx="23" cy="40" r="7" fill="white"/><circle cx="23" cy="40" r="3.5" fill="#003865"/></svg>
+              <div><div class="wordmark-name" style="color:white; font-size:20px;">Kairo</div><div class="wordmark-tag" style="color:rgba(255,255,255,0.4);">TEConecta</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:1px; background:rgba(255,255,255,0.06);"></div>
+
+        <div class="summary-row" style="align-items:center;">
+          <span class="summary-row-label" style="color:rgba(255,255,255,0.2);">Vertical</span>
+          <div class="summary-row-items" style="align-items:flex-start;">
+            <div class="wordmark-v" style="background:#002A4C; padding:16px 20px;">
+              <svg width="44" height="44" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="18" fill="#003865"/><rect x="1" y="1" width="78" height="78" rx="17" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="white"/><circle cx="55" cy="62" r="5" fill="white"/><circle cx="23" cy="40" r="7" fill="white"/><circle cx="23" cy="40" r="3.5" fill="#003865"/></svg>
+              <div class="wordmark-v-text"><span class="wordmark-name" style="color:white; font-size:20px;">Kairo</span><span class="wordmark-tag" style="color:rgba(255,255,255,0.4);">TEConecta</span></div>
+            </div>
+            <div class="wordmark-v" style="background:#002A4C; padding:16px 20px;">
+              <svg width="44" height="44" viewBox="0 0 80 80" fill="none"><rect width="80" height="80" rx="40" fill="#003865"/><rect x="1" y="1" width="78" height="78" rx="39" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" fill="none"/><line x1="23" y1="18" x2="23" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="18" stroke="white" stroke-width="3" stroke-linecap="round"/><line x1="23" y1="40" x2="55" y2="62" stroke="white" stroke-width="3" stroke-linecap="round"/><circle cx="23" cy="18" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="23" cy="62" r="5" fill="#003865" stroke="white" stroke-width="2.5"/><circle cx="55" cy="18" r="5" fill="white"/><circle cx="55" cy="62" r="5" fill="white"/><circle cx="23" cy="40" r="7" fill="white"/><circle cx="23" cy="40" r="3.5" fill="#003865"/></svg>
+              <div class="wordmark-v-text"><span class="wordmark-name" style="color:white; font-size:20px;">Kairo</span><span class="wordmark-tag" style="color:rgba(255,255,255,0.4);">Oracle × ITESM</span></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

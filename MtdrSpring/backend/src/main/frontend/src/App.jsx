@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ProjectProvider } from './context/ProjectContext';
 import { ToastProvider } from './context/ToastContext';
+import { ThemeProvider } from './context/ThemeContext';
 
 import AuthLayout from './components/Layout/AuthLayout';
 import AppLayout from './components/Layout/AppLayout';
@@ -20,6 +21,7 @@ import ProfilePage from './pages/ProfilePage';
 
 export default function App() {
   return (
+    <ThemeProvider>
     <ToastProvider>
       <AuthProvider>
         <ProjectProvider>
@@ -50,5 +52,6 @@ export default function App() {
         </ProjectProvider>
       </AuthProvider>
     </ToastProvider>
+    </ThemeProvider>
   );
 }

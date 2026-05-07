@@ -3,35 +3,47 @@ import Badge from '../common/Badge';
 
 export default function TaskTable({ tasks, onTaskClick }) {
   if (tasks.length === 0) {
-    return <p className="text-sm text-gray-400 py-8 text-center">No tasks found.</p>;
+    return <p className="text-sm py-8 text-center" style={{ color: 'var(--text-muted)' }}>No tasks found.</p>;
   }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full text-sm">
+    <div className="rounded-xl overflow-hidden" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)', boxShadow: '0 1px 4px var(--shadow-card)' }}>
+      <table className="w-full border-collapse">
         <thead>
-          <tr className="text-left text-xs text-gray-400 uppercase tracking-wider border-b border-gray-100">
-            <th className="pb-3 pr-4">Name</th>
-            <th className="pb-3 pr-4">Status</th>
-            <th className="pb-3 pr-4 hidden sm:table-cell">Priority</th>
-            <th className="pb-3 pr-4 hidden md:table-cell">SP</th>
-            <th className="pb-3 pr-4 hidden sm:table-cell">Assigned</th>
-            <th className="pb-3 hidden md:table-cell">Sprint</th>
+          <tr style={{ background: 'var(--table-alt)' }}>
+            {['Task', 'Status', 'Priority', 'SP', 'Assigned', 'Sprint'].map((h, i) => (
+              <th
+                key={h}
+                className={`px-4 py-2.5 text-left text-[11px] font-bold uppercase tracking-wider ${i >= 2 ? 'hidden sm:table-cell' : ''} ${i >= 3 ? 'hidden md:table-cell' : ''}`}
+                style={{ color: 'var(--text-secondary)', borderBottom: '1px solid var(--border)' }}
+              >
+                {h}
+              </th>
+            ))}
           </tr>
         </thead>
         <tbody>
-          {tasks.map((t) => (
+          {tasks.map((t, i) => (
             <tr
               key={t.id}
               onClick={() => onTaskClick(t)}
-              className="border-b border-gray-50 hover:bg-gray-50 cursor-pointer transition-colors"
+              className="cursor-pointer transition-colors"
+              style={{ borderBottom: i < tasks.length - 1 ? '1px solid var(--border)' : 'none' }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--bg-card-alt)')}
+              onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
             >
-              <td className="py-3 pr-4 font-medium text-gray-800">{t.taskName}</td>
-              <td className="py-3 pr-4"><Badge value={t.status} /></td>
-              <td className="py-3 pr-4 hidden sm:table-cell">{t.priority ? <Badge value={t.priority} /> : <span className="text-gray-300">—</span>}</td>
-              <td className="py-3 pr-4 text-gray-500 hidden md:table-cell">{t.storyPoints}</td>
-              <td className="py-3 pr-4 text-gray-500 hidden sm:table-cell">{t.assignedTo?.fullName || <span className="text-gray-300">—</span>}</td>
-              <td className="py-3 text-gray-500 hidden md:table-cell">{t.sprint?.sprintName || <span className="text-gray-300">Backlog</span>}</td>
+              <td className="px-4 py-3 text-[13px] font-medium" style={{ color: 'var(--text-primary)' }}>{t.taskName}</td>
+              <td className="px-4 py-3"><Badge value={t.status} /></td>
+              <td className="px-4 py-3 hidden sm:table-cell">
+                {t.priority ? <Badge value={t.priority} /> : <span style={{ color: 'var(--text-muted)' }}>—</span>}
+              </td>
+              <td className="px-4 py-3 hidden md:table-cell font-mono text-[12px]" style={{ color: 'var(--text-muted)' }}>{t.storyPoints}</td>
+              <td className="px-4 py-3 hidden sm:table-cell text-[12px]" style={{ color: 'var(--text-secondary)' }}>
+                {t.assignedTo?.fullName || <span style={{ color: 'var(--text-muted)' }}>—</span>}
+              </td>
+              <td className="px-4 py-3 hidden md:table-cell text-[12px]" style={{ color: 'var(--text-secondary)' }}>
+                {t.sprint?.sprintName || <span style={{ color: 'var(--text-muted)' }}>Backlog</span>}
+              </td>
             </tr>
           ))}
         </tbody>

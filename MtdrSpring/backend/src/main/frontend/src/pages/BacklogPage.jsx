@@ -7,7 +7,6 @@ import TaskTable from '../components/tasks/TaskTable';
 import Modal from '../components/common/Modal';
 import ConfirmDialog from '../components/common/ConfirmDialog';
 import Badge from '../components/common/Badge';
-import Button from '../components/common/Button';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 
 export default function BacklogPage() {
@@ -69,13 +68,20 @@ export default function BacklogPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-bold text-gray-900">Backlog — {project.projectName}</h1>
+      <div className="mb-6">
+        <h1 className="font-display font-extrabold text-[22px] leading-none" style={{ letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
+          Backlog
+        </h1>
+        <p className="text-[12px] mt-1.5" style={{ color: 'var(--text-secondary)' }}>{project.projectName}</p>
       </div>
-      {error && <p className="text-sm text-red-600 mb-4">{error}</p>}
+
+      {error && <p className="text-sm text-oracle bg-oracle-light rounded-lg px-3 py-2 mb-4">{error}</p>}
+
       {loading ? <LoadingSpinner /> : (
         <>
-          <p className="text-sm text-gray-500 mb-4">{tasks.length} task(s) not assigned to a sprint.</p>
+          <p className="text-[12px] mb-4" style={{ color: 'var(--text-muted)' }}>
+            {tasks.length} {tasks.length === 1 ? 'task' : 'tasks'} not assigned to a sprint
+          </p>
           <TaskTable tasks={tasks} onTaskClick={setSelectedTask} />
         </>
       )}
@@ -83,14 +89,15 @@ export default function BacklogPage() {
       <Modal open={!!selectedTask} onClose={() => setSelectedTask(null)} title="Assign to sprint">
         {selectedTask && (
           <div className="space-y-4">
-            <div className="bg-gray-50 rounded-lg px-4 py-3 space-y-2">
-              <p className="text-sm font-semibold text-gray-900">{selectedTask.taskName}</p>
-              <div className="flex flex-wrap gap-2">
+            {/* Task summary */}
+            <div className="rounded-xl px-4 py-3 space-y-2" style={{ background: 'var(--bg-card-alt)', border: '1px solid var(--border)' }}>
+              <p className="text-[13px] font-semibold" style={{ color: 'var(--text-primary)' }}>{selectedTask.taskName}</p>
+              <div className="flex flex-wrap items-center gap-2">
                 <Badge value={selectedTask.status} />
                 {selectedTask.priority && <Badge value={selectedTask.priority} />}
-                <span className="text-xs text-gray-400">{selectedTask.storyPoints} SP</span>
+                <span className="text-[11px] font-mono" style={{ color: 'var(--text-muted)' }}>{selectedTask.storyPoints} SP</span>
                 {selectedTask.assignedTo && (
-                  <span className="text-xs text-gray-400">→ {selectedTask.assignedTo.fullName}</span>
+                  <span className="text-[11px]" style={{ color: 'var(--text-muted)' }}>· {selectedTask.assignedTo.fullName}</span>
                 )}
               </div>
             </div>
@@ -101,16 +108,16 @@ export default function BacklogPage() {
               <p className="text-sm text-gray-400">No active or planning sprints available.</p>
             ) : (
               <div className="space-y-2">
-                <p className="text-sm text-gray-500">Select a sprint to move this task:</p>
+                <p className="text-[12px] font-semibold text-gray-500 uppercase tracking-wider">Move to sprint</p>
                 <div className="flex flex-col gap-2">
                   {sprints.map((s) => (
                     <button
                       key={s.id}
                       disabled={moving}
                       onClick={() => handleMoveToSprint(s.id)}
-                      className="flex items-center justify-between w-full px-4 py-3 rounded-lg border border-gray-200 hover:bg-gray-50 hover:border-gray-300 transition-colors text-sm text-left disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex items-center justify-between w-full px-4 py-3 rounded-xl border border-gray-200 hover:border-navy-mid hover:bg-navy-light/40 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed group"
                     >
-                      <span className="font-medium text-gray-800">{s.sprintName}</span>
+                      <span className="text-[13px] font-semibold text-gray-800 group-hover:text-navy">{s.sprintName}</span>
                       <Badge value={s.status} />
                     </button>
                   ))}
@@ -119,22 +126,26 @@ export default function BacklogPage() {
             )}
 
             {isManager && (
-              <div className="pt-2 border-t border-gray-100">
-                <Button variant="danger" onClick={() => setConfirmDelete(selectedTask)}>
-                  Eliminar tarea
-                </Button>
+              <div className="pt-3 border-t border-gray-100">
+                <button
+                  onClick={() => setConfirmDelete(selectedTask)}
+                  className="text-[12px] font-semibold text-oracle hover:text-oracle-dark transition-colors"
+                >
+                  Delete task
+                </button>
               </div>
             )}
           </div>
         )}
       </Modal>
+
       <ConfirmDialog
         open={!!confirmDelete}
         onClose={() => setConfirmDelete(null)}
         onConfirm={doDelete}
-        title="Eliminar tarea"
-        message={`"${confirmDelete?.taskName}" será eliminada permanentemente. Esta acción no se puede deshacer.`}
-        confirmLabel="Eliminar"
+        title="Delete task"
+        message={`"${confirmDelete?.taskName}" will be permanently deleted. This cannot be undone.`}
+        confirmLabel="Delete"
         variant="danger"
         loading={deleting}
       />

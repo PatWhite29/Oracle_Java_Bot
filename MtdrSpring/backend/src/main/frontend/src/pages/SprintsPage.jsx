@@ -12,7 +12,6 @@ import TaskForm from '../components/tasks/TaskForm';
 import Modal from '../components/common/Modal';
 import ConfirmDialog from '../components/common/ConfirmDialog';
 import Badge from '../components/common/Badge';
-import Button from '../components/common/Button';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 
 export default function SprintsPage() {
@@ -187,27 +186,43 @@ export default function SprintsPage() {
 
   const listProps = { isManager, onActivate: handleActivate, onClose: handleClose, onReopen: handleReopen, onSelect: loadSprintTasks };
 
+  const PlusIcon = () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+    </svg>
+  );
+
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-bold text-gray-900">Sprints — {project.projectName}</h1>
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-6">
+        <div>
+          <h1 className="font-display font-extrabold text-[22px] leading-none" style={{ letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
+            Sprints
+          </h1>
+          <p className="text-[12px] mt-1.5" style={{ color: 'var(--text-secondary)' }}>{project.projectName}</p>
+        </div>
         {isManager ? (
-          <Button onClick={() => setShowCreate(true)}>New sprint</Button>
+          <button
+            onClick={() => setShowCreate(true)}
+            className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-sm font-semibold text-white bg-navy hover:bg-navy-deep transition-colors"
+          >
+            <PlusIcon /> New sprint
+          </button>
         ) : (
           <span className="text-xs text-gray-400 italic">Only managers can create sprints</span>
         )}
       </div>
 
-      {error && <p className="text-sm text-red-600 mb-4">{error}</p>}
+      {error && <p className="text-sm text-oracle bg-oracle-light rounded-lg px-3 py-2 mb-4">{error}</p>}
       {loading ? <LoadingSpinner /> : (
         <div className="space-y-8">
           <div>
-            <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Active & Planning</h2>
+            <h2 className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-3">Active & Planning</h2>
             <SprintList sprints={openSprints} {...listProps} />
           </div>
           {closedSprints.length > 0 && (
             <div>
-              <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-3">Closed</h2>
+              <h2 className="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-3">Closed</h2>
               <SprintList sprints={closedSprints} {...listProps} />
             </div>
           )}
@@ -236,14 +251,20 @@ export default function SprintsPage() {
               {isManager && (
                 <div className="flex items-center gap-2 shrink-0">
                   {selectedSprint.status !== 'CLOSED' && (
-                    <Button variant="secondary" onClick={() => setEditSprint(selectedSprint)}>
-                      Editar
-                    </Button>
+                    <button
+                      onClick={() => setEditSprint(selectedSprint)}
+                      className="px-3 py-1.5 rounded-lg text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 border border-gray-200 transition-colors"
+                    >
+                      Edit
+                    </button>
                   )}
                   {selectedSprint.status !== 'ACTIVE' && (
-                    <Button variant="danger" onClick={() => setConfirmDeleteSprint(selectedSprint)}>
-                      Eliminar
-                    </Button>
+                    <button
+                      onClick={() => setConfirmDeleteSprint(selectedSprint)}
+                      className="px-3 py-1.5 rounded-lg text-sm font-semibold text-white bg-oracle hover:bg-oracle-dark transition-colors"
+                    >
+                      Delete
+                    </button>
                   )}
                 </div>
               )}
@@ -251,12 +272,12 @@ export default function SprintsPage() {
 
             {!tasksLoading && sprintTasks.length > 0 && (
               <div className="flex justify-end">
-                <Button
-                  variant="secondary"
+                <button
                   onClick={() => exportTasksToJson(sprintTasks, selectedSprint.sprintName)}
+                  className="px-3 py-1.5 rounded-lg text-sm font-semibold text-gray-700 bg-gray-100 hover:bg-gray-200 border border-gray-200 transition-colors"
                 >
-                  Exportar tareas
-                </Button>
+                  Export tasks
+                </button>
               </div>
             )}
 

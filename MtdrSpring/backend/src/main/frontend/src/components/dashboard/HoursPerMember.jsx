@@ -2,7 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useProject } from '../../context/ProjectContext';
 import { dashboardService } from '../../services/dashboardService';
 
-function Skeleton() { return <div className="animate-pulse h-40 bg-gray-50 rounded-lg" />; }
+function Skeleton() {
+  return <div className="animate-pulse h-40 rounded-lg" style={{ background: 'var(--bg-card-alt)' }} />;
+}
+
+function initials(name) {
+  return name?.split(' ').map((n) => n[0]).slice(0, 2).join('') ?? '?';
+}
 
 export default function HoursPerMember({ sprintId }) {
   const { project } = useProject();
@@ -20,33 +26,43 @@ export default function HoursPerMember({ sprintId }) {
   }, [project.id, sprintId]);
 
   if (loading) return <Skeleton />;
-  if (error) return <p className="text-xs text-red-500">{error}</p>;
-  if (!data) return <p className="text-sm text-gray-400">Select a sprint to view data.</p>;
-  if (!data.members?.length)
-    return <p className="text-sm text-gray-400">No hours logged yet.</p>;
+  if (error) return <p className="text-xs text-oracle">{error}</p>;
+  if (!data) return <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Select a sprint to view data.</p>;
+  if (!data.members?.length) return <p className="text-sm" style={{ color: 'var(--text-muted)' }}>No hours logged yet.</p>;
 
   const sorted = [...data.members].sort((a, b) => b.actualHours - a.actualHours);
   const max = sorted[0]?.actualHours || 1;
 
   return (
     <div className="space-y-3">
-      {sorted.map((m, i) => (
-        <div key={m.userId} className="space-y-1">
-          <div className="flex items-center justify-between text-xs">
-            <div className="flex items-center gap-2">
-              <span className="text-gray-300 font-mono w-4 text-right">{i + 1}</span>
-              <span className="font-medium text-gray-700">{m.fullName}</span>
+      {sorted.map((m, i) => {
+        const pct = (m.actualHours / max) * 100;
+        return (
+          <div key={m.userId} className="space-y-1.5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div
+                  className="w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-bold shrink-0"
+                  style={{ background: '#E8F0F7', color: '#003865' }}
+                >
+                  {initials(m.fullName)}
+                </div>
+                <span className="text-[12px] font-semibold" style={{ color: 'var(--text-primary)' }}>{m.fullName}</span>
+              </div>
+              <span className="text-[11px] font-mono tabular-nums" style={{ color: 'var(--text-secondary)' }}>{m.actualHours?.toFixed(1)}h</span>
             </div>
-            <span className="text-gray-500 tabular-nums">{m.actualHours?.toFixed(1)}h</span>
+            <div className="w-full rounded-full h-1.5 overflow-hidden" style={{ background: 'var(--bg-card-alt)' }}>
+              <div
+                className="h-1.5 rounded-full transition-all duration-500"
+                style={{
+                  width: `${pct}%`,
+                  background: '#003865',
+                }}
+              />
+            </div>
           </div>
-          <div className="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
-            <div
-              className="h-2.5 bg-gray-800 rounded-full transition-all"
-              style={{ width: `${(m.actualHours / max) * 100}%` }}
-            />
-          </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

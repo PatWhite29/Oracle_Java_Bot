@@ -5,9 +5,14 @@ import { projectService } from '../services/projectService';
 import ProjectCard from '../components/projects/ProjectCard';
 import ProjectForm from '../components/projects/ProjectForm';
 import Modal from '../components/common/Modal';
-import Button from '../components/common/Button';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import ConfirmDialog from '../components/common/ConfirmDialog';
+
+const PlusIcon = () => (
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+  </svg>
+);
 
 export default function MyProjectsPage() {
   const { user } = useAuth();
@@ -75,18 +80,41 @@ export default function MyProjectsPage() {
     }
   };
 
+  const activeCount = projects.filter((p) => p.status === 'ACTIVE').length;
+
   return (
     <div className="max-w-4xl">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-bold text-gray-900">My Projects</h1>
-        <Button onClick={() => setShowCreate(true)}>New project</Button>
+      {/* Header */}
+      <div className="flex items-start justify-between mb-7 gap-3">
+        <div>
+          <h1 className="font-display font-extrabold text-[26px] leading-none" style={{ letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
+            My Projects
+          </h1>
+          <p className="text-[13px] mt-1.5" style={{ color: 'var(--text-secondary)' }}>
+            {loading ? '…' : `${projects.length} workspace${projects.length !== 1 ? 's' : ''}${activeCount ? ` · ${activeCount} active` : ''}`}
+          </p>
+        </div>
+        <button
+          onClick={() => setShowCreate(true)}
+          className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-semibold text-white
+            bg-navy hover:bg-navy-deep transition-colors shrink-0"
+          style={{ letterSpacing: '0.01em' }}
+        >
+          <PlusIcon /> New project
+        </button>
       </div>
 
+      {/* States */}
       {loading && <LoadingSpinner />}
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && <p className="text-sm text-oracle bg-oracle-light rounded-lg px-3 py-2">{error}</p>}
       {!loading && projects.length === 0 && (
-        <p className="text-sm text-gray-400 py-8 text-center">No projects yet. Create one to get started.</p>
+        <div className="text-center py-16" style={{ color: 'var(--text-muted)' }}>
+          <p className="text-sm">No projects yet.</p>
+          <p className="text-xs mt-1">Create one to get started.</p>
+        </div>
       )}
+
+      {/* Grid */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {projects.map((p) => (
           <ProjectCard
@@ -99,11 +127,12 @@ export default function MyProjectsPage() {
         ))}
       </div>
 
+      {/* Modals */}
       <Modal open={showCreate} onClose={() => setShowCreate(false)} title="New project">
         <ProjectForm onSubmit={handleCreate} onCancel={() => setShowCreate(false)} loading={saving} />
       </Modal>
 
-      <Modal open={!!editTarget} onClose={() => setEditTarget(null)} title="Editar proyecto">
+      <Modal open={!!editTarget} onClose={() => setEditTarget(null)} title="Edit project">
         <ProjectForm
           initial={editTarget || {}}
           onSubmit={handleEditProject}
@@ -114,8 +143,8 @@ export default function MyProjectsPage() {
 
       <ConfirmDialog
         open={!!deleteTarget}
-        title="Eliminar proyecto"
-        message={`¿Eliminar "${deleteTarget?.projectName}" y todo su contenido? Esta acción no se puede deshacer.`}
+        title="Delete project"
+        message={`Delete "${deleteTarget?.projectName}" and all its content? This action cannot be undone.`}
         onConfirm={handleDeleteProject}
         onClose={() => setDeleteTarget(null)}
         loading={deleting}
