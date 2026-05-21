@@ -50,11 +50,19 @@ export default function FilterSelect({
   const updatePosition = () => {
     if (!btnRef.current) return;
     const rect = btnRef.current.getBoundingClientRect();
+    const spaceBelow = window.innerHeight - rect.bottom - 8;
+    const spaceAbove = rect.top - 8;
+    const maxH = Math.min(240, Math.max(spaceBelow, spaceAbove) - 6);
+    const openBelow = spaceBelow >= spaceAbove || spaceBelow >= 120;
     setDropdownStyle({
       position: 'fixed',
-      top: rect.bottom + 6,
+      ...(openBelow
+        ? { top: rect.bottom + 6 }
+        : { bottom: window.innerHeight - rect.top + 6 }),
       left: rect.left,
       minWidth: Math.max(rect.width, 160),
+      maxHeight: maxH,
+      overflowY: 'auto',
       zIndex: 9999,
     });
   };
