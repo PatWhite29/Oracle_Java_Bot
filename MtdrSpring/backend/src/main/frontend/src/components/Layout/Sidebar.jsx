@@ -120,7 +120,7 @@ export default function Sidebar({ open, onClose }) {
         ${open ? 'translate-x-0' : '-translate-x-full'}
         md:translate-x-0
       `}
-      style={{ background: '#003865' }}
+      style={{ background: '#6D28D9' }}
     >
       {/* Header */}
       <div
@@ -137,7 +137,7 @@ export default function Sidebar({ open, onClose }) {
               Kairo
             </div>
             <div className="text-[9px] font-bold tracking-[0.10em] uppercase mt-1" style={{ color: 'rgba(255,255,255,0.35)' }}>
-              TEConecta
+              CD Deploy Test
             </div>
           </div>
         </div>
