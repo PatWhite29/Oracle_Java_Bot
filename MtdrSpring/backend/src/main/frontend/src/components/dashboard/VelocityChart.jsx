@@ -4,6 +4,8 @@ import {
 } from 'recharts';
 import { useProject } from '../../context/ProjectContext';
 import { dashboardService } from '../../services/dashboardService';
+import { exportCsv } from '../../services/importExportService';
+import ExportCsvButton from '../common/ExportCsvButton';
 
 function Skeleton() {
   return <div className="animate-pulse h-48 rounded-lg" style={{ background: 'var(--bg-card-alt)' }} />;
@@ -38,8 +40,17 @@ export default function VelocityChart() {
 
   const maxVal = Math.max(...data.map((d) => d.spCompleted));
 
+  const handleExport = () => {
+    const rows = data.map((d) => ({ Sprint: d.sprintName, 'SP Completados': d.spCompleted }));
+    exportCsv(rows, `velocity-proyecto-${project.id}`);
+  };
+
   return (
-    <ResponsiveContainer width="100%" height={200}>
+    <div>
+      <div className="flex justify-end mb-1">
+        <ExportCsvButton onClick={handleExport} />
+      </div>
+      <ResponsiveContainer width="100%" height={200}>
       <BarChart data={data} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="rgba(100,116,139,0.25)" vertical={false} />
         <XAxis
@@ -64,5 +75,6 @@ export default function VelocityChart() {
         </Bar>
       </BarChart>
     </ResponsiveContainer>
+    </div>
   );
 }

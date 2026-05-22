@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useProject } from '../../context/ProjectContext';
 import { dashboardService } from '../../services/dashboardService';
+import { exportCsv } from '../../services/importExportService';
+import ExportCsvButton from '../common/ExportCsvButton';
 
 const STATUSES = ['TODO', 'IN_PROGRESS', 'BLOCKED', 'DONE'];
 
@@ -34,8 +36,24 @@ export default function WorkloadTable({ sprintId }) {
   const getTotal = (member) =>
     STATUSES.reduce((sum, s) => sum + getValue(member, s), 0);
 
+  const handleExport = () => {
+    const rows = data.map((m) => ({
+      Miembro: m.fullName,
+      'Tasks TODO': m.taskCounts?.TODO ?? 0,
+      'Tasks IN_PROGRESS': m.taskCounts?.IN_PROGRESS ?? 0,
+      'Tasks BLOCKED': m.taskCounts?.BLOCKED ?? 0,
+      'Tasks DONE': m.taskCounts?.DONE ?? 0,
+      'SP TODO': m.storyPoints?.TODO ?? 0,
+      'SP IN_PROGRESS': m.storyPoints?.IN_PROGRESS ?? 0,
+      'SP BLOCKED': m.storyPoints?.BLOCKED ?? 0,
+      'SP DONE': m.storyPoints?.DONE ?? 0,
+    }));
+    exportCsv(rows, `workload-sprint-${sprintId}`);
+  };
+
   return (
     <div className="space-y-3">
+      <div className="flex items-center justify-between">
       <div className="flex gap-1 rounded-lg p-0.5 w-fit" style={{ background: 'var(--bg-card-alt)' }}>
         {['tasks', 'sp'].map((m) => (
           <button
@@ -51,6 +69,8 @@ export default function WorkloadTable({ sprintId }) {
             {m === 'tasks' ? 'Tasks' : 'Story Points'}
           </button>
         ))}
+      </div>
+      <ExportCsvButton onClick={handleExport} />
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-[12px]">

@@ -4,6 +4,8 @@ import {
 } from 'recharts';
 import { useProject } from '../../context/ProjectContext';
 import { dashboardService } from '../../services/dashboardService';
+import { exportCsv } from '../../services/importExportService';
+import ExportCsvButton from '../common/ExportCsvButton';
 
 const MEMBER_COLORS = [
   '#003865', '#C74634', '#1D4ED8', '#15803D',
@@ -99,8 +101,17 @@ export default function HoursByDeveloperChart({ sprints }) {
   if (error) return <p className="text-xs text-oracle">{error}</p>;
   if (!chartData.length) return <p className="text-sm text-gray-400">No sprint data available.</p>;
 
+  const handleExport = () => {
+    const rows = chartData.map(({ sprint, ...devs }) => ({ Sprint: sprint, ...devs }));
+    exportCsv(rows, `horas-por-desarrollador-proyecto-${project.id}`);
+  };
+
   return (
-    <ResponsiveContainer width="100%" height={240}>
+    <div>
+      <div className="flex justify-end mb-1">
+        <ExportCsvButton onClick={handleExport} />
+      </div>
+      <ResponsiveContainer width="100%" height={240}>
       <BarChart data={chartData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="rgba(100,116,139,0.25)" vertical={false} />
         <XAxis
@@ -127,5 +138,6 @@ export default function HoursByDeveloperChart({ sprints }) {
         ))}
       </BarChart>
     </ResponsiveContainer>
+    </div>
   );
 }

@@ -4,6 +4,8 @@ import {
 } from 'recharts';
 import { useProject } from '../../context/ProjectContext';
 import { dashboardService } from '../../services/dashboardService';
+import { exportCsv } from '../../services/importExportService';
+import ExportCsvButton from '../common/ExportCsvButton';
 
 function Skeleton() {
   return <div className="animate-pulse h-48 rounded-lg" style={{ background: 'var(--bg-card-alt)' }} />;
@@ -54,6 +56,15 @@ export default function EfficiencyChart({ sprintId }) {
   if (!data) return <p className="text-sm text-gray-400">Select a sprint to view data.</p>;
   if (!data.members?.length) return <p className="text-sm text-gray-400">No completed tasks in this sprint.</p>;
 
+  const handleExport = () => {
+    const rows = data.members.map((m) => ({
+      Miembro: m.fullName,
+      'SP Completados': m.spCompleted,
+      'Horas Reales': parseFloat(m.actualHours.toFixed(1)),
+    }));
+    exportCsv(rows, `efficiency-sprint-${sprintId}`);
+  };
+
   const chartData = data.members.map((m) => ({
     name: m.fullName.split(' ')[0],
     'SP done': m.spCompleted,
@@ -61,7 +72,11 @@ export default function EfficiencyChart({ sprintId }) {
   }));
 
   return (
-    <ResponsiveContainer width="100%" height={200}>
+    <div>
+      <div className="flex justify-end mb-1">
+        <ExportCsvButton onClick={handleExport} />
+      </div>
+      <ResponsiveContainer width="100%" height={200}>
       <BarChart data={chartData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
         <CartesianGrid strokeDasharray="3 3" stroke="rgba(100,116,139,0.25)" vertical={false} />
         <XAxis
@@ -81,5 +96,6 @@ export default function EfficiencyChart({ sprintId }) {
         <Bar dataKey="Hours" fill="#C74634" radius={[4, 4, 0, 0]} maxBarSize={28} />
       </BarChart>
     </ResponsiveContainer>
+    </div>
   );
 }
