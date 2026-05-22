@@ -84,21 +84,21 @@
   /* Status chip backgrounds */
   --status-todo-bg:     #1E293B;
   --status-todo-dot:    #94A3B8;
-  --status-todo-text:   #CBD5E1;
-  --status-ip-bg:       #172554;
-  --status-ip-dot:      #60A5FA;
-  --status-ip-text:     #60A5FA;
-  --status-blocked-bg:  #2D1515;
-  --status-blocked-dot: #F87171;
-  --status-blocked-text:#F87171;
-  --status-done-bg:     #052E16;
-  --status-done-dot:    #4ADE80;
-  --status-done-text:   #4ADE80;
+  --status-todo-text:   #94A3B8;
+  --status-ip-bg:       #1C2B42;
+  --status-ip-dot:      #7EB8F0;
+  --status-ip-text:     #7EB8F0;
+  --status-blocked-bg:  #271D1D;
+  --status-blocked-dot: #E08A8A;
+  --status-blocked-text:#E08A8A;
+  --status-done-bg:     #1B2A22;
+  --status-done-dot:    #6DC98A;
+  --status-done-text:   #6DC98A;
 
   /* Blocked alert */
-  --alert-blocked-bg:   #2D1515;
-  --alert-done-bg:      #052E16;
-  --alert-done-text:    #4ADE80;
+  --alert-blocked-bg:   #271D1D;
+  --alert-done-bg:      #1B2A22;
+  --alert-done-text:    #6DC98A;
 
   /* Table alternating row */
   --table-alt:      #263448;
