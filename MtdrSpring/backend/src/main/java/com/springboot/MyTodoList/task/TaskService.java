@@ -138,7 +138,7 @@ public class TaskService {
                 throw new com.springboot.MyTodoList.common.exception.ValidationException(
                         "actual_hours is required and must be greater than zero when marking a task as DONE");
             }
-            task.setActualHours(BigDecimal.ZERO);
+            task.setActualHours(request.getActualHours());
         }
 
         TaskStatus oldStatus = task.getStatus();
