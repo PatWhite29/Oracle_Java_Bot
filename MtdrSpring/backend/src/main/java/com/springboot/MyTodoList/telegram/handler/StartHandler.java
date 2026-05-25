@@ -9,7 +9,7 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 public class StartHandler {
 
     private static final String WELCOME =
-            "👋 Welcome to Chuva Bot!\n\n" +
+            "👋 Welcome to Kairo Bot!\n\n" +
             "I help you manage your tasks from Telegram.\n\n" +
             "To get started, link your account:\n" +
             "  /login {email} {password}\n\n" +

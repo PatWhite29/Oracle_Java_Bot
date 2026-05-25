@@ -4,7 +4,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: chuvabot-app
+    container_name: kairobot-app
     ports:
       - "8080:8080"
     volumes:

@@ -9,7 +9,7 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 public class HelpHandler {
 
     private static final String HELP =
-            "📋 Chuva Bot — Available commands\n\n" +
+            "📋 Kairo Bot — Available commands\n\n" +
             "🔐 Authentication\n" +
             "  /login {email} {password} — Link your account\n\n" +
             "📁 Projects\n" +

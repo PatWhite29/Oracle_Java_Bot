@@ -2,7 +2,7 @@ services:
 
   db:
     image: gvenzl/oracle-xe:21-slim
-    container_name: chuvabot-db
+    container_name: kairobot-db
     environment:
       ORACLE_PASSWORD: admin123
     ports:
@@ -21,7 +21,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: chuvabot-app
+    container_name: kairobot-app
     ports:
       - "8080:8080"
     depends_on:
@@ -29,9 +29,9 @@ services:
         condition: service_healthy
     environment:
       DB_URL: ${DB_URL:-jdbc:oracle:thin:@//db:1521/XEPDB1}
-      DB_USERNAME: ${DB_USERNAME:-chuvabot}
-      DB_PASSWORD: ${DB_PASSWORD:-chuvabot123}
-      JWT_SECRET: ${JWT_SECRET:-chuvabot_local_dev_secret_key_minimo32chars!!}
+      DB_USERNAME: ${DB_USERNAME:-kairobot}
+      DB_PASSWORD: ${DB_PASSWORD:-kairobot123}
+      JWT_SECRET: ${JWT_SECRET:-kairobot_local_dev_secret_key_minimo32chars!!}
       JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-86400000}
       TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}

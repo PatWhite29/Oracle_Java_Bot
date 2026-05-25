@@ -65,4 +65,4 @@ jobs:
 
       - name: Build Docker image
         working-directory: MtdrSpring
-        run: docker build -f backend/Dockerfile backend/ -t chuvabot:ci-check
+        run: docker build -f backend/Dockerfile backend/ -t kairobot:ci-check

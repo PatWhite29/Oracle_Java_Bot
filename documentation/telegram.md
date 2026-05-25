@@ -3,7 +3,7 @@
 ## Objetivo
 
 Completar la integración del módulo Telegram dentro del monolito Spring Boot del proyecto
-Chuva Bot (Task Management System). El bot ya tiene infraestructura funcional; lo que falta
+Kairo (Task Management System). El bot ya tiene infraestructura funcional; lo que falta
 es implementar la lógica de negocio de cada handler y conectar el envío real de mensajes
 en NotificationService.
 
@@ -25,8 +25,8 @@ Comparte el mismo proceso, el mismo service layer, y el mismo connection pool qu
 |---|---|
 | Dependencias Maven (telegrambots 9.1.0) | ✅ Funcional |
 | Activación condicional (@ConditionalOnExpression) | ✅ Funcional |
-| ChuvaBot.java — long polling + TelegramClient | ✅ Funcional |
-| Enrutamiento de comandos en ChuvaBot.consume() | ✅ Funcional |
+| KairoBot.java — long polling + TelegramClient | ✅ Funcional |
+| Enrutamiento de comandos en KairoBot.consume() | ✅ Funcional |
 | 8 handlers implementados con lógica de negocio | ✅ Funcional |
 | NotificationService — envío real de mensajes | 🔲 TODO |
 
@@ -78,7 +78,7 @@ Cada handler sigue este patrón:
 5. Llamar al servicio de dominio
 6. Construir SendMessage y ejecutar con TelegramClient
 
-El TelegramClient ya está instanciado en ChuvaBot. Los handlers deben recibirlo como
+El TelegramClient ya está instanciado en KairoBot. Los handlers deben recibirlo como
 parámetro en el método handle(Update update, TelegramClient telegramClient) o bien
 inyectarlo como bean compartido desde TelegramBotConfig.
 

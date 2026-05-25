@@ -22,8 +22,8 @@ public class SwaggerConfig {
     public OpenAPI openAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Chuva Bot API")
+                        .title("Kairo API")
                         .version("1.0")
-                        .description("Task Management System API for Chuva Bot — Spring Boot + Oracle DB + Telegram"));
+                        .description("Task Management System API for Kairo — Spring Boot + Oracle DB + Telegram"));
     }
 }

@@ -46,7 +46,7 @@ Combination of Client-Server (macro) and Layered (internal) patterns.
 
 ## Package Structure
 
-com.chuva
+com.kairo
 ├── config/                    → Spring Security, JWT, CORS, Swagger config
 │   ├── SecurityConfig.java
 │   ├── JwtAuthFilter.java
@@ -118,7 +118,7 @@ com.chuva
 │   └── NotificationLog.java
 ├── telegram/                  → Telegram Bot module
 │   ├── TelegramBotConfig.java      → Conditional on TELEGRAM_BOT_TOKEN
-│   ├── ChuvaBot.java               → Main bot class, command routing
+│   ├── KairoBot.java               → Main bot class, command routing
 │   └── handler/
 │       ├── StartHandler.java
 │       ├── LoginHandler.java

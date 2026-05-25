@@ -25,7 +25,7 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 @Component
 @ConditionalOnExpression("!'${telegram.bot.token:}'.isEmpty()")
 @Slf4j
-public class ChuvaBot implements SpringLongPollingBot, LongPollingSingleThreadUpdateConsumer {
+public class KairoBot implements SpringLongPollingBot, LongPollingSingleThreadUpdateConsumer {
 
     private final String botToken;
     private final TelegramClient telegramClient;
@@ -40,7 +40,7 @@ public class ChuvaBot implements SpringLongPollingBot, LongPollingSingleThreadUp
     private final NaturalLanguageRouter nluRouter;
     private final ObjectMapper objectMapper;
 
-    public ChuvaBot(
+    public KairoBot(
             @Value("${telegram.bot.token}") String botToken,
             TelegramClient telegramClient,
             StartHandler startHandler,

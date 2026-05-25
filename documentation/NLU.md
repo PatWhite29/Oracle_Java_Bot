@@ -59,11 +59,11 @@ directo         │
 
 **Tipo:** `@Service` dentro del módulo `telegram/`
 
-**Responsabilidad:** Recibir el texto del mensaje, llamar a la API de Claude, interpretar la respuesta JSON, y retornar un resultado tipado al `ChuvaBot`.
+**Responsabilidad:** Recibir el texto del mensaje, llamar a la API de Claude, interpretar la respuesta JSON, y retornar un resultado tipado al `KairoBot`.
 
 **Ubicación sugerida:** `telegram/nlu/NaturalLanguageRouter.java`
 
-**Integración en ChuvaBot:** `ChuvaBot.consume()` invoca `NaturalLanguageRouter` únicamente cuando el mensaje no empieza con `/`.
+**Integración en KairoBot:** `KairoBot.consume()` invoca `NaturalLanguageRouter` únicamente cuando el mensaje no empieza con `/`.
 
 ---
 
@@ -152,7 +152,7 @@ El modelo Haiku es suficiente para clasificación de intenciones. El límite de 
 | --- | --- | --- |
 | `ANTHROPIC_API_KEY` | API key de la Console de Anthropic | Solo si NLU está activo |
 
-El NLU debe activarse condicionalmente: si `ANTHROPIC_API_KEY` no está presente, `ChuvaBot` omite el paso de NLU y responde con el mensaje genérico de "no entendí" para mensajes sin `/`.
+El NLU debe activarse condicionalmente: si `ANTHROPIC_API_KEY` no está presente, `KairoBot` omite el paso de NLU y responde con el mensaje genérico de "no entendí" para mensajes sin `/`.
 
 ---
 

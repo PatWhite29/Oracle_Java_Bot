@@ -1,6 +1,6 @@
 ---
 name: deploy
-description: Despliega la aplicación Chuva Bot con Docker. Baja el stack, reconstruye la imagen y lo levanta en background. Si hay error de build o arranque, revisa logs, diagnostica y espera confirmación antes de aplicar cualquier fix.
+description: Despliega la aplicación Kairo con Docker. Baja el stack, reconstruye la imagen y lo levanta en background. Si hay error de build o arranque, revisa logs, diagnostica y espera confirmación antes de aplicar cualquier fix.
 ---
 
 ## Comando de despliegue
@@ -23,7 +23,7 @@ No usar rutas absolutas ni flags adicionales salvo que el usuario lo indique exp
 
 1. Revisar los logs del contenedor:
    ```bash
-   docker logs chuvabot-app --tail 80
+   docker logs kairobot-app --tail 80
    ```
 2. Identificar la causa raíz del error (compilación, arranque de Spring, conexión a DB, etc.).
 3. Explicar al usuario:

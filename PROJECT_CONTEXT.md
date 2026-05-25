@@ -1,4 +1,4 @@
-# PROJECT_CONTEXT — Chuva Bot
+# PROJECT_CONTEXT — Kairo
 
 > **Infrastructure & Database:** Deployed on **OCI (Oracle Cloud Infrastructure)** using Terraform. The database is an **Oracle Autonomous Database** provisioned in OCI.
 
@@ -16,7 +16,7 @@
 8. [Service Layer Details](#8-service-layer-details)
 9. [Audit & Activity Tracking](#9-audit--activity-tracking)
 10. [Notifications](#10-notifications)
-11. [Telegram Bot — ChuvaBot](#11-telegram-bot--chuvabot)
+11. [Telegram Bot — KairoBot](#11-telegram-bot--kairobot)
 12. [NLU Router (AI)](#12-nlu-router-ai)
 13. [Dashboard & KPI Endpoints](#13-dashboard--kpi-endpoints)
 14. [Error Handling](#14-error-handling)
@@ -43,7 +43,7 @@ Oracle_Java_Bot/
 │   │   │   │   └── activity/           ← TASK_ACTIVITY append-only log
 │   │   │   ├── audit/                  ← AUDIT_LOG write-through service
 │   │   │   ├── notification/           ← NOTIFICATION_LOG, scheduler, service
-│   │   │   └── telegram/               ← ChuvaBot long-polling, handlers, NLU
+│   │   │   └── telegram/               ← KairoBot long-polling, handlers, NLU
 │   │   │       ├── handler/            ← One handler class per bot command
 │   │   │       └── nlu/                ← NaturalLanguageRouter (Anthropic Claude)
 │   │   └── src/main/frontend/          ← React web portal
@@ -156,7 +156,7 @@ notification/
   NotificationService            ← send(recipient, eventType, message), retryFailed()
   NotificationScheduler          ← @Scheduled cron: sprint deadline + retry failed
 telegram/
-  ChuvaBot                       ← @ConditionalOnExpression token present; long-polling
+  KairoBot                       ← @ConditionalOnExpression token present; long-polling
   TelegramBotConfig              ← Bean wiring for TelegramClient
   TelegramHelper                 ← static send(client, chatId, text)
   SyntheticUpdateFactory         ← Builds fake Update from NLU result
@@ -494,9 +494,9 @@ Two `@Scheduled(cron = "0 0 9 * * *")` jobs run daily at 09:00:
 
 ---
 
-## 11. Telegram Bot — ChuvaBot
+## 11. Telegram Bot — KairoBot
 
-`ChuvaBot` implements `SpringLongPollingBot` and `LongPollingSingleThreadUpdateConsumer`.
+`KairoBot` implements `SpringLongPollingBot` and `LongPollingSingleThreadUpdateConsumer`.
 
 ### Activation
 ```java
@@ -548,7 +548,7 @@ Requires `ANTHROPIC_API_KEY` environment variable. If absent, every NLU call ret
 ```
 
 ### Param validation
-After a successful NLU classification, `ChuvaBot.validateNluParams()` checks that any `id` param is a pure integer. If not, a user-friendly error is sent via `NluErrorMessages`.
+After a successful NLU classification, `KairoBot.validateNluParams()` checks that any `id` param is a pure integer. If not, a user-friendly error is sent via `NluErrorMessages`.
 
 ---
 

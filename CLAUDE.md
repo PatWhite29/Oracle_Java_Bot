@@ -1,8 +1,8 @@
-# CLAUDE.md — Chuva Bot Task Management System
+# CLAUDE.md — Kairo Task Management System
 
 ## Project Overview
 
-Task Management System with three components: Spring Boot REST API, React web portal, and Telegram Bot (Chuva Bot). Deployed on OCI with Docker. Oracle Database backend.
+Task Management System with three components: Spring Boot REST API, React web portal, and Telegram Bot (Kairo Bot — the Telegram component). Deployed on OCI with Docker. Oracle Database backend.
 
 Tech stack: Java + Spring Boot, React, Oracle DB, Docker, OCI, Telegram Bot API.
 
