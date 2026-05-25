@@ -1,6 +1,6 @@
 ---
 name: deploy
-description: Despliega la aplicación Kairo Bot con Docker. Baja el stack, reconstruye la imagen y lo levanta en background. Si hay error de build o arranque, revisa logs, diagnostica y espera confirmación antes de aplicar cualquier fix.
+description: Despliega la aplicación Kairo con Docker. Baja el stack, reconstruye la imagen y lo levanta en background. Si hay error de build o arranque, revisa logs, diagnostica y espera confirmación antes de aplicar cualquier fix.
 ---
 
 ## Comando de despliegue
