@@ -6,16 +6,12 @@ on:
     types: [completed]
     branches: [master]
 
-permissions:
-  contents: write
-
 env:
   OCIR_REGISTRY: mx-queretaro-1.ocir.io
   IMAGE_REPOSITORY: mx-queretaro-1.ocir.io/axjlbcwfm44q/reacttodo/wx7u0/todolistapp-springboot
   K8S_NAMESPACE: mtdrworkshop
   K8S_DEPLOYMENT: todolistapp-springboot-deployment
   K8S_CONTAINER: todolistapp-springboot
-  INITIAL_DEPLOY_MINOR_VERSION: '10'
 
 jobs:
   deploy:
@@ -31,33 +27,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.workflow_run.head_branch }}
-          fetch-depth: 0
-
-      - name: Calculate next image version
-        id: version
-        shell: bash
-        run: |
-          latest_tag="$(git tag -l 'deploy-0.*' --sort=-v:refname | head -n 1)"
-
-          if [ -z "$latest_tag" ]; then
-            current_minor="${INITIAL_DEPLOY_MINOR_VERSION}"
-          else
-            current_minor="${latest_tag#deploy-0.}"
-          fi
-
-          next_minor=$((current_minor + 1))
-          image_tag="0.${next_minor}"
-
-          echo "image_tag=${image_tag}" >> "$GITHUB_OUTPUT"
-          echo "git_tag=deploy-${image_tag}" >> "$GITHUB_OUTPUT"
-
-      - name: Register deployed version tag
-        shell: bash
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag "${{ steps.version.outputs.git_tag }}"
-          git push origin "${{ steps.version.outputs.git_tag }}"
 
       - name: Log in to OCIR
         uses: docker/login-action@v3
@@ -67,9 +36,8 @@ jobs:
           password: ${{ secrets.OCIR_PASSWORD }}
 
       - name: Build and Push Docker image
-        env:
-          IMAGE_TAG: ${{ steps.version.outputs.image_tag }}
         run: |
+          IMAGE_TAG="${GITHUB_SHA:0:7}"
           docker build -f MtdrSpring/backend/Dockerfile -t "$IMAGE_REPOSITORY:$IMAGE_TAG" MtdrSpring/backend/
           docker push "$IMAGE_REPOSITORY:$IMAGE_TAG"
 
@@ -80,9 +48,8 @@ jobs:
           chmod 600 ~/.kube/config
 
       - name: Deploy to Kubernetes (OKE)
-        env:
-          IMAGE_TAG: ${{ steps.version.outputs.image_tag }}
         run: |
+          IMAGE_TAG="${GITHUB_SHA:0:7}"
           kubectl set image deployment/"$K8S_DEPLOYMENT" "$K8S_CONTAINER"="$IMAGE_REPOSITORY":"$IMAGE_TAG" -n "$K8S_NAMESPACE"
           kubectl rollout status deployment/"$K8S_DEPLOYMENT" -n "$K8S_NAMESPACE" --timeout=180s
           kubectl get pods -n "$K8S_NAMESPACE"
