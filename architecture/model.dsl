@@ -1,63 +1,143 @@
 workspace {
-    model {
-        user = person "End User" "A person interacting with the Oracle Java Bot via supported interfaces (web, chat, etc.)"
-        telegram = softwareSystem "Telegram API" "External messaging API used for chat interface."
-        oci = softwareSystem "Oracle Cloud Infrastructure (OCI)" "Cloud environment and hosting for the bot and database."
 
-        bot = softwareSystem "Oracle Java Bot" "Multilingual AI chatbot supporting Java and Oracle Cloud interactions." {
-            webui = container "Web UI" "JavaScript, HTML/CSS" "Browser-based interface."
-            logic = container "Application Logic" "Java" "Bot logic, connects frontends to services."
-            telegramadapter = container "Telegram Adapter" "JavaScript" "Handles Telegram message integration."
-            db = container "Oracle Autonomous Database" "Oracle Autonomous DB" "Stores persistent data, users, logs, etc." {
+    model {
+        teamMember = person "Team Member" "A user creating and managing tasks and sprints."
+        projectManager = person "Project Manager" "Supervises projects, sprints, tasks."
+        administrator = person "Administrator" "Platform operations, log/business intelligence monitoring."
+
+        telegramAPI = softwareSystem "Telegram API" "Sends/receives bot messages."
+        github = softwareSystem "GitHub" "Houses code and CI/CD actions."
+        oci = softwareSystem "Oracle Cloud Infrastructure" "Cloud host (OKE, OCI, ADB, etc.)."
+
+        bot = softwareSystem "Oracle Java Bot Platform" "Automates task management, NLU-based chat interactions, and integrations." {
+            webApp = container "Web App" "Task/project dashboard." "React.js"
+            telegramBot = container "Telegram Bot Adapter" "Handles message and chat routing with NLU workflow." "Node.js"
+            nlu = container "NLU Service" "Parses and classifies user intent/entities for commands via text/chat." "Java Spring Boot or Python"
+            backend = container "Spring Boot Backend" "Skill orchestration, data/services, notifications, and security." "Java, Spring Boot" {
+                userController = component "User Controller" "User CRUD, authZ/authN." "REST Controller"
+                taskController = component "Task Controller" "CRUD for tasks, status management, assignment." "REST Controller"
+                sprintController = component "Sprint Controller" "Sprint planning/execution." "REST Controller"
+                projectService = component "Project Service" "Business/project logic." "Spring Service"
+                taskService = component "Task Service" "Task rules, assignment, priorities." "Spring Service"
+                notificationService = component "Notification Service" "User notifications via web/Telegram." "Spring Service"
+                repositoryLayer = component "Repository Layer" "Repository for all system entities." "Spring Data/JPA"
+                dbAccess = component "Database Access Layer" "Performs SQL/PLSQL DB connection." "JDBC/Spring Data"
+            }
+            db = container "Oracle Autonomous Database" "Persistence for users, tasks, sprints, projects, logs." "Oracle Autonomous DB" {
                 tag "database"
             }
+            ciCd = container "DevOps & CI/CD" "CI pipeline and images for OCI/OKE." "GitHub Actions & Docker"
         }
-        
-        user -> webui "Uses"
-        user -> telegramadapter "Chats via" 
-        webui -> logic "Submits requests to"
-        telegramadapter -> logic "Forwards chat messages to"
-        logic -> db "Reads/Writes data to"
-        logic -> oci "Leverages OCI APIs/services"
-        db <- oci "Managed/Provisioned by"
-        telegramadapter -> telegram "Uses"
-    }
-    views {
-        systemLandscape {
-            include *
-            autoLayout
-        }
-        systemContext bot {
-            include *
-            autoLayout
-        }
-        container bot {
-            include *
-            autoLayout
-        }
-        component logic {
-            include *
-            autoLayout
-        }
-        deployment {
-            node "OCI Compute (VM)" {
-                containerInstance logic
-                containerInstance telegramadapter
+
+        teamMember -> webApp "Uses Web dashboard"
+        projectManager -> webApp "Configures projects/sprints"
+        administrator -> webApp "Admin, logs, platform health"
+        teamMember -> telegramBot "Chats with bot"
+
+        telegramBot -> telegramAPI "Integrates with"
+        webApp -> backend "REST API"
+        telegramBot -> nlu "Sends user message for NLU"
+        nlu -> backend "Sends structured intent JSON"
+        telegramBot -> backend "Forwards chat and attachments"
+        backend -> db "Full persistence"
+        backend -> oci "Uses cloud services"
+        ciCd -> github "Pushes/PR/CI"
+        ciCd -> oci "Deployment"
+        oci -> db "Provisions and manages"
+
+        webApp -> userController "REST/JSON"
+        telegramBot -> taskController "HTTP/JSON"
+        nlu -> taskController "Dispatches task intent"
+        nlu -> sprintController "Dispatches sprint intent"
+        nlu -> userController "Dispatches user intent"
+        userController -> projectService "Business rules"
+        taskController -> taskService "Business rules"
+        sprintController -> taskService "Sprint/task association"
+        projectService -> repositoryLayer "CRUD"
+        taskService -> repositoryLayer "CRUD and business rules"
+        taskService -> notificationService "Triggers notification"
+        notificationService -> telegramBot "Notify user via Telegram"
+        notificationService -> webApp "Notify user via Web"
+        repositoryLayer -> dbAccess "For all DB entities"
+        dbAccess -> db "SQL"
+
+        deploymentEnvironment "Production" {
+            deploymentNode "OCI Kubernetes Engine OKE" {
+                deploymentNode "OKE Namespace java-bot" {
+                    deploymentNode "Docker Pod Web App" {
+                        containerInstance webApp
+                    }
+                    deploymentNode "Docker Pod Telegram Bot Adapter" {
+                        containerInstance telegramBot
+                    }
+                    deploymentNode "Docker Pod Spring Boot Backend" {
+                        containerInstance backend
+                    }
+                    deploymentNode "Docker Pod NLU Service" {
+                        containerInstance nlu
+                    }
+                }
             }
-            node "Browser" {
-                containerInstance webui
-            }
-            node "Oracle Autonomous DB" {
+
+            deploymentNode "Oracle Autonomous Database Service" {
                 containerInstance db
             }
-            autoLayout
-        }
-        dynamic logic "User Registration Sequence" {
-            user -> webui "Submits registration form"
-            webui -> logic "Sends registration details"
-            logic -> db "Persists user"
-            autoLayout
+
+            deploymentNode "Telegram Cloud" {
+                softwareSystemInstance telegramAPI
+            }
+
+            deploymentNode "GitHub Cloud" {
+                softwareSystemInstance github
+                containerInstance ciCd
+            }
         }
     }
-    themes default
+
+    views {
+        systemLandscape "SystemLandscape" {
+            include *
+            autoLayout lr
+        }
+
+        systemContext bot "SystemContext" {
+            include *
+            autoLayout lr
+        }
+
+        container bot "Containers" {
+            include *
+            autoLayout lr
+        }
+
+        component backend "BackendComponents" {
+            include *
+            autoLayout lr
+        }
+
+        deployment bot "Production" "Deployment" {
+            include *
+            autoLayout lr
+        }
+
+        dynamic backend "CreateTaskViaTelegramAndNLU" {
+            teamMember -> telegramBot "Sends create task message"
+            telegramBot -> nlu "Passes text message"
+            nlu -> taskController "Intent resolved as createTask"
+            taskController -> taskService "Runs createTask business logic"
+            taskService -> repositoryLayer "Save task"
+            repositoryLayer -> dbAccess "Insert row"
+            dbAccess -> db "SQL insert"
+            taskService -> notificationService "Trigger notification"
+            notificationService -> telegramBot "Notifies task created"
+            telegramBot -> teamMember "Confirms new task created"
+            autoLayout lr
+        }
+
+        styles {
+            element "database" {
+                shape cylinder
+            }
+        }
+    }
 }
