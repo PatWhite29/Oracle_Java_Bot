@@ -7,11 +7,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageConversionException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.stream.Collectors;
 
@@ -95,6 +98,28 @@ public class GlobalExceptionHandler {
         int lastDot = path.lastIndexOf('.');
         String field = lastDot >= 0 ? path.substring(lastDot + 1) : path;
         return field + ": " + violation.getMessage();
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleUnreadableBody(HttpMessageNotReadableException ex, HttpServletRequest req) {
+        log.warn("[400] {} {}: unreadable body — {}", req.getMethod(), req.getRequestURI(), ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse("INVALID_INPUT", "The submitted input is invalid or contains unsupported characters", 400));
+    }
+
+    @ExceptionHandler(HttpMessageConversionException.class)
+    public ResponseEntity<ErrorResponse> handleConversionError(HttpMessageConversionException ex, HttpServletRequest req) {
+        log.warn("[400] {} {}: message conversion — {}", req.getMethod(), req.getRequestURI(), ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse("INVALID_INPUT", "The submitted input is invalid or contains unsupported characters", 400));
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleTypeMismatch(MethodArgumentTypeMismatchException ex, HttpServletRequest req) {
+        String field = ex.getName();
+        log.warn("[400] {} {}: type mismatch on '{}' — {}", req.getMethod(), req.getRequestURI(), field, ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse("INVALID_INPUT", field + ": invalid value", 400));
     }
 
     @ExceptionHandler(Exception.class)
