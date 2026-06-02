@@ -3,9 +3,12 @@ package com.springboot.MyTodoList.project.dashboard;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,6 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/projects/{projectId}/dashboard")
 @RequiredArgsConstructor
+@Validated
 @Tag(name = "Dashboard")
 @SecurityRequirement(name = "bearerAuth")
 public class DashboardController {
@@ -30,7 +34,9 @@ public class DashboardController {
     @GetMapping("/velocity")
     @Operation(summary = "SP completed per closed sprint for the last N sprints, oldest to newest")
     public ResponseEntity<List<VelocityResponse>> velocity(@PathVariable Long projectId,
-                                                            @RequestParam(defaultValue = "5") int sprints,
+                                                            @RequestParam(defaultValue = "5")
+                                                            @Min(value = 1, message = "must be between 1 and 50")
+                                                            @Max(value = 50, message = "must be between 1 and 50") int sprints,
                                                             Authentication auth) {
         return ResponseEntity.ok(dashboardService.getVelocity(uid(auth), projectId, sprints));
     }
