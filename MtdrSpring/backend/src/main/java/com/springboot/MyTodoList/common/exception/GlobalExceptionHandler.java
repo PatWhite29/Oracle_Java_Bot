@@ -1,6 +1,8 @@
 package com.springboot.MyTodoList.common.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -70,11 +72,29 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException ex, HttpServletRequest req) {
         String message = ex.getBindingResult().getFieldErrors().stream()
-                .map(FieldError::getDefaultMessage)
+                .map(fe -> fe.getField() + ": " + fe.getDefaultMessage())
                 .collect(Collectors.joining(", "));
         log.warn("[400] {} {}: {}", req.getMethod(), req.getRequestURI(), message);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ErrorResponse("VALIDATION_ERROR", message, 400));
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorResponse> handleConstraintViolation(ConstraintViolationException ex, HttpServletRequest req) {
+        String message = ex.getConstraintViolations().stream()
+                .map(this::formatViolation)
+                .collect(Collectors.joining(", "));
+        log.warn("[400] {} {}: {}", req.getMethod(), req.getRequestURI(), message);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse("VALIDATION_ERROR", message, 400));
+    }
+
+    private String formatViolation(ConstraintViolation<?> violation) {
+        String path = violation.getPropertyPath().toString();
+        // Property path for method params looks like "method.paramName"; keep only the last node.
+        int lastDot = path.lastIndexOf('.');
+        String field = lastDot >= 0 ? path.substring(lastDot + 1) : path;
+        return field + ": " + violation.getMessage();
     }
 
     @ExceptionHandler(Exception.class)
