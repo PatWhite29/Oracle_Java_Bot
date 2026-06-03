@@ -4,6 +4,7 @@ import com.springboot.MyTodoList.TestFixtures;
 import com.springboot.MyTodoList.audit.AuditLogService;
 import com.springboot.MyTodoList.common.enums.ActivityType;
 import com.springboot.MyTodoList.common.enums.SprintStatus;
+import com.springboot.MyTodoList.common.enums.TaskPriority;
 import com.springboot.MyTodoList.common.enums.TaskStatus;
 import com.springboot.MyTodoList.common.exception.ClosedSprintException;
 import com.springboot.MyTodoList.common.exception.ForbiddenException;
@@ -71,6 +72,56 @@ class TaskServiceTest {
 
         given(taskRepository.findById(200L)).willReturn(Optional.of(task));
         given(taskMapper.toResponse(any())).willReturn(new TaskResponse());
+    }
+
+    // --- createTask: happy path (#6) ---
+
+    @Test
+    void createTask_withAllFields_savesAndReturnsResponse() {
+        given(userService.findActiveUserById(1L)).willReturn(manager);
+        given(projectService.findProject(10L)).willReturn(project);
+        given(sprintRepository.findById(100L)).willReturn(Optional.of(activeSprint));
+        given(userService.findActiveUserById(2L)).willReturn(member);
+        given(taskRepository.save(any())).willReturn(task);
+
+        TaskRequest req = new TaskRequest();
+        req.setTaskName("Implementar login");
+        req.setDescription("Descripción de la tarea");
+        req.setStatus(TaskStatus.TODO);
+        req.setPriority(TaskPriority.HIGH);
+        req.setStoryPoints(3);
+        req.setAssignedTo(member.getId());
+        req.setSprintId(activeSprint.getId());
+
+        TaskResponse result = taskService.createTask(manager.getId(), project.getId(), req);
+
+        assertThat(result).isNotNull();
+        verify(taskRepository).save(any(Task.class));
+        verify(auditLogService).log(any(), any(), any(), any(), any(), any());
+    }
+
+    // --- updateTask: happy path (#7) ---
+
+    @Test
+    void updateTask_changesTitlePriorityAndSprint() {
+        Sprint newSprint = TestFixtures.sprint(101L, project, SprintStatus.PLANNING);
+        given(userService.findActiveUserById(1L)).willReturn(manager);
+        given(projectService.findProject(10L)).willReturn(project);
+        given(sprintRepository.findById(101L)).willReturn(Optional.of(newSprint));
+        given(taskRepository.save(any())).willReturn(task);
+
+        TaskRequest req = new TaskRequest();
+        req.setTaskName("Nuevo título");
+        req.setPriority(TaskPriority.LOW);
+        req.setStatus(TaskStatus.TODO);
+        req.setStoryPoints(2);
+        req.setSprintId(newSprint.getId());
+
+        TaskResponse result = taskService.updateTask(manager.getId(), project.getId(), task.getId(), req);
+
+        assertThat(result).isNotNull();
+        verify(taskRepository).save(any(Task.class));
+        verify(auditLogService).log(any(), any(), any(), any(), any(), any());
     }
 
     // --- changeStatus: DONE validation ---
