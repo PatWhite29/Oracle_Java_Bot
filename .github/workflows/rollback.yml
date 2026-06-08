@@ -1,0 +1,27 @@
+name: Rollback
+
+on:
+  workflow_dispatch:
+
+env:
+  K8S_NAMESPACE: mtdrworkshop
+  K8S_DEPLOYMENT: todolistapp-springboot-deployment
+
+jobs:
+  rollback:
+    name: Rollback to previous deploy
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Set up Kubernetes config
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBECONFIG_DATA }}" | base64 -d > ~/.kube/config
+          chmod 600 ~/.kube/config
+
+      - name: Rollback deployment
+        run: |
+          kubectl rollout undo deployment/"$K8S_DEPLOYMENT" -n "$K8S_NAMESPACE"
+          kubectl rollout status deployment/"$K8S_DEPLOYMENT" -n "$K8S_NAMESPACE" --timeout=180s
+          kubectl get pods -n "$K8S_NAMESPACE"
