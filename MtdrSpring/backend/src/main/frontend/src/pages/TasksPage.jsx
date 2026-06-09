@@ -44,7 +44,7 @@ export default function TasksPage() {
   const [showForm, setShowForm] = useState(false);
   const [editTask, setEditTask] = useState(null);
   const [saving, setSaving] = useState(false);
-  const [filters, setFilters] = useState({ status: '', sprint: '', priority: '' });
+  const [filters, setFilters] = useState({ status: '', sprint: undefined, priority: '' });
   const [showClosed, setShowClosed] = useState(false);
   const [donePrompt, setDonePrompt] = useState(null);
   const [actualHoursInput, setActualHoursInput] = useState('');
@@ -55,6 +55,7 @@ export default function TasksPage() {
   const isManager = userRole === 'MANAGER';
 
   const load = useCallback(() => {
+    if (filters.sprint === undefined) return;
     setLoading(true);
     taskService.list(project.id, { ...filters, size: 500 })
       .then((data) => setTasks(data.content || []))
@@ -68,10 +69,12 @@ export default function TasksPage() {
     sprintService.list(project.id).then((data) => {
       setSprints(data);
       const active = data.find((s) => s.status === 'ACTIVE');
-      const fallback = data.filter((s) => s.status === 'PLANNING').sort((a, b) => a.startDate.localeCompare(b.startDate))[0];
-      const defaultSprint = active || fallback;
-      if (defaultSprint) setFilters((f) => ({ ...f, sprint: String(defaultSprint.id) }));
-    }).catch(() => {});
+      const mostRecent = [...data].sort((a, b) => b.startDate.localeCompare(a.startDate))[0];
+      const defaultSprint = active || mostRecent;
+      setFilters((f) => ({ ...f, sprint: defaultSprint ? String(defaultSprint.id) : '' }));
+    }).catch(() => {
+      setFilters((f) => ({ ...f, sprint: '' }));
+    });
   }, [project.id]);
 
   const handleCreate = async (form) => {
