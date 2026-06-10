@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useProject } from '../context/ProjectContext';
 import { sprintService } from '../services/sprintService';
-import { dashboardService } from '../services/dashboardService';
 import FilterSelect from '../components/common/FilterSelect';
 import SprintSummary from '../components/dashboard/SprintSummary';
 import CompletionRate from '../components/dashboard/CompletionRate';
@@ -39,8 +38,6 @@ export default function DashboardPage() {
 
   const [sprints, setSprints] = useState([]);
   const [selectedSprintId, setSelectedSprintId] = useState(null);
-  const [developers, setDevelopers] = useState([]);
-  const [selectedDevId, setSelectedDevId] = useState(null);
 
   useEffect(() => {
     sprintService.list(project.id).then((data) => {
@@ -58,23 +55,6 @@ export default function DashboardPage() {
     }).catch(() => {});
   }, [project.id]);
 
-  // Load developer list from workload (all sprints)
-  useEffect(() => {
-    dashboardService.workload(project.id, null)
-      .then((members) => {
-        const unique = [];
-        const seen = new Set();
-        (members || []).forEach((m) => {
-          if (!seen.has(m.userId)) {
-            seen.add(m.userId);
-            unique.push({ id: m.userId, name: m.fullName });
-          }
-        });
-        setDevelopers(unique.sort((a, b) => a.name.localeCompare(b.name)));
-      })
-      .catch(() => {});
-  }, [project.id]);
-
   const sid = selectedSprintId || null;
 
   return (
@@ -87,20 +67,12 @@ export default function DashboardPage() {
           </h1>
           <p className="text-[12px] mt-1.5" style={{ color: 'var(--text-secondary)' }}>{project.projectName}</p>
         </div>
-        <div className="flex flex-col sm:flex-row gap-2">
-          <FilterSelect
-            value={selectedSprintId ? String(selectedSprintId) : ''}
-            onChange={(v) => setSelectedSprintId(v ? Number(v) : null)}
-            options={sprints.map((s) => ({ value: String(s.id), label: sprintLabel(s) }))}
-            placeholder="All Sprints"
-          />
-          <FilterSelect
-            value={selectedDevId ? String(selectedDevId) : ''}
-            onChange={(v) => setSelectedDevId(v ? Number(v) : null)}
-            options={developers.map((d) => ({ value: String(d.id), label: d.name }))}
-            placeholder="All Devs"
-          />
-        </div>
+        <FilterSelect
+          value={selectedSprintId ? String(selectedSprintId) : ''}
+          onChange={(v) => setSelectedSprintId(v ? Number(v) : null)}
+          options={sprints.map((s) => ({ value: String(s.id), label: sprintLabel(s) }))}
+          placeholder="All Sprints"
+        />
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-4">
@@ -123,7 +95,7 @@ export default function DashboardPage() {
 
         {/* KPI row — new: Avg/Median por dev */}
         <Widget title="Developer KPIs" className="sm:col-span-2 md:col-span-6">
-          <KpiDevStats sprintId={sid} devId={selectedDevId} />
+          <KpiDevStats sprintId={sid} />
         </Widget>
 
         {/* Charts row */}
@@ -131,15 +103,15 @@ export default function DashboardPage() {
           <VelocityChart />
         </Widget>
         <Widget title="Efficiency (SP vs Hours)" className="sm:col-span-2 md:col-span-3">
-          <EfficiencyChart sprintId={sid} devId={selectedDevId} />
+          <EfficiencyChart sprintId={sid} />
         </Widget>
 
         {/* Tables row */}
         <Widget title="Workload" className="sm:col-span-2 md:col-span-3">
-          <WorkloadTable sprintId={sid} devId={selectedDevId} />
+          <WorkloadTable sprintId={sid} />
         </Widget>
         <Widget title="Hours per Member" className="sm:col-span-2 md:col-span-3">
-          <HoursPerMember sprintId={sid} devId={selectedDevId} />
+          <HoursPerMember sprintId={sid} />
         </Widget>
 
         {/* Backlog */}
@@ -147,12 +119,12 @@ export default function DashboardPage() {
           <BacklogSummary />
         </Widget>
 
-        {/* Developer charts — filtered by sprint/dev */}
+        {/* Developer charts — filtered by sprint */}
         <Widget title="Tasks Completed by Developer" className="sm:col-span-2 md:col-span-6">
-          <TasksByDeveloperChart sprints={sprints} selectedSprintId={selectedSprintId} devId={selectedDevId} />
+          <TasksByDeveloperChart sprints={sprints} selectedSprintId={selectedSprintId} />
         </Widget>
         <Widget title="Hours Worked by Developer" className="sm:col-span-2 md:col-span-6">
-          <HoursByDeveloperChart sprints={sprints} selectedSprintId={selectedSprintId} devId={selectedDevId} />
+          <HoursByDeveloperChart sprints={sprints} selectedSprintId={selectedSprintId} />
         </Widget>
 
         {/* Compare panel */}

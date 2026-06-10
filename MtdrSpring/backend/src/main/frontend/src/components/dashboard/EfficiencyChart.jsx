@@ -36,7 +36,7 @@ const CustomLegend = ({ payload }) => (
   </div>
 );
 
-export default function EfficiencyChart({ sprintId, devId }) {
+export default function EfficiencyChart({ sprintId }) {
   const { project } = useProject();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -54,11 +54,10 @@ export default function EfficiencyChart({ sprintId, devId }) {
   if (loading) return <Skeleton />;
   if (error) return <p className="text-xs text-oracle">{error}</p>;
   if (!data) return <p className="text-sm text-gray-400">Select a sprint to view data.</p>;
-  const visibleMembers = (data.members || []).filter((m) => !devId || m.userId === devId);
-  if (!visibleMembers.length) return <p className="text-sm text-gray-400">No completed tasks in this sprint.</p>;
+  if (!data.members?.length) return <p className="text-sm text-gray-400">No completed tasks in this sprint.</p>;
 
   const handleExport = () => {
-    const rows = visibleMembers.map((m) => ({
+    const rows = data.members.map((m) => ({
       Miembro: m.fullName,
       'SP Completados': m.spCompleted,
       'Horas Reales': parseFloat(m.actualHours.toFixed(1)),
@@ -66,7 +65,7 @@ export default function EfficiencyChart({ sprintId, devId }) {
     exportCsv(rows, `efficiency-sprint-${sprintId}`);
   };
 
-  const chartData = visibleMembers.map((m) => ({
+  const chartData = data.members.map((m) => ({
     name: m.fullName.split(' ')[0],
     'SP done': m.spCompleted,
     'Hours': parseFloat(m.actualHours.toFixed(1)),
