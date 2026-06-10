@@ -8,7 +8,7 @@ const STATUSES = ['TODO', 'IN_PROGRESS', 'BLOCKED', 'DONE'];
 
 function Skeleton() { return <div className="animate-pulse h-40 rounded-lg" style={{ background: 'var(--bg-card-alt)' }} />; }
 
-export default function WorkloadTable({ sprintId }) {
+export default function WorkloadTable({ sprintId, devId }) {
   const { project } = useProject();
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -26,7 +26,8 @@ export default function WorkloadTable({ sprintId }) {
 
   if (loading) return <Skeleton />;
   if (error) return <p className="text-xs text-red-500">{error}</p>;
-  if (!data.length) return <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Select a sprint to view data.</p>;
+  const visibleData = data.filter((m) => !devId || m.userId === devId);
+  if (!visibleData.length) return <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Select a sprint to view data.</p>;
 
   const getValue = (member, status) =>
     mode === 'tasks'
@@ -37,7 +38,7 @@ export default function WorkloadTable({ sprintId }) {
     STATUSES.reduce((sum, s) => sum + getValue(member, s), 0);
 
   const handleExport = () => {
-    const rows = data.map((m) => ({
+    const rows = visibleData.map((m) => ({
       Miembro: m.fullName,
       'Tasks TODO': m.taskCounts?.TODO ?? 0,
       'Tasks IN_PROGRESS': m.taskCounts?.IN_PROGRESS ?? 0,
@@ -86,8 +87,8 @@ export default function WorkloadTable({ sprintId }) {
             </tr>
           </thead>
           <tbody>
-            {data.map((member, i) => (
-              <tr key={member.userId} style={{ borderBottom: i < data.length - 1 ? '1px solid var(--border)' : 'none' }}>
+            {visibleData.map((member, i) => (
+              <tr key={member.userId} style={{ borderBottom: i < visibleData.length - 1 ? '1px solid var(--border)' : 'none' }}>
                 <td className="py-2.5 pr-3 font-semibold whitespace-nowrap" style={{ color: 'var(--text-primary)' }}>{member.fullName}</td>
                 {STATUSES.map((s) => (
                   <td
