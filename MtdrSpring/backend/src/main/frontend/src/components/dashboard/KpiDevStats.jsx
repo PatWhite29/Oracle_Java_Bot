@@ -23,7 +23,7 @@ function MiniKpi({ label, value, sub }) {
   );
 }
 
-export default function KpiDevStats({ sprintId, devId }) {
+export default function KpiDevStats({ sprintId }) {
   const { project } = useProject();
   const [effData, setEffData] = useState(null);
   const [wkData, setWkData] = useState(null);
@@ -51,8 +51,8 @@ export default function KpiDevStats({ sprintId, devId }) {
   }
   if (error) return <p className="text-xs text-red-500">{error}</p>;
 
-  const effMembers = (effData?.members || []).filter((m) => !devId || m.userId === devId);
-  const wkMembers = (wkData || []).filter((m) => !devId || m.userId === devId);
+  const effMembers = effData?.members || [];
+  const wkMembers = wkData || [];
 
   const hoursArr = effMembers.map((m) => m.actualHours || 0);
   const tasksArr = wkMembers.map((m) => m.taskCounts?.DONE || 0);

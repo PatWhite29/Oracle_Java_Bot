@@ -41,7 +41,7 @@ const CustomLegend = ({ payload }) => (
   </div>
 );
 
-export default function HoursByDeveloperChart({ sprints, selectedSprintId, devId }) {
+export default function HoursByDeveloperChart({ sprints, selectedSprintId }) {
   const { project } = useProject();
   const [chartData, setChartData] = useState([]);
   const [members, setMembers] = useState([]);
@@ -78,11 +78,10 @@ export default function HoursByDeveloperChart({ sprints, selectedSprintId, devId
           });
         });
 
-        let candidateIds = Object.entries(totals)
+        const top8ids = Object.entries(totals)
           .sort((a, b) => b[1] - a[1])
+          .slice(0, 8)
           .map(([id]) => Number(id));
-        if (devId) candidateIds = candidateIds.filter((id) => id === devId);
-        const top8ids = candidateIds.slice(0, 8);
 
         const data = selected.map((s, i) => {
           const row = { sprint: s.sprintName };
@@ -99,7 +98,7 @@ export default function HoursByDeveloperChart({ sprints, selectedSprintId, devId
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
-  }, [project.id, sprints, selectedSprintId, devId]);
+  }, [project.id, sprints, selectedSprintId]);
 
   if (loading) return <Skeleton />;
   if (error) return <p className="text-xs text-oracle">{error}</p>;
