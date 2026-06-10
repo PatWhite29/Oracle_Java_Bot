@@ -120,7 +120,7 @@ export default function Sidebar({ open, onClose }) {
         ${open ? 'translate-x-0' : '-translate-x-full'}
         md:translate-x-0
       `}
-      style={{ background: '#7C3AED' }}
+      style={{ background: '#003865' }}
     >
       {/* Header */}
       <div
