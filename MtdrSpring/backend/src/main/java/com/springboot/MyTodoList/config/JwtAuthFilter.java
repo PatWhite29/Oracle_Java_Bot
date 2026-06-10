@@ -38,8 +38,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                     auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(auth);
                 }
-            } else {
-                // Token present but expired/invalid → 401 so the frontend redirects to login
+            } else if (request.getRequestURI().startsWith("/api/")) {
+                // Solo bloquear rutas de API con token expirado; rutas SPA siguen al frontend
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.setContentType(MediaType.APPLICATION_JSON_VALUE);
                 response.getWriter().write("{\"error\":\"Token expired or invalid\"}");
