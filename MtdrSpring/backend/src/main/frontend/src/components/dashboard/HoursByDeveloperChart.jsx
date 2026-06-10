@@ -41,7 +41,7 @@ const CustomLegend = ({ payload }) => (
   </div>
 );
 
-export default function HoursByDeveloperChart({ sprints }) {
+export default function HoursByDeveloperChart({ sprints, selectedSprintId, devId }) {
   const { project } = useProject();
   const [chartData, setChartData] = useState([]);
   const [members, setMembers] = useState([]);
@@ -51,19 +51,24 @@ export default function HoursByDeveloperChart({ sprints }) {
   useEffect(() => {
     if (!sprints?.length) { setLoading(false); return; }
 
-    const active = sprints.find((s) => s.status === 'ACTIVE');
-    const closed = sprints
-      .filter((s) => s.status === 'CLOSED')
-      .sort((a, b) => new Date(a.endDate) - new Date(b.endDate))
-      .slice(-3);
-    const selected = [...closed, ...(active ? [active] : [])];
+    let selected;
+    if (selectedSprintId) {
+      const single = sprints.find((s) => s.id === selectedSprintId);
+      selected = single ? [single] : [];
+    } else {
+      const active = sprints.find((s) => s.status === 'ACTIVE');
+      const closed = sprints
+        .filter((s) => s.status === 'CLOSED')
+        .sort((a, b) => new Date(a.endDate) - new Date(b.endDate))
+        .slice(-3);
+      selected = [...closed, ...(active ? [active] : [])];
+    }
 
     if (!selected.length) { setLoading(false); return; }
 
     setLoading(true);
     Promise.all(selected.map((s) => dashboardService.efficiency(project.id, s.id)))
       .then((results) => {
-        // Aggregate total hours per member across all sprints
         const totals = {};
         const nameMap = {};
         results.forEach((res) => {
@@ -73,18 +78,17 @@ export default function HoursByDeveloperChart({ sprints }) {
           });
         });
 
-        // Top 8 by total hours
-        const top8ids = Object.entries(totals)
+        let candidateIds = Object.entries(totals)
           .sort((a, b) => b[1] - a[1])
-          .slice(0, 8)
           .map(([id]) => Number(id));
+        if (devId) candidateIds = candidateIds.filter((id) => id === devId);
+        const top8ids = candidateIds.slice(0, 8);
 
-        // Build recharts data
         const data = selected.map((s, i) => {
           const row = { sprint: s.sprintName };
-          const members = results[i]?.members || [];
+          const sprintMembers = results[i]?.members || [];
           top8ids.forEach((uid) => {
-            const m = members.find((x) => x.userId === uid);
+            const m = sprintMembers.find((x) => x.userId === uid);
             row[nameMap[uid]] = m ? parseFloat(m.actualHours.toFixed(1)) : 0;
           });
           return row;
@@ -95,7 +99,7 @@ export default function HoursByDeveloperChart({ sprints }) {
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
-  }, [project.id, sprints]);
+  }, [project.id, sprints, selectedSprintId, devId]);
 
   if (loading) return <Skeleton />;
   if (error) return <p className="text-xs text-oracle">{error}</p>;

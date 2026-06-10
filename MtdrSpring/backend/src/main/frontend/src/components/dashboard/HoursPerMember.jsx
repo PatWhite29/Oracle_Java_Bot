@@ -10,7 +10,7 @@ function initials(name) {
   return name?.split(' ').map((n) => n[0]).slice(0, 2).join('') ?? '?';
 }
 
-export default function HoursPerMember({ sprintId }) {
+export default function HoursPerMember({ sprintId, devId }) {
   const { project } = useProject();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -30,7 +30,8 @@ export default function HoursPerMember({ sprintId }) {
   if (!data) return <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Select a sprint to view data.</p>;
   if (!data.members?.length) return <p className="text-sm" style={{ color: 'var(--text-muted)' }}>No hours logged yet.</p>;
 
-  const sorted = [...data.members].sort((a, b) => b.actualHours - a.actualHours);
+  const filtered = devId ? data.members.filter((m) => m.userId === devId) : data.members;
+  const sorted = [...filtered].sort((a, b) => b.actualHours - a.actualHours);
   const max = sorted[0]?.actualHours || 1;
 
   return (
