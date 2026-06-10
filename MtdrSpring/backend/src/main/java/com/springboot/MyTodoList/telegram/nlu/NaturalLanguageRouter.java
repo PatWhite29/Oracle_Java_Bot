@@ -20,7 +20,7 @@ public class NaturalLanguageRouter {
 
     private static final String ANTHROPIC_URL = "https://api.anthropic.com/v1/messages";
     private static final String ANTHROPIC_VERSION = "2023-06-01";
-    private static final String MODEL = "claude-sonnet-4-6";
+    private static final String MODEL = "claude-haiku-4-5";
 
     private static final String SYSTEM_PROMPT =
             "You are a command classifier for a task management Telegram bot." +
