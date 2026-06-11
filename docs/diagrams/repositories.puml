@@ -1,0 +1,34 @@
+@startuml
+title Repositories
+skinparam classAttributeIconSize 0
+hide empty members
+left to right direction
+
+package "Repositories" {
+interface AuditLogRepository {
+}
+
+interface NotificationLogRepository {
+}
+
+interface ProjectMemberRepository {
+}
+
+interface ProjectRepository {
+}
+
+interface SprintRepository {
+}
+
+interface TaskActivityRepository {
+}
+
+interface TaskRepository {
+}
+
+interface UserRepository {
+}
+
+}
+
+@enduml

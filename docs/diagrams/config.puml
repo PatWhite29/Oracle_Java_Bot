@@ -1,0 +1,49 @@
+@startuml
+title Config
+skinparam classAttributeIconSize 0
+hide empty members
+left to right direction
+
+package "Config" {
+class CorsConfig {
+}
+
+class JwtAuthFilter {
+  + jwtUtil : JwtUtil
+  + userDetailsService : UserDetailsServiceImpl
+}
+
+class JwtUtil {
+  + signingKey : SecretKey
+  + expirationMs : long
+}
+
+class RequestLoggingFilter {
+}
+
+class SecurityConfig {
+  + jwtAuthFilter : JwtAuthFilter
+  + userDetailsService : UserDetailsServiceImpl
+}
+
+class SpaController {
+}
+
+class SwaggerConfig {
+}
+
+class TelegramBotConfig {
+}
+
+class UserDetailsServiceImpl {
+  + userRepository : UserRepository
+}
+
+}
+
+JwtAuthFilter --> JwtUtil : uses
+JwtAuthFilter --> UserDetailsServiceImpl : uses
+SecurityConfig --> JwtAuthFilter : uses
+SecurityConfig --> UserDetailsServiceImpl : uses
+UserDetailsServiceImpl --> UserRepository : depends on
+@enduml

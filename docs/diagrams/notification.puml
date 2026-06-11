@@ -1,0 +1,38 @@
+@startuml
+title Notification
+skinparam classAttributeIconSize 0
+hide empty members
+left to right direction
+
+package "Notification" {
+class NotificationLog {
+  + id : Long
+  + recipient : User
+  + eventType : String
+  + message : String
+  + deliveryStatus : String
+  + sentAt : LocalDateTime
+}
+
+interface NotificationLogRepository {
+}
+
+class NotificationScheduler {
+  + sprintRepository : SprintRepository
+  + taskRepository : TaskRepository
+  + notificationService : NotificationService
+}
+
+class NotificationService {
+  + notificationLogRepository : NotificationLogRepository
+  + telegramClient : TelegramClient
+}
+
+}
+
+NotificationLog --> User : depends on
+NotificationScheduler --> SprintRepository : depends on
+NotificationScheduler --> TaskRepository : depends on
+NotificationScheduler --> NotificationService : uses
+NotificationService --> NotificationLogRepository : uses
+@enduml

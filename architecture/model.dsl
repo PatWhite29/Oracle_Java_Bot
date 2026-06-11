@@ -11,17 +11,37 @@ workspace {
 
         bot = softwareSystem "Oracle Java Bot Platform" "Automates task management, NLU-based chat interactions, and integrations." {
             webApp = container "Web App" "Task/project dashboard." "React.js"
-            telegramBot = container "Telegram Bot Adapter" "Handles message and chat routing with NLU workflow." "Node.js"
-            nlu = container "NLU Service" "Parses and classifies user intent/entities for commands via text/chat." "Java Spring Boot or Python"
+            telegramBot = container "Telegram Bot Adapter" "Handles message and chat routing with NLU workflow." "Node.js" {
+                url "https://github.com/PatWhite29/Oracle_Java_Bot/blob/master/docs/diagrams/bot.puml"
+            }
+            nlu = container "NLU Service" "Parses and classifies user intent/entities for commands via text/chat." "Java Spring Boot or Python" {
+                url "https://github.com/PatWhite29/Oracle_Java_Bot/blob/master/docs/diagrams/nlu.puml"
+            }
             backend = container "Spring Boot Backend" "Skill orchestration, data/services, notifications, and security." "Java, Spring Boot" {
-                userController = component "User Controller" "User CRUD, authZ/authN." "REST Controller"
-                taskController = component "Task Controller" "CRUD for tasks, status management, assignment." "REST Controller"
-                sprintController = component "Sprint Controller" "Sprint planning/execution." "REST Controller"
-                projectService = component "Project Service" "Business/project logic." "Spring Service"
-                taskService = component "Task Service" "Task rules, assignment, priorities." "Spring Service"
-                notificationService = component "Notification Service" "User notifications via web/Telegram." "Spring Service"
-                repositoryLayer = component "Repository Layer" "Repository for all system entities." "Spring Data/JPA"
-                dbAccess = component "Database Access Layer" "Performs SQL/PLSQL DB connection." "JDBC/Spring Data"
+                userController = component "User Controller" "User CRUD, authZ/authN." "REST Controller" {
+                    url "https://github.com/PatWhite29/Oracle_Java_Bot/blob/master/docs/diagrams/controllers.puml"
+                }
+                taskController = component "Task Controller" "CRUD for tasks, status management, assignment." "REST Controller" {
+                    url "https://github.com/PatWhite29/Oracle_Java_Bot/blob/master/docs/diagrams/controllers.puml"
+                }
+                sprintController = component "Sprint Controller" "Sprint planning/execution." "REST Controller" {
+                    url "https://github.com/PatWhite29/Oracle_Java_Bot/blob/master/docs/diagrams/controllers.puml"
+                }
+                projectService = component "Project Service" "Business/project logic." "Spring Service" {
+                    url "https://github.com/PatWhite29/Oracle_Java_Bot/blob/master/docs/diagrams/services.puml"
+                }
+                taskService = component "Task Service" "Task rules, assignment, priorities." "Spring Service" {
+                    url "https://github.com/PatWhite29/Oracle_Java_Bot/blob/master/docs/diagrams/services.puml"
+                }
+                notificationService = component "Notification Service" "User notifications via web/Telegram." "Spring Service" {
+                    url "https://github.com/PatWhite29/Oracle_Java_Bot/blob/master/docs/diagrams/notification.puml"
+                }
+                repositoryLayer = component "Repository Layer" "Repository for all system entities." "Spring Data/JPA" {
+                    url "https://github.com/PatWhite29/Oracle_Java_Bot/blob/master/docs/diagrams/repositories.puml"
+                }
+                dbAccess = component "Database Access Layer" "Performs SQL/PLSQL DB connection." "JDBC/Spring Data" {
+                    url "https://github.com/PatWhite29/Oracle_Java_Bot/blob/master/docs/diagrams/repositories.puml"
+                }
             }
             db = container "Oracle Autonomous Database" "Persistence for users, tasks, sprints, projects, logs." "Oracle Autonomous DB" {
                 tag "database"

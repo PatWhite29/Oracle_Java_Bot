@@ -1,0 +1,44 @@
+name: Generate PlantUML Diagrams
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+
+jobs:
+  generate-diagrams:
+    name: Generate and Commit Diagrams
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-actions[bot]'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Generate PlantUML diagrams
+        working-directory: MtdrSpring/backend
+        run: sh ./mvnw -q -Parchitecture-diagrams -DskipTests process-classes
+
+      - name: Commit generated diagrams
+        run: |
+          if git status --porcelain docs/diagrams | grep -q '^'; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add docs/diagrams/*.puml
+            git commit -m "docs: generate PlantUML diagrams [skip ci]"
+            git push origin HEAD:${GITHUB_REF_NAME}
+          else
+            echo "No diagram changes to commit."
+          fi

@@ -1,0 +1,139 @@
+@startuml
+title Services
+skinparam classAttributeIconSize 0
+hide empty members
+left to right direction
+
+package "Services" {
+class AuditLogService {
+  + auditLogRepository : AuditLogRepository
+  + objectMapper : ObjectMapper
+}
+
+class AuthService {
+  + userRepository : UserRepository
+  + passwordEncoder : PasswordEncoder
+  + jwtUtil : JwtUtil
+  + userMapper : UserMapper
+}
+
+class DashboardService {
+  + projectService : ProjectService
+  + sprintRepository : SprintRepository
+  + taskRepository : TaskRepository
+  + memberRepository : ProjectMemberRepository
+}
+
+class NotificationScheduler {
+  + sprintRepository : SprintRepository
+  + taskRepository : TaskRepository
+  + notificationService : NotificationService
+}
+
+class NotificationService {
+  + notificationLogRepository : NotificationLogRepository
+  + telegramClient : TelegramClient
+}
+
+class ProjectMemberService {
+  + memberRepository : ProjectMemberRepository
+  + projectService : ProjectService
+  + userService : UserService
+  + auditLogService : AuditLogService
+  + memberMapper : ProjectMemberMapper
+}
+
+class ProjectService {
+  + projectRepository : ProjectRepository
+  + memberRepository : ProjectMemberRepository
+  + sprintRepository : SprintRepository
+  + taskRepository : TaskRepository
+  + activityRepository : TaskActivityRepository
+  + userService : UserService
+  + auditLogService : AuditLogService
+  + projectMapper : ProjectMapper
+}
+
+class SprintService {
+  + sprintRepository : SprintRepository
+  + taskRepository : TaskRepository
+  + projectService : ProjectService
+  + userService : UserService
+  + auditLogService : AuditLogService
+  + sprintMapper : SprintMapper
+}
+
+class TaskActivityService {
+  + activityRepository : TaskActivityRepository
+  + taskService : TaskService
+  + projectService : ProjectService
+  + userService : UserService
+  + activityMapper : TaskActivityMapper
+}
+
+class TaskService {
+  + taskRepository : TaskRepository
+  + activityRepository : TaskActivityRepository
+  + sprintRepository : SprintRepository
+  + projectService : ProjectService
+  + userService : UserService
+  + auditLogService : AuditLogService
+  + notificationService : NotificationService
+  + taskMapper : TaskMapper
+}
+
+class UserService {
+  + userRepository : UserRepository
+  + userMapper : UserMapper
+  + passwordEncoder : PasswordEncoder
+}
+
+}
+
+AuditLogService --> AuditLogRepository : depends on
+AuthService --> UserRepository : depends on
+AuthService --> JwtUtil : depends on
+AuthService --> UserMapper : depends on
+DashboardService --> ProjectService : uses
+DashboardService --> SprintRepository : depends on
+DashboardService --> TaskRepository : depends on
+DashboardService --> ProjectMemberRepository : depends on
+NotificationScheduler --> SprintRepository : depends on
+NotificationScheduler --> TaskRepository : depends on
+NotificationScheduler --> NotificationService : uses
+NotificationService --> NotificationLogRepository : depends on
+ProjectMemberService --> ProjectMemberRepository : depends on
+ProjectMemberService --> ProjectService : uses
+ProjectMemberService --> UserService : uses
+ProjectMemberService --> AuditLogService : uses
+ProjectMemberService --> ProjectMemberMapper : depends on
+ProjectService --> ProjectRepository : depends on
+ProjectService --> ProjectMemberRepository : depends on
+ProjectService --> SprintRepository : depends on
+ProjectService --> TaskRepository : depends on
+ProjectService --> TaskActivityRepository : depends on
+ProjectService --> UserService : uses
+ProjectService --> AuditLogService : uses
+ProjectService --> ProjectMapper : depends on
+SprintService --> SprintRepository : depends on
+SprintService --> TaskRepository : depends on
+SprintService --> ProjectService : uses
+SprintService --> UserService : uses
+SprintService --> AuditLogService : uses
+SprintService --> SprintMapper : depends on
+TaskActivityService --> TaskActivityRepository : depends on
+TaskActivityService --> TaskService : uses
+TaskActivityService --> ProjectService : uses
+TaskActivityService --> UserService : uses
+TaskActivityService --> TaskActivityMapper : depends on
+TaskService --> TaskRepository : depends on
+TaskService --> TaskActivityRepository : depends on
+TaskService --> SprintRepository : depends on
+TaskService --> ProjectService : uses
+TaskService --> UserService : uses
+TaskService --> AuditLogService : uses
+TaskService --> NotificationService : uses
+TaskService --> TaskMapper : depends on
+UserService --> UserRepository : depends on
+UserService --> UserMapper : depends on
+@enduml
