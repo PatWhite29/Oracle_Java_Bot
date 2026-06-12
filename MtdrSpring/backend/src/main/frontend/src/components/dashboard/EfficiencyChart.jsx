@@ -43,8 +43,8 @@ export default function EfficiencyChart({ sprintId }) {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (!sprintId) { setLoading(false); setData(null); return; }
     setLoading(true);
+    setError('');
     dashboardService.efficiency(project.id, sprintId)
       .then(setData)
       .catch((err) => setError(err.message))
@@ -53,7 +53,7 @@ export default function EfficiencyChart({ sprintId }) {
 
   if (loading) return <Skeleton />;
   if (error) return <p className="text-xs text-oracle">{error}</p>;
-  if (!data) return <p className="text-sm text-gray-400">Select a sprint to view data.</p>;
+  if (!data) return null;
   if (!data.members?.length) return <p className="text-sm text-gray-400">No completed tasks in this sprint.</p>;
 
   const handleExport = () => {
@@ -62,7 +62,7 @@ export default function EfficiencyChart({ sprintId }) {
       'SP Completados': m.spCompleted,
       'Horas Reales': parseFloat(m.actualHours.toFixed(1)),
     }));
-    exportCsv(rows, `efficiency-sprint-${sprintId}`);
+    exportCsv(rows, sprintId ? `efficiency-sprint-${sprintId}` : 'efficiency-all-sprints');
   };
 
   const chartData = data.members.map((m) => ({

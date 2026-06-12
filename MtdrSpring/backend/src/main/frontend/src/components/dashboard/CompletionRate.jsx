@@ -11,8 +11,8 @@ export default function CompletionRate({ sprintId }) {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (!sprintId) { setLoading(false); setData(null); return; }
     setLoading(true);
+    setError('');
     dashboardService.sprintSummary(project.id, sprintId)
       .then(setData)
       .catch((err) => setError(err.message))
@@ -21,7 +21,7 @@ export default function CompletionRate({ sprintId }) {
 
   if (loading) return <Skeleton />;
   if (error) return <p className="text-xs text-red-500">{error}</p>;
-  if (!data) return <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Select a sprint to view data.</p>;
+  if (!data) return null;
 
   const pct = data.completionPercentage ?? 0;
   const color = pct >= 80 ? '#15803D' : pct >= 50 ? '#003865' : '#C74634';

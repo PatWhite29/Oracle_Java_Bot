@@ -38,8 +38,10 @@ export default function DashboardPage() {
 
   const [sprints, setSprints] = useState([]);
   const [selectedSprintId, setSelectedSprintId] = useState(null);
+  const [sprintsLoaded, setSprintsLoaded] = useState(false);
 
   useEffect(() => {
+    setSprintsLoaded(false);
     sprintService.list(project.id).then((data) => {
       setSprints(data);
       const active = data.find((s) => s.status === 'ACTIVE');
@@ -50,9 +52,9 @@ export default function DashboardPage() {
           .filter((s) => s.status === 'CLOSED')
           .sort((a, b) => new Date(b.endDate) - new Date(a.endDate));
         if (closed.length > 0) setSelectedSprintId(closed[0].id);
-        else if (data.length > 0) setSelectedSprintId(data[0].id);
+        else setSelectedSprintId(null);
       }
-    }).catch(() => {});
+    }).catch(() => {}).finally(() => setSprintsLoaded(true));
   }, [project.id]);
 
   const sid = selectedSprintId || null;
@@ -75,7 +77,14 @@ export default function DashboardPage() {
         />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-4">
+      {!sprintsLoaded && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-4">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="animate-pulse rounded-xl h-32 md:col-span-2" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }} />
+          ))}
+        </div>
+      )}
+      {sprintsLoaded && <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-6 gap-4">
 
         {/* Sprint Summary */}
         <Widget title="Sprint Summary" className="sm:col-span-2 md:col-span-6">
@@ -132,7 +141,7 @@ export default function DashboardPage() {
           <ComparePanel sprints={sprints} />
         </Widget>
 
-      </div>
+      </div>}
     </div>
   );
 }

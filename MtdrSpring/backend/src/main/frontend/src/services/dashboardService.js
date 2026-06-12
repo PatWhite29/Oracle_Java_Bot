@@ -2,21 +2,27 @@ import { apiFetch } from './api';
 
 export const dashboardService = {
   sprintSummary: (projectId, sprintId) => {
-    const q = sprintId ? `?sprintId=${sprintId}` : '';
-    return apiFetch(`/projects/${projectId}/dashboard/sprint-summary${q}`);
+    const params = new URLSearchParams();
+    if (sprintId) params.set('sprintId', sprintId);
+    else params.set('allSprints', 'true');
+    return apiFetch(`/projects/${projectId}/dashboard/sprint-summary?${params}`);
   },
 
   velocity: (projectId, count = 5) =>
     apiFetch(`/projects/${projectId}/dashboard/velocity?sprints=${count}`),
 
   efficiency: (projectId, sprintId) => {
-    const q = sprintId ? `?sprintId=${sprintId}` : '';
-    return apiFetch(`/projects/${projectId}/dashboard/efficiency${q}`);
+    const params = new URLSearchParams();
+    if (sprintId) params.set('sprintId', sprintId);
+    else params.set('allSprints', 'true');
+    return apiFetch(`/projects/${projectId}/dashboard/efficiency?${params}`);
   },
 
   workload: (projectId, sprintId) => {
-    const q = sprintId ? `?sprintId=${sprintId}` : '';
-    return apiFetch(`/projects/${projectId}/dashboard/workload${q}`);
+    const params = new URLSearchParams();
+    if (sprintId) params.set('sprintId', sprintId);
+    else params.set('allSprints', 'true');
+    return apiFetch(`/projects/${projectId}/dashboard/workload?${params}`);
   },
 
   backlog: (projectId) =>
