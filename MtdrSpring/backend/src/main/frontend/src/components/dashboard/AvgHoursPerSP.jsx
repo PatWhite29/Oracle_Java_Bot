@@ -11,8 +11,8 @@ export default function AvgHoursPerSP({ sprintId }) {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (!sprintId) { setLoading(false); setData(null); return; }
     setLoading(true);
+    setError('');
     dashboardService.efficiency(project.id, sprintId)
       .then(setData)
       .catch((err) => setError(err.message))

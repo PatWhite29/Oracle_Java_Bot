@@ -24,11 +24,12 @@ public class DashboardController {
     private final DashboardService dashboardService;
 
     @GetMapping("/sprint-summary")
-    @Operation(summary = "Sprint summary — uses active sprint if sprintId is omitted")
+    @Operation(summary = "Sprint summary — uses active sprint if sprintId is omitted, all sprints if allSprints=true")
     public ResponseEntity<SprintSummaryResponse> sprintSummary(@PathVariable Long projectId,
                                                                 @RequestParam(required = false) Long sprintId,
+                                                                @RequestParam(defaultValue = "false") boolean allSprints,
                                                                 Authentication auth) {
-        return ResponseEntity.ok(dashboardService.getSprintSummary(uid(auth), projectId, sprintId));
+        return ResponseEntity.ok(dashboardService.getSprintSummary(uid(auth), projectId, sprintId, allSprints));
     }
 
     @GetMapping("/velocity")
@@ -42,19 +43,21 @@ public class DashboardController {
     }
 
     @GetMapping("/efficiency")
-    @Operation(summary = "Per-member efficiency — uses active sprint if sprintId is omitted")
+    @Operation(summary = "Per-member efficiency — uses active sprint if sprintId is omitted, all sprints if allSprints=true")
     public ResponseEntity<EfficiencyResponse> efficiency(@PathVariable Long projectId,
                                                           @RequestParam(required = false) Long sprintId,
+                                                          @RequestParam(defaultValue = "false") boolean allSprints,
                                                           Authentication auth) {
-        return ResponseEntity.ok(dashboardService.getEfficiency(uid(auth), projectId, sprintId));
+        return ResponseEntity.ok(dashboardService.getEfficiency(uid(auth), projectId, sprintId, allSprints));
     }
 
     @GetMapping("/workload")
-    @Operation(summary = "Workload per member — uses active sprint if sprintId is omitted")
+    @Operation(summary = "Workload per member — uses active sprint if sprintId is omitted, all sprints if allSprints=true")
     public ResponseEntity<List<WorkloadResponse>> workload(@PathVariable Long projectId,
                                                             @RequestParam(required = false) Long sprintId,
+                                                            @RequestParam(defaultValue = "false") boolean allSprints,
                                                             Authentication auth) {
-        return ResponseEntity.ok(dashboardService.getWorkload(uid(auth), projectId, sprintId));
+        return ResponseEntity.ok(dashboardService.getWorkload(uid(auth), projectId, sprintId, allSprints));
     }
 
     @GetMapping("/backlog")

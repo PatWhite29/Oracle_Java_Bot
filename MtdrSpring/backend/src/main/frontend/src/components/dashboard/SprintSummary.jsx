@@ -14,8 +14,8 @@ export default function SprintSummary({ sprintId }) {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (!sprintId) { setLoading(false); setData(null); return; }
     setLoading(true);
+    setError('');
     dashboardService.sprintSummary(project.id, sprintId)
       .then(setData)
       .catch((err) => setError(err.message))
@@ -24,7 +24,7 @@ export default function SprintSummary({ sprintId }) {
 
   if (loading) return <Skeleton />;
   if (error) return <p className="text-xs text-red-500">{error}</p>;
-  if (!data) return <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Select a sprint to view data.</p>;
+  if (!data) return null;
 
   const counts = data.statusCounts || {};
 

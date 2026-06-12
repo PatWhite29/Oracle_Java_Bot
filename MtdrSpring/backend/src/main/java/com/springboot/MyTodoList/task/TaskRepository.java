@@ -61,6 +61,9 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     @Query("SELECT t.status, COUNT(t), SUM(t.storyPoints) FROM Task t WHERE t.sprint = :sprint GROUP BY t.status")
     List<Object[]> findStatusCountsAndSpBySprint(@Param("sprint") Sprint sprint);
 
+    @Query("SELECT t.status, COUNT(t), SUM(t.storyPoints) FROM Task t WHERE t.project = :project AND t.sprint IS NOT NULL GROUP BY t.status")
+    List<Object[]> findStatusCountsAndSpByProject(@Param("project") Project project);
+
     @Query("""
             SELECT t.assignedTo.id, t.assignedTo.fullName, t.status, COUNT(t), SUM(t.storyPoints)
             FROM Task t
@@ -70,12 +73,28 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     List<Object[]> findWorkloadBySprint(@Param("sprint") Sprint sprint);
 
     @Query("""
+            SELECT t.assignedTo.id, t.assignedTo.fullName, t.status, COUNT(t), SUM(t.storyPoints)
+            FROM Task t
+            WHERE t.project = :project AND t.sprint IS NOT NULL AND t.assignedTo IS NOT NULL
+            GROUP BY t.assignedTo.id, t.assignedTo.fullName, t.status
+            """)
+    List<Object[]> findWorkloadByProject(@Param("project") Project project);
+
+    @Query("""
             SELECT t.assignedTo.id, t.assignedTo.fullName, SUM(t.storyPoints), SUM(t.actualHours)
             FROM Task t
             WHERE t.sprint = :sprint AND t.status = :status AND t.assignedTo IS NOT NULL
             GROUP BY t.assignedTo.id, t.assignedTo.fullName
             """)
     List<Object[]> findEfficiencyBySprint(@Param("sprint") Sprint sprint, @Param("status") TaskStatus status);
+
+    @Query("""
+            SELECT t.assignedTo.id, t.assignedTo.fullName, SUM(t.storyPoints), SUM(t.actualHours)
+            FROM Task t
+            WHERE t.project = :project AND t.sprint IS NOT NULL AND t.status = :status AND t.assignedTo IS NOT NULL
+            GROUP BY t.assignedTo.id, t.assignedTo.fullName
+            """)
+    List<Object[]> findEfficiencyByProject(@Param("project") Project project, @Param("status") TaskStatus status);
 
     void deleteByProject(Project project);
 

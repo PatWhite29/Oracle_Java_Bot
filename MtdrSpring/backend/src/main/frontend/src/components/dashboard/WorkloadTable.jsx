@@ -16,8 +16,8 @@ export default function WorkloadTable({ sprintId }) {
   const [mode, setMode] = useState('tasks');
 
   useEffect(() => {
-    if (!sprintId) { setLoading(false); setData([]); return; }
     setLoading(true);
+    setError('');
     dashboardService.workload(project.id, sprintId)
       .then(setData)
       .catch((err) => setError(err.message))
@@ -26,7 +26,7 @@ export default function WorkloadTable({ sprintId }) {
 
   if (loading) return <Skeleton />;
   if (error) return <p className="text-xs text-red-500">{error}</p>;
-  if (!data.length) return <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Select a sprint to view data.</p>;
+  if (!data.length) return <p className="text-sm" style={{ color: 'var(--text-muted)' }}>No hay datos disponibles.</p>;
 
   const getValue = (member, status) =>
     mode === 'tasks'
@@ -48,7 +48,7 @@ export default function WorkloadTable({ sprintId }) {
       'SP BLOCKED': m.storyPoints?.BLOCKED ?? 0,
       'SP DONE': m.storyPoints?.DONE ?? 0,
     }));
-    exportCsv(rows, `workload-sprint-${sprintId}`);
+    exportCsv(rows, sprintId ? `workload-sprint-${sprintId}` : 'workload-all-sprints');
   };
 
   return (

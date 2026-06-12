@@ -17,8 +17,8 @@ export default function HoursPerMember({ sprintId }) {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (!sprintId) { setLoading(false); setData(null); return; }
     setLoading(true);
+    setError('');
     dashboardService.efficiency(project.id, sprintId)
       .then(setData)
       .catch((err) => setError(err.message))
@@ -27,7 +27,7 @@ export default function HoursPerMember({ sprintId }) {
 
   if (loading) return <Skeleton />;
   if (error) return <p className="text-xs text-oracle">{error}</p>;
-  if (!data) return <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Select a sprint to view data.</p>;
+  if (!data) return null;
   if (!data.members?.length) return <p className="text-sm" style={{ color: 'var(--text-muted)' }}>No hours logged yet.</p>;
 
   const sorted = [...data.members].sort((a, b) => b.actualHours - a.actualHours);
