@@ -32,9 +32,14 @@ public class DashboardService {
     private final ProjectMemberRepository memberRepository;
 
     @Transactional(readOnly = true)
-    public SprintSummaryResponse getSprintSummary(Long userId, Long projectId, Long sprintId) {
+    public SprintSummaryResponse getSprintSummary(Long userId, Long projectId, Long sprintId, boolean allSprints) {
         Project project = projectService.findProject(projectId);
         projectService.requireParticipant(userId, project);
+
+        if (allSprints) {
+            return buildSprintSummaryForProject(project);
+        }
+
         Sprint sprint = resolveSprint(project, sprintId);
 
         Map<String, Integer> statusCounts = new LinkedHashMap<>();
@@ -65,6 +70,35 @@ public class DashboardService {
                 .build();
     }
 
+    private SprintSummaryResponse buildSprintSummaryForProject(Project project) {
+        Map<String, Integer> statusCounts = new LinkedHashMap<>();
+        for (TaskStatus s : TaskStatus.values()) statusCounts.put(s.name(), 0);
+
+        long committed = 0;
+        long completed = 0;
+
+        for (Object[] row : taskRepository.findStatusCountsAndSpByProject(project)) {
+            TaskStatus status = (TaskStatus) row[0];
+            int count = ((Long) row[1]).intValue();
+            long sp = row[2] == null ? 0L : ((Number) row[2]).longValue();
+            statusCounts.put(status.name(), count);
+            committed += sp;
+            if (status == TaskStatus.DONE) completed = sp;
+        }
+
+        double pct = committed == 0 ? 0.0 : (double) completed / committed * 100.0;
+
+        return SprintSummaryResponse.builder()
+                .sprintId(null)
+                .sprintName("All Sprints")
+                .statusCounts(statusCounts)
+                .spCommitted(committed)
+                .spCompleted(completed)
+                .completionPercentage(pct)
+                .blockedCount(statusCounts.getOrDefault("BLOCKED", 0))
+                .build();
+    }
+
     @Transactional(readOnly = true)
     public List<VelocityResponse> getVelocity(Long userId, Long projectId, int sprintCount) {
         Project project = projectService.findProject(projectId);
@@ -85,9 +119,14 @@ public class DashboardService {
     }
 
     @Transactional(readOnly = true)
-    public EfficiencyResponse getEfficiency(Long userId, Long projectId, Long sprintId) {
+    public EfficiencyResponse getEfficiency(Long userId, Long projectId, Long sprintId, boolean allSprints) {
         Project project = projectService.findProject(projectId);
         projectService.requireParticipant(userId, project);
+
+        if (allSprints) {
+            return buildEfficiencyForProject(project);
+        }
+
         Sprint sprint = resolveSprint(project, sprintId);
 
         List<EfficiencyResponse.MemberEfficiency> members = new ArrayList<>();
@@ -107,17 +146,37 @@ public class DashboardService {
         return new EfficiencyResponse(sprint.getId(), sprint.getSprintName(), totalHours, totalSp, members);
     }
 
+    private EfficiencyResponse buildEfficiencyForProject(Project project) {
+        List<EfficiencyResponse.MemberEfficiency> members = new ArrayList<>();
+        double totalHours = 0.0;
+        long totalSp = 0L;
+
+        for (Object[] row : taskRepository.findEfficiencyByProject(project, TaskStatus.DONE)) {
+            Long memberId = (Long) row[0];
+            String fullName = (String) row[1];
+            long sp = row[2] == null ? 0L : ((Number) row[2]).longValue();
+            double hours = row[3] == null ? 0.0 : ((BigDecimal) row[3]).doubleValue();
+            members.add(new EfficiencyResponse.MemberEfficiency(memberId, fullName, sp, hours));
+            totalSp += sp;
+            totalHours += hours;
+        }
+
+        return new EfficiencyResponse(null, "All Sprints", totalHours, totalSp, members);
+    }
+
     @Transactional(readOnly = true)
-    public List<WorkloadResponse> getWorkload(Long userId, Long projectId, Long sprintId) {
+    public List<WorkloadResponse> getWorkload(Long userId, Long projectId, Long sprintId, boolean allSprints) {
         Project project = projectService.findProject(projectId);
         projectService.requireParticipant(userId, project);
-        Sprint sprint = resolveSprint(project, sprintId);
 
-        // task counts and SP per user per status, from DB
         Map<Long, Map<String, Long>> taskCountByUser = new HashMap<>();
         Map<Long, Map<String, Long>> spByUser = new HashMap<>();
 
-        for (Object[] row : taskRepository.findWorkloadBySprint(sprint)) {
+        List<Object[]> rows = allSprints
+                ? taskRepository.findWorkloadByProject(project)
+                : taskRepository.findWorkloadBySprint(resolveSprint(project, sprintId));
+
+        for (Object[] row : rows) {
             Long memberId = (Long) row[0];
             String status = ((TaskStatus) row[2]).name();
             long count = (Long) row[3];
@@ -127,7 +186,6 @@ public class DashboardService {
             spByUser.computeIfAbsent(memberId, k -> new HashMap<>()).put(status, sp);
         }
 
-        // all project participants: manager + members
         List<User> participants = new ArrayList<>();
         participants.add(project.getManager());
         memberRepository.findAllByProject(project).stream()
