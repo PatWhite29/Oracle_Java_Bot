@@ -1,0 +1,89 @@
+@startuml
+title Bot
+skinparam classAttributeIconSize 0
+hide empty members
+left to right direction
+
+package "Bot" {
+class CommentHandler {
+  + userService : UserService
+  + activityService : TaskActivityService
+}
+
+class HelpHandler {
+}
+
+class KairoBot {
+  + botToken : String
+  + telegramClient : TelegramClient
+  + startHandler : StartHandler
+  + loginHandler : LoginHandler
+  + helpHandler : HelpHandler
+  + myProjectsHandler : MyProjectsHandler
+  + myTasksHandler : MyTasksHandler
+  + taskHandler : TaskHandler
+  + taskStatusHandler : TaskStatusHandler
+  + commentHandler : CommentHandler
+  + nluRouter : NaturalLanguageRouter
+  + objectMapper : ObjectMapper
+}
+
+class LoginHandler {
+  + userService : UserService
+}
+
+class MyProjectsHandler {
+  + userService : UserService
+  + projectService : ProjectService
+}
+
+class MyTasksHandler {
+  + userService : UserService
+  + taskService : TaskService
+}
+
+class StartHandler {
+}
+
+class SyntheticUpdateFactory {
+}
+
+class TaskHandler {
+  + userService : UserService
+  + taskService : TaskService
+}
+
+class TaskStatusHandler {
+  + userService : UserService
+  + taskService : TaskService
+}
+
+class TelegramBotConfig {
+}
+
+class TelegramHelper {
+}
+
+}
+
+CommentHandler --> UserService : depends on
+CommentHandler --> TaskActivityService : depends on
+KairoBot --> StartHandler : uses
+KairoBot --> LoginHandler : uses
+KairoBot --> HelpHandler : uses
+KairoBot --> MyProjectsHandler : uses
+KairoBot --> MyTasksHandler : uses
+KairoBot --> TaskHandler : uses
+KairoBot --> TaskStatusHandler : uses
+KairoBot --> CommentHandler : uses
+KairoBot --> NaturalLanguageRouter : depends on
+LoginHandler --> UserService : depends on
+MyProjectsHandler --> UserService : depends on
+MyProjectsHandler --> ProjectService : depends on
+MyTasksHandler --> UserService : depends on
+MyTasksHandler --> TaskService : depends on
+TaskHandler --> UserService : depends on
+TaskHandler --> TaskService : depends on
+TaskStatusHandler --> UserService : depends on
+TaskStatusHandler --> TaskService : depends on
+@enduml

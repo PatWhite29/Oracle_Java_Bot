@@ -1,0 +1,53 @@
+@startuml
+title Controllers
+skinparam classAttributeIconSize 0
+hide empty members
+left to right direction
+
+package "Controllers" {
+class AuthController {
+  + authService : AuthService
+}
+
+class DashboardController {
+  + dashboardService : DashboardService
+}
+
+class ProjectController {
+  + projectService : ProjectService
+}
+
+class ProjectMemberController {
+  + memberService : ProjectMemberService
+}
+
+class SpaController {
+}
+
+class SprintController {
+  + sprintService : SprintService
+}
+
+class TaskActivityController {
+  + activityService : TaskActivityService
+}
+
+class TaskController {
+  + taskService : TaskService
+}
+
+class UserController {
+  + userService : UserService
+}
+
+}
+
+AuthController --> AuthService : depends on
+DashboardController --> DashboardService : depends on
+ProjectController --> ProjectService : depends on
+ProjectMemberController --> ProjectMemberService : depends on
+SprintController --> SprintService : depends on
+TaskActivityController --> TaskActivityService : depends on
+TaskController --> TaskService : depends on
+UserController --> UserService : depends on
+@enduml

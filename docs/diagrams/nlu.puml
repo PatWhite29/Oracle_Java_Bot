@@ -1,0 +1,30 @@
+@startuml
+title NLU
+skinparam classAttributeIconSize 0
+hide empty members
+left to right direction
+
+package "NLU" {
+class NaturalLanguageRouter {
+  + anthropicApiKey : String
+  + restTemplate : RestTemplate
+  + objectMapper : ObjectMapper
+}
+
+class NluErrorMessages {
+}
+
+class NluResult {
+  + status : NluStatus
+  + command : String
+  + params : Map<String, String>
+  + missing : List<String>
+}
+
+enum NluStatus {
+}
+
+}
+
+NluResult --> NluStatus : uses
+@enduml

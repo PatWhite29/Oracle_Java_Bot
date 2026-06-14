@@ -1,0 +1,36 @@
+@startuml
+title Audit
+skinparam classAttributeIconSize 0
+hide empty members
+left to right direction
+
+package "Audit" {
+enum AuditAction {
+}
+
+class AuditLog {
+  + id : Long
+  + employee : User
+  + entityType : EntityType
+  + entityId : Long
+  + action : AuditAction
+  + oldValue : String
+  + newValue : String
+  + createdAt : LocalDateTime
+}
+
+interface AuditLogRepository {
+}
+
+class AuditLogService {
+  + auditLogRepository : AuditLogRepository
+  + objectMapper : ObjectMapper
+}
+
+}
+
+AuditLog --> User : depends on
+AuditLog --> EntityType : depends on
+AuditLog --> AuditAction : uses
+AuditLogService --> AuditLogRepository : uses
+@enduml

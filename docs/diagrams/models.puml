@@ -1,0 +1,421 @@
+@startuml
+title Entities and Models
+skinparam classAttributeIconSize 0
+hide empty members
+left to right direction
+
+package "Entities and Models" {
+enum ActivityType {
+}
+
+class AddMemberRequest {
+  + userId : Long
+}
+
+enum AuditAction {
+}
+
+class AuditLog {
+  + id : Long
+  + employee : User
+  + entityType : EntityType
+  + entityId : Long
+  + action : AuditAction
+  + oldValue : String
+  + newValue : String
+  + createdAt : LocalDateTime
+}
+
+interface AuditLogRepository {
+}
+
+class AuditLogService {
+  + auditLogRepository : AuditLogRepository
+  + objectMapper : ObjectMapper
+}
+
+class AuthResponse {
+  + token : String
+  + user : UserResponse
+}
+
+class BacklogResponse {
+  + totalTasks : long
+  + totalStoryPoints : long
+  + byPriority : Map<String, Long>
+}
+
+class BurndownResponse {
+  + sprintId : Long
+  + sprintName : String
+  + totalStoryPoints : long
+  + completedStoryPoints : long
+  + remainingStoryPoints : long
+  + idealBurnPercent : double
+  + actualBurnPercent : double
+}
+
+class ClosedSprintException {
+}
+
+class CloseProjectResponse {
+  + projectId : Long
+  + projectName : String
+  + sprintsClosed : int
+  + pendingTasks : int
+  + message : String
+}
+
+class CommentRequest {
+  + content : String
+}
+
+class ConflictException {
+}
+
+class CorsConfig {
+}
+
+class EfficiencyResponse {
+  + sprintId : Long
+  + sprintName : String
+  + totalActualHours : double
+  + totalSpCompleted : long
+  + members : List<MemberEfficiency>
+}
+
+enum EntityType {
+}
+
+class ErrorResponse {
+  + error : String
+  + message : String
+  + status : int
+}
+
+class ForbiddenException {
+}
+
+class GlobalExceptionHandler {
+}
+
+class JwtAuthFilter {
+  + jwtUtil : JwtUtil
+  + userDetailsService : UserDetailsServiceImpl
+}
+
+class JwtUtil {
+  + signingKey : SecretKey
+  + expirationMs : long
+}
+
+class LoginRequest {
+  + email : String
+  + password : String
+}
+
+class NotProjectParticipantException {
+}
+
+record PagedResponse {
+}
+
+class Project {
+  + id : Long
+  + projectName : String
+  + description : String
+  + status : ProjectStatus
+  + manager : User
+  + createdAt : LocalDateTime
+}
+
+interface ProjectMapper {
+}
+
+class ProjectMember {
+  + id : Long
+  + project : Project
+  + employee : User
+  + createdAt : LocalDateTime
+}
+
+interface ProjectMemberMapper {
+}
+
+class ProjectMemberResponse {
+  + id : Long
+  + employee : UserSummary
+  + createdAt : LocalDateTime
+}
+
+class ProjectRequest {
+  + projectName : String
+  + description : String
+}
+
+class ProjectResponse {
+  + id : Long
+  + projectName : String
+  + description : String
+  + status : ProjectStatus
+  + manager : UserSummary
+  + createdAt : LocalDateTime
+}
+
+enum ProjectStatus {
+}
+
+class RegisterRequest {
+  + fullName : String
+  + email : String
+  + password : String
+}
+
+class RequestLoggingFilter {
+}
+
+class ResourceNotFoundException {
+}
+
+class SecurityConfig {
+  + jwtAuthFilter : JwtAuthFilter
+  + userDetailsService : UserDetailsServiceImpl
+}
+
+class SpaController {
+}
+
+class Sprint {
+  + id : Long
+  + project : Project
+  + sprintName : String
+  + goal : String
+  + startDate : LocalDate
+  + endDate : LocalDate
+  + status : SprintStatus
+  + createdAt : LocalDateTime
+}
+
+class SprintChangeRequest {
+  + sprintId : Long
+}
+
+interface SprintMapper {
+}
+
+class SprintRequest {
+  + sprintName : String
+  + goal : String
+  + startDate : LocalDate
+  + endDate : LocalDate
+}
+
+class SprintResponse {
+  + id : Long
+  + projectId : Long
+  + sprintName : String
+  + goal : String
+  + startDate : LocalDate
+  + endDate : LocalDate
+  + status : SprintStatus
+  + createdAt : LocalDateTime
+}
+
+enum SprintStatus {
+}
+
+class SprintSummary {
+  + id : Long
+  + sprintName : String
+  + status : SprintStatus
+}
+
+class SprintSummaryResponse {
+  + sprintId : Long
+  + sprintName : String
+  + statusCounts : Map<String, Integer>
+  + spCommitted : long
+  + spCompleted : long
+  + completionPercentage : double
+  + blockedCount : int
+}
+
+class StatusChangeRequest {
+  + status : TaskStatus
+  + actualHours : BigDecimal
+}
+
+class SwaggerConfig {
+}
+
+class Task {
+  + id : Long
+  + project : Project
+  + sprint : Sprint
+  + taskName : String
+  + description : String
+  + status : TaskStatus
+  + priority : TaskPriority
+  + storyPoints : Integer
+  + assignedTo : User
+  + createdBy : User
+  + actualHours : BigDecimal
+  + createdAt : LocalDateTime
+}
+
+class TaskActivity {
+  + id : Long
+  + task : Task
+  + employee : User
+  + activityType : ActivityType
+  + content : String
+  + createdAt : LocalDateTime
+}
+
+interface TaskActivityMapper {
+}
+
+class TaskActivityResponse {
+  + id : Long
+  + taskId : Long
+  + employee : UserSummary
+  + activityType : ActivityType
+  + content : String
+  + createdAt : LocalDateTime
+}
+
+interface TaskMapper {
+}
+
+enum TaskPriority {
+}
+
+class TaskRequest {
+  + taskName : String
+  + description : String
+  + status : TaskStatus
+  + priority : TaskPriority
+  + storyPoints : Integer
+  + assignedTo : Long
+  + sprintId : Long
+}
+
+class TaskResponse {
+  + id : Long
+  + projectId : Long
+  + sprintId : Long
+  + sprint : SprintSummary
+  + taskName : String
+  + description : String
+  + status : TaskStatus
+  + priority : TaskPriority
+  + storyPoints : Integer
+  + assignedTo : UserSummary
+  + createdBy : UserSummary
+  + actualHours : BigDecimal
+  + createdAt : LocalDateTime
+}
+
+enum TaskStatus {
+}
+
+class TelegramBotConfig {
+}
+
+class TransferRequest {
+  + newManagerId : Long
+}
+
+class User {
+  + id : Long
+  + fullName : String
+  + email : String
+  + passwordHash : String
+  + telegramChatId : Long
+  + isActive : boolean
+  + createdAt : LocalDateTime
+}
+
+class UserDetailsServiceImpl {
+  + userRepository : UserRepository
+}
+
+interface UserMapper {
+}
+
+class UserRequest {
+  + fullName : String
+  + email : String
+}
+
+class UserResponse {
+  + id : Long
+  + fullName : String
+  + email : String
+  + telegramChatId : Long
+  + createdAt : LocalDateTime
+}
+
+class UserSummary {
+  + id : Long
+  + fullName : String
+  + email : String
+}
+
+class ValidationException {
+}
+
+class VelocityResponse {
+  + sprintId : Long
+  + sprintName : String
+  + spCompleted : long
+}
+
+class WorkloadResponse {
+  + userId : Long
+  + fullName : String
+  + taskCounts : Map<String, Long>
+  + storyPoints : Map<String, Long>
+}
+
+}
+
+AuditLog --> User : uses
+AuditLog --> EntityType : uses
+AuditLog --> AuditAction : uses
+AuditLogService --> AuditLogRepository : uses
+AuthResponse --> UserResponse : uses
+JwtAuthFilter --> JwtUtil : uses
+JwtAuthFilter --> UserDetailsServiceImpl : uses
+Project --> ProjectStatus : uses
+Project --> User : uses
+ProjectMember --> Project : uses
+ProjectMember --> User : uses
+ProjectMemberResponse --> UserSummary : uses
+ProjectResponse --> ProjectStatus : uses
+ProjectResponse --> UserSummary : uses
+SecurityConfig --> JwtAuthFilter : uses
+SecurityConfig --> UserDetailsServiceImpl : uses
+Sprint --> Project : uses
+Sprint --> SprintStatus : uses
+SprintResponse --> SprintStatus : uses
+SprintSummary --> SprintStatus : uses
+StatusChangeRequest --> TaskStatus : uses
+Task --> Project : uses
+Task --> Sprint : uses
+Task --> TaskStatus : uses
+Task --> TaskPriority : uses
+Task --> User : uses
+TaskActivity --> Task : uses
+TaskActivity --> User : uses
+TaskActivity --> ActivityType : uses
+TaskActivityResponse --> UserSummary : uses
+TaskActivityResponse --> ActivityType : uses
+TaskRequest --> TaskStatus : uses
+TaskRequest --> TaskPriority : uses
+TaskResponse --> SprintSummary : uses
+TaskResponse --> TaskStatus : uses
+TaskResponse --> TaskPriority : uses
+TaskResponse --> UserSummary : uses
+UserDetailsServiceImpl --> UserRepository : depends on
+@enduml

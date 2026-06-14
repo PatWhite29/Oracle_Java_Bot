@@ -19,6 +19,9 @@
 		<mapstruct.version>1.5.5.Final</mapstruct.version>
 		<jjwt.version>0.12.6</jjwt.version>
 		<frontend-src-dir>${project.basedir}/src/main/frontend</frontend-src-dir>
+		<architecture.output-dir>${project.basedir}/../../docs/diagrams</architecture.output-dir>
+		<architecture.source-dir>${project.basedir}/src/main/java</architecture.source-dir>
+		<architecture.base-package>com.springboot.MyTodoList</architecture.base-package>
 		<node.version>v23.9.0</node.version>
 		<npm.version>8.1.2</npm.version>
 		<skipFrontend>false</skipFrontend>
@@ -208,4 +211,46 @@
 			</plugin>
 		</plugins>
 	</build>
+
+	<profiles>
+		<profile>
+			<id>architecture-diagrams</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>exec-maven-plugin</artifactId>
+						<version>3.5.0</version>
+						<executions>
+							<execution>
+								<id>generate-plantuml-diagrams</id>
+								<phase>process-classes</phase>
+								<goals>
+									<goal>java</goal>
+								</goals>
+								<configuration>
+									<mainClass>com.springboot.MyTodoList.architecture.PlantUmlDiagramGenerator</mainClass>
+									<classpathScope>compile</classpathScope>
+									<systemProperties>
+										<systemProperty>
+											<key>architecture.sourceDir</key>
+											<value>${architecture.source-dir}</value>
+										</systemProperty>
+										<systemProperty>
+											<key>architecture.outputDir</key>
+											<value>${architecture.output-dir}</value>
+										</systemProperty>
+										<systemProperty>
+											<key>architecture.basePackage</key>
+											<value>${architecture.base-package}</value>
+										</systemProperty>
+									</systemProperties>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
